@@ -1,0 +1,23 @@
+{
+  "name": "spike-bot",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jbowen2/Spike-Bot.git"
+  },
+  "author": "John William Bowen",
+  "license": "SEE LICENSE IN LICENSE FILE",
+  "bugs": {
+    "url": "https://github.com/jbowen2/Spike-Bot/issues"
+  },
+  "homepage": "https://github.com/jbowen2/Spike-Bot#readme",
+  "dependencies": {
+    "discord.js": "^12.4.1",
+    "eslint": "^7.13.0"
+  }
+}
