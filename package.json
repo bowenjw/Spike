@@ -1,23 +1,22 @@
 {
-  "name": "spike-bot",
-  "version": "0.1.0",
-  "description": "",
+  "name": "flow",
+  "version": "0.1.6",
+  "description": "Discord Bot for discord based projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jbowen2/Spike-Bot.git"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "dev": "nodemon index"
   },
   "author": "John William Bowen",
-  "license": "SEE LICENSE IN LICENSE FILE",
-  "bugs": {
-    "url": "https://github.com/jbowen2/Spike-Bot/issues"
-  },
-  "homepage": "https://github.com/jbowen2/Spike-Bot#readme",
+  "license": "GPL-3.0-or-later",
+  "repository": {},
   "dependencies": {
-    "discord.js": "^12.4.1",
-    "eslint": "^7.13.0"
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.6.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
