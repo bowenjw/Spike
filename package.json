@@ -1,22 +1,26 @@
 {
-  "name": "flow",
-  "version": "0.1.6",
+  "name": "spike-bot",
+  "version": "0.2.1",
   "description": "Discord Bot for discord based projects",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index",
-    "dev": "nodemon index"
+    "start": "node deploy-commands && node index",
+    "dev": " nodemon index",
+    "com": "node remove-commands && node deploy-commands"
   },
-  "author": "John William Bowen",
+  "author": "",
   "license": "GPL-3.0-or-later",
-  "repository": {},
   "dependencies": {
-    "discord.js": "^12.5.3",
-    "dotenv": "^8.6.0",
-    "mysql": "^2.18.1"
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^14.2.0",
+    "mongodb": "^4.3.1"
   },
   "devDependencies": {
+    "eslint": "^7.32.0",
     "nodemon": "^2.0.7"
   }
 }
