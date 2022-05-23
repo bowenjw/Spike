@@ -2,7 +2,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { Routes } from 'discord-api-types/v10';
 
 dotenv.config();
 
