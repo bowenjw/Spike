@@ -15,7 +15,7 @@ module.exports = {
 				{ name: 'Command Latency', value: `${Date.now() - interaction.createdTimestamp}ms`, inline: true },
 				{ name: 'API Latency', value: `${Math.round(client.ws.ping)}ms`, inline: true })
 			.setTimestamp();
-		interaction.followUp({
+		await interaction.followUp({
 		//	content: ,
 			ephemeral: true,
 			embeds: [embed],

@@ -18,17 +18,27 @@ const guildId = process.env.GUILDID;
 const rest = new REST({ version: '9' }).setToken(token!);
 
 // Removes exsiting commands
-rest.get(Routes.applicationGuildCommands(appid!, guildId!))
+try {
+	// Remove gobal commands
+	rest.get(Routes.applicationCommands(appid!))
 	.then((data:any) => {
 		const promises = [];
 		for (const command of data) {
-			const deleteUrl = Routes.applicationGuildCommand(appid!, guildId!, command.id);
-			//console.log(deleteUrl);
+			const deleteUrl = Routes.applicationCommand(appid!, command.id);
 			promises.push(rest.delete(`/${deleteUrl}`));
 		}
 		return Promise.all(promises);
-	}).then(async () => {
-		// Added New commands
+	});
+	// Remove guild commands
+	rest.get(Routes.applicationGuildCommands(appid!, guildId!))
+    .then((data:any) => {
+        const promises = [];
+        for (const command of data) {
+            const deleteUrl = Routes.applicationGuildCommand(appid!, guildId!,command.id);
+            promises.push(rest.delete(`/${deleteUrl}`));
+        }
+        return Promise.all(promises);
+    }).then( async () => { // Added New commands
 
 		const commands = [];
 		const commandFiles = fs.readdirSync('./interactions/commands').filter(file => file.endsWith('.ts'));
@@ -44,4 +54,7 @@ rest.get(Routes.applicationGuildCommands(appid!, guildId!))
 		);
 		console.log('Successfully reloaded application (/) commands.');
 	});
-
+	
+} catch (error) {
+	console.log(error);
+};
