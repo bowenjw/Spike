@@ -4,23 +4,23 @@
   "description": "Discord Bot for discord based projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node deploy-commands && node index",
-    "dev": " nodemon index",
-    "com": "node remove-commands && node deploy-commands"
+    "start": "ts-node index.ts",
+    "dev": " nodemon index.ts",
+    "com": "ts-node deploy-commands",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.2.0-canary.0",
-    "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
-    "dotenv": "^14.2.0",
-    "mongodb": "^4.3.1"
+    "dotenv": "^14.2.0"
   },
   "devDependencies": {
+    "discord-api-types": "^0.26.1",
     "eslint": "^7.32.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "typescript": "^4.6.4"
   }
 }

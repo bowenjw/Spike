@@ -1,21 +1,13 @@
-// eslint-disable-next-line no-unused-vars
-const { Interaction } = require('discord.js');
+import {Interaction} from 'discord.js';
 module.exports = {
 	name: 'interactionCreate',
-	/**
-     *
-     * @param {Interaction} interaction
-     * @returns
-     */
-	async execute(interaction) {
-		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+	async execute(interaction: Interaction) {
+		console.log(`${interaction.user.tag} in ${interaction.channel} triggered an interaction.`);
 
 		// Command interaction
 		if (interaction.isCommand()) {
-			const command = require(`../commands/${interaction.commandName}`);
-
+			const command = require(`../interactions/commands/${interaction.commandName}`);
 			if (!command) return;
-
 			try {
 				await command.execute(interaction);
 			}

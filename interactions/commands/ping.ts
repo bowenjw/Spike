@@ -1,16 +1,12 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-// eslint-disable-next-line no-unused-vars
-const { CommandInteraction, MessageEmbed } = require('discord.js');
-const client = require('../index');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
+import client from '../../index';
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
-	/**
-	 *
-	 * @param {CommandInteraction} interaction
-	 */
-	async execute(interaction) {
+		
+	async execute(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const embed = new MessageEmbed()
 			.setColor('BLURPLE')

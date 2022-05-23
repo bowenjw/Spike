@@ -1,18 +1,21 @@
-require('dotenv').config();
-const { Client, Intents } = require('discord.js');
-const fs = require('fs');
-const token = process.env.DISCORD_TOKEN;
+import dotenv from 'dotenv';
+import fs from 'fs';
+import {Client, Intents} from 'discord.js';
+
+dotenv.config();
 
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS]});
+
+const token = process.env.DISCORD_TOKEN;
 
 // Login to Discord with your client's token
 client.login(token);
 
 // Event file location
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
 
-//  Events handler
+//event handler
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
 	if (event.once) {
@@ -24,4 +27,4 @@ for (const file of eventFiles) {
 }
 
 // exports client
-module.exports = client;
+export default client;

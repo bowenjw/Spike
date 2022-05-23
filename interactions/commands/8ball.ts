@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-// eslint-disable-next-line no-unused-vars
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {CommandInteraction, MessageEmbed} from 'discord.js';
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('8ball')
@@ -9,11 +9,7 @@ module.exports = {
 			option.setName('question')
 				.setDescription('The question you wish to ask')
 				.setRequired(true)),
-	/**
-	 *
-	 * @param {CommandInteraction} interaction
-	 */
-	async execute(interaction) {
+	async execute(interaction: CommandInteraction) {
 		let reply = '';
 		switch (Math.floor(Math.random() * 20)) {
 		case 0:
@@ -82,7 +78,7 @@ module.exports = {
 			.setTitle('The Magic 8 Ball™')
 			.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 			.addFields(
-				{ name: 'Question', value: interaction.options.getString('question') },
+				{ name: 'Question', value: interaction.options.getString('question')! },
 				{ name: 'Answer', value: reply })
 			.setThumbnail('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyiQvzUGEAdRklJkeFaKspuQPDicqsp5ff3A&usqp=CAU')
 			.setTimestamp();

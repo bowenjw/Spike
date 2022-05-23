@@ -1,7 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { ChannelType } = require('discord-api-types/v9');
-// eslint-disable-next-line no-unused-vars
-const { CommandInteraction, MessageActionRow, MessageSelectMenu } = require('discord.js');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { ChannelType } from 'discord-api-types/v9';
+import { CommandInteraction, MessageActionRow, MessageSelectMenu, TextChannel } from 'discord.js';
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('autorole')
@@ -14,11 +13,8 @@ module.exports = {
 						.setDescription('channel where messages will be set')
 						.setRequired(true)
 						.addChannelType(ChannelType.GuildText))),
-	/**
-	 *
-	 * @param {CommandInteraction} interaction
-	 */
-	async execute(interaction) {
+
+	async execute(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const menu = new MessageSelectMenu()
 			.setCustomId('major')
@@ -31,8 +27,13 @@ module.exports = {
 		menu.setMaxValues(menu.options.length);
 		const row = new MessageActionRow()
 			.addComponents(menu);
-		interaction.options.getChannel('target')
-			.send({ content: 'Get roles', components: [row] });
+			try {
+				(interaction.options.getChannel('target')! as TextChannel)
+					.send({ content: 'Get roles', components: [row] });
+			} catch (error) {
+				console.log('channel type error')
+			}
+		
 		interaction.followUp({ content: 'Role setup done', ephemeral: true });
 	},
 };
