@@ -15,7 +15,8 @@ const warn = new mongoose.Schema({
     },
     reason: {
         type: String,
-        required: true,
+        required:true,
+        default: 'No Reason Given'
     }
 }, {timestamps: true,});
 
