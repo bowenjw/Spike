@@ -10,7 +10,7 @@ module.exports = {
         const target = interaction.guild!.members.cache.find((member)=> member.id == splitbutton[2])
         const message = interaction.message;
         if(mode == 'y') {
-            warnSchema.findById(dbid).deleteOne();
+            await warnSchema.findByIdAndDelete(dbid);
             interaction.update({content:`${target} has had the most resent warnning removed`, embeds:[], components:[]})
         } else {
             interaction.update({content:'Action Canceled', embeds:[], components:[]});
