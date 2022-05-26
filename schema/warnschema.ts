@@ -18,7 +18,7 @@ const warn = new mongoose.Schema({
         required:true,
         default: 'No Reason Given'
     }
-}, {timestamps: true,});
+}, {timestamps: true, expireAfterSeconds:7776000});
 
 
 export default mongoose.model('warning', warn);
