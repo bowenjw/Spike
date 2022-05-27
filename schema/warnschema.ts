@@ -20,7 +20,7 @@ const warn = new mongoose.Schema({
     },
     createdAt: {
         type: Date, 
-        expires: '3M',
+        expires: '90d',
         default: Date.now
     }
 }, { timestamps: true, expireAfterSeconds: 7890000 });
