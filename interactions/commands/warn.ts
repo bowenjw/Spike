@@ -54,39 +54,61 @@ module.exports = {
                         .setRequired(true)))),
     
 	async execute(interaction: CommandInteraction) {
-        
-        const target = interaction.options.getUser('user')!; // User is the target of the warn command
-        
-        if(/*interaction.options.getUser('user')?.id == interaction.user.id||*/ target.bot) {
-            interaction.reply({content:'You can not warn your self', ephemeral:true})
-            console.log(`${interaction.user.tag} tried to interat with them selfs`);
-            return;
-        }
-        //await interaction.deferReply({ ephemeral: true });
+        // Options
         const options = interaction.options;
+        const subCommand = options.getSubcommand();
+        const silent = options.getBoolean('silent');
+        const target = options.getUser('user')!; // User is the target of the warn command
+        // interaction properties
         const guild = interaction.guild!; // guild where the command came from
-        const officer = interaction.member!; // user 
+        const officer = interaction.user!; // user
+
+        // Exsiting  wranings
         const warnnings = await warnSchema.find({guildID: guild.id, userID: target.id });
         const length = warnnings.length;
-        const subCommand = options.getSubcommand();
         
+        // Base Conferamtion embed
         let embed =  new MessageEmbed()
             .setTitle('Are You Sure?')
             .setThumbnail(target.avatarURL()!)
-            .setColor('BLURPLE');
+            .setColor('BLURPLE')
+            .setTimestamp();
+
+        // Yes button Base Element
         let approvalbutton = new MessageButton()
             .setLabel('Yes')
             .setStyle('SUCCESS');
+
+        // No Button Base Element
         let cancelButton = new MessageButton()
             .setCustomId(`warn cancel ${target.id}`)
             .setLabel('Cancel')
             .setStyle('DANGER');
 
-        // remove subcommand
+        // subGomandGroup remove
         if(options.getSubcommandGroup(false) == 'remove') {
-            embed = embed.setDescription('You are about to remove the the Following warning(s)');
+            // Officer can not interact with bot or them self
+            if(target.id == officer.id || target.bot) {
+                interaction.reply({content:'You can not interact with that user', ephemeral:true})
+                console.log(`${interaction.user.tag} tried to interat with them selfs or a bot`);
+                return;
+            }
             
-            if(subCommand == 'all') {
+            embed = embed.setDescription('You are about to remove the the Following warning(s)');
+            if(subCommand == 'latest') {
+                
+                approvalbutton = approvalbutton.setCustomId(`warn deleteOne ${target.id} ${warnnings[length-1]._id}`);
+
+                embed = embed.addFields(
+                    {name:'Reason', value:warnnings[length-1].reason, inline: true},
+                    {name:'Date', value:`<t:${Math.floor((warnnings[length-1].createdAt as Date).getTime() / 1000)}:f>`, inline:true},
+                    {name:'Reporting Officer', value:`${guild.members.cache.find(user => user.id == warnnings[length-1].officerID)}`, inline:true}
+                );
+            
+            } else { //reomve all warnings
+                
+                approvalbutton = approvalbutton.setCustomId(`warn deleteAll ${target.id} `); 
+
                 warnnings.reverse().forEach((warnning)=>{
                     embed = embed.addFields(
                         {name:'\u200b' ,value:'\u200b'},
@@ -95,63 +117,64 @@ module.exports = {
                         {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline: true}
                     );
                 });
-                approvalbutton = approvalbutton.setCustomId(`warn deleteAll ${target.id} `);  
-            
-            } else if(subCommand == 'latest') {
-                embed = embed.addFields(
-                    {name:'Reason', value:warnnings[length-1].reason, inline: true},
-                    {name: 'Date', value:`<t:${Math.floor((warnnings[length-1].createdAt as Date).getTime() / 1000)}:f>`, inline:true},
-                    {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnnings[length-1].officerID)}`, inline: true});
-                    approvalbutton = approvalbutton.setCustomId(`warn deleteOne ${target.id} ${warnnings[length-1]._id}`);
             }
 
             const row = new MessageActionRow().addComponents([ approvalbutton, cancelButton]);
+            // remove reply
             interaction.reply({embeds: [embed], components:[row], ephemeral:true})
-        } else if(subCommand == 'user') {
-            if(options.getBoolean('silent')){
-                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} silent`);
-            } else {
-                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id}`);
+
+        } else if(subCommand == 'user'){
+            // Officer can not interact with bot or them self
+            if(target.id == officer.id || target.bot) {
+                interaction.reply({content:'You can not interact with that user', ephemeral:true})
+                console.log(`${interaction.user.tag} tried to interat with them selfs or a bot`);
+                return;
             }
             
+            if(silent) {
+                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} ${length} silent`);
+            } else {
+                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} ${length}`);
+            }
+
             const reason = interaction.options.getString('reason')!;
-            const warnning = new warnSchema({ guildID: guild.id, userID: target.id, officerID: officer.user.id, reason: reason });
-            
+            const warnning = new warnSchema({
+                guildID:guild.id, 
+                userID:target.id, 
+                officerID:officer.id, 
+                reason:reason 
+            });
+
             warnning.save();
-            
-            const row = new MessageActionRow().addComponents([approvalbutton, 
-                cancelButton.setCustomId(`warn cancel ${target.id} ${(warnSchema.findOne({guildID:guild.id,userID:target.id}) as any)._id}`)]);
-            
-                embed = embed.setDescription(`You are about to warn ${target}`)
-                    .addFields(
-                        {name:'Reason', value:reason, inline: true},
-                        {name: 'Date', value:`<t:${Math.floor(new Date?.getTime() / 1000)}:f>`, inline:true},
-                        {name:'Reporting Officer', value: `${officer}`, inline: true}        
-                    );
+
+            embed = embed.addField('Reason',reason);
+
             switch (length) {
                 case 0:
-                    embed = embed.setColor('GREEN');
+                    embed = embed.setColor('GREEN')
+                        .setDescription(`This would be ${target}'s first warnning`);
                     break;
                 case 1:                
-                    embed = embed.setColor('YELLOW');
+                    embed = embed.setColor('YELLOW')
+                        .setDescription(`This would be ${target}'s Secound warnning`);
                     break;
                 case 2:
                     embed = embed.setColor('RED')
                         .setTitle(`YOU ARE ABOUT TO BAN THIS USER`)
-                        .setDescription(`${target} is about to recive theire threed warnning`);
+                        .setDescription(`${target} has recive two previous warnnings. This would be thier thred and Final warnning`);
                     break;
                 default:
                     break;
-            }            
-            interaction.reply({embeds:[embed], components:[row], ephemeral: true});
-
+            }
+            // confrimation buttons
+            const row = new MessageActionRow().addComponents([approvalbutton, 
+                cancelButton.setCustomId(`warn cancel ${target.id} ${(warnSchema.findOne({guildID:guild.id,userID:target.id}) as any)._id}`)]);
+            
+                interaction.reply({embeds:[embed], components:[row], ephemeral: true});
         } else if(subCommand == 'history') { 
             // warn history
-            let embed = new MessageEmbed()
-                .setTitle('Warnning of History User')
-                .setDescription(`Waring history of user ${target}.`)
-                .setThumbnail(target.avatarURL()!)
-                .setTimestamp();
+            embed = embed.setTitle('Warnning of History User')
+                .setDescription(`Waring history of user ${target}.`);
             switch (length) {
                 case 0:
                     embed = embed.setDescription(`User ${target} has not resvied any warnnings`)
@@ -167,15 +190,19 @@ module.exports = {
                 default:
                     break;
             }
+            let first = true;
             warnnings.reverse().forEach((warnning) => {
+                if(!first) {
+                    embed = embed.addField('\u200b' ,'\u200b');
+                }
                 embed = embed.addFields(
-                    {name:'\u200b' ,value:'\u200b'},
-                    {name:'Reason', value:warnning.reason, inline: true},
-                    {name: 'Date', value:`<t:${Math.floor((warnning.createdAt as Date).getTime() / 1000)}:f>`, inline:true},
-                    {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline: true}
+                    {name:'Reason', value:warnning.reason, inline:true},
+                    {name:'Date', value:`<t:${Math.floor((warnning.createdAt as Date).getTime() / 1000)}:f>`, inline:true},
+                    {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline:true}
                 );
+                first = false;
             });
-            interaction.reply({embeds: [embed],ephemeral:true})
+            interaction.reply({embeds:[embed], ephemeral:true})
         }
 	},
 };

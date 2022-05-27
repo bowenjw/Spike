@@ -17,8 +17,13 @@ const warn = new mongoose.Schema({
         type: String,
         required:true,
         default: 'No Reason Given'
+    },
+    createdAt: {
+        type: Date, 
+        expires: '3M',
+        default: Date.now
     }
-}, {timestamps: true, expireAfterSeconds:7776000});
+}, { timestamps: true, expireAfterSeconds: 7890000 });
 
 
 export default mongoose.model('warning', warn);
