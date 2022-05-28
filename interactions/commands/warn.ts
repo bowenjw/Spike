@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, Guild, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
+import { CommandInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import warnSchema from '../../schema/warnschema';
 
 module.exports = {
@@ -21,7 +21,10 @@ module.exports = {
                 .setRequired(true))
             .addBooleanOption(option=>
                 option.setName('silent')
-                    .setDescription('hide warnning from users')))
+                    .setDescription('hide warnning from users'))
+            .addNumberOption(option =>
+                option.setName('duration')
+                    .setDescription('Number of day that the warning will last')))
         .addSubcommand(subcommand=>
             // warn history - command show shitory of user
             subcommand.setName('history')
@@ -136,13 +139,21 @@ module.exports = {
             } else {
                 approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} ${length}`);
             }
-
-            const reason = interaction.options.getString('reason')!;
+            const date = new Date;
+            let days = 90;
+            const durationOption = options.getNumber('duration');
+            if(durationOption) {
+               days = durationOption;
+            }
+            date.setDate(date.getDate() + days);
+            
+            const reason = options.getString('reason')!;
             const warnning = new warnSchema({
-                guildID:guild.id, 
-                userID:target.id, 
-                officerID:officer.id, 
-                reason:reason 
+                guildID: guild.id, 
+                userID: target.id, 
+                officerID: officer.id, 
+                reason: reason,
+                expireAt: date
             });
 
             warnning.save();

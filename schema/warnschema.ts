@@ -17,10 +17,14 @@ const warn = new mongoose.Schema({
         type: String,
         required:true,
         default: 'No Reason Given'
+    },
+    expireAt: {
+        type: Date,
+        required:true
     }
 }, { timestamps: true});
 
-warn.index({createdAt: 1},{expireAfterSeconds: 7890000});
+warn.index({ "expireAt": 1 }, {expireAfterSeconds: 0 } )
 
 
 export default mongoose.model('warning', warn);

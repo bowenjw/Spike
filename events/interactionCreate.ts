@@ -1,18 +1,19 @@
-import {CommandInteraction, Interaction, TextChannel} from 'discord.js';
+import {CommandInteraction, GuildChannel, Interaction} from 'discord.js';
 module.exports = {
 	name: 'interactionCreate',
 	once: false,
 	async execute(interaction: Interaction) {
-		console.log(`${interaction.user.tag} in #${(interaction.channel as TextChannel).name} triggered an interaction.`);
+		// console.log(`${interaction.user.tag} in #${(interaction.channel as TextChannel).name} triggered an interaction.`);
 
 		// Command interaction
 		try {
 			if (interaction.isCommand()) {
-				//console.log(interaction.commandName);
+				console.log(`${interaction.user.tag} used Command ${interaction.commandName} from ${interaction.guild?.name} in channel ${(interaction.channel as GuildChannel).name}`);
 				const command = await require(`../interactions/commands/${interaction.commandName}`);
 				command.execute(interaction);
 			}
 			else if(interaction.isButton()) {
+				console.log(`${interaction.user.tag} used Button from ${interaction.guild?.name} in channel ${(interaction.channel as GuildChannel).name}`);
 				const command = await require(`../interactions/buttons/${interaction.customId.split(' ')[0]}`);
 				command.execute(interaction);
 			}
