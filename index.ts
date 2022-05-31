@@ -1,8 +1,14 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 import {Client, Intents} from 'discord.js';
+import mongoose from 'mongoose';
 
 dotenv.config();
+
+// Conect to the Data Base
+mongoose.connect(process.env.MONGO_URI!,{keepAlive:true})
+	.then(() => console.log('Conected to DB'))
+	.catch((err) => console.log(err));
 
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS]});
