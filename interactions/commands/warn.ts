@@ -24,7 +24,8 @@ module.exports = {
                     .setDescription('hide warnning from users'))
             .addNumberOption(option =>
                 option.setName('duration')
-                    .setDescription('Number of day that the warning will last')))
+                    .setDescription('Number of day that the warning will last')
+                    .setMinValue(0)))
         .addSubcommand(subcommand=>
             // warn history - command show shitory of user
             subcommand.setName('history')
