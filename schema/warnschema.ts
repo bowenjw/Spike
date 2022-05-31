@@ -20,11 +20,9 @@ const warn = new mongoose.Schema({
     },
     expireAt: {
         type: Date,
-        required:true
+        default: new Date().setDate(new Date().getDate()+90),
+        required:true,
     }
 }, { timestamps: true});
-
-warn.index({ "expireAt": 1 }, {expireAfterSeconds: 0 } )
-
 
 export default mongoose.model('warning', warn);
