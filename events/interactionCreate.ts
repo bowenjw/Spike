@@ -1,4 +1,6 @@
 import {CommandInteraction, GuildChannel, Interaction} from 'discord.js';
+import { ChannelType } from 'discord-api-types/v10';
+
 module.exports = {
 	name: 'interactionCreate',
 	once: false,
@@ -7,7 +9,9 @@ module.exports = {
 
 		// Command interaction
 		try {
-			if (interaction.isCommand()) {
+			if(interaction.channel?.type == "DM") {
+				return;
+			} else if (interaction.isCommand()) {
 				console.log(`${interaction.user.tag} used Command ${interaction.commandName} from ${interaction.guild?.name} in channel ${(interaction.channel as GuildChannel).name}`);
 				const command = await require(`../interactions/commands/${interaction.commandName}`);
 				command.execute(interaction);
