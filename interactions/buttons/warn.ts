@@ -1,56 +1,59 @@
-import { ButtonInteraction, GuildCacheMessage } from "discord.js";
-import warnSchema from '../../schema/warnschema';
+import { ButtonInteraction, GuildMember } from "discord.js";
+import {warningTemp, warningSchema} from '../../schema/warnschema';
 
-module.exports = {
-	async execute(interaction:ButtonInteraction) {
-        
-        const splitbutton = interaction.customId.split(' ');
-        const mode = splitbutton[1];
-        const target = interaction.guild!.members.cache.find((member)=> member.id == splitbutton[2])
-        const dbid = splitbutton[3];
-        let content = 'Error';
-        if(mode == 'cancel') {
-            
-            content = 'Action Canceled';
-            
-            async () => {
-                if(dbid) {
-                    warnSchema.findByIdAndDelete(dbid).catch((error)=> console.log(error));
-                }
-           }
-        } else if (mode == 'deleteAll') {
+import { Button } from '../../types'
 
-            await warnSchema.deleteMany({guildID:interaction.guild?.id, userID:target?.id})
-            content = `${target} has had all warnings removed`;
-
-        } else if (mode == 'deleteOne') {
-
-            await warnSchema.findByIdAndDelete(dbid);
-            content = `${target} has had the most resent warnning removed`;
-
-        } else if (mode == 'warnning') {
-
-            const length = splitbutton[3];
-            const silent = splitbutton[4] == 'silent';
-            let DM = `You have recived a warnning from ${interaction.guild?.name}`;
-            let inChannel = `${target}, You have been warned by ${interaction.user}`;
-            content = 'Action Complete';
-
-            if(length == '2') {
-                DM = `You have recived been banned from ${interaction.guild?.name}`;
-                inChannel = `${target}, has been **BANNED** by ${interaction.user}`;
-                content = `${target}, has been **BANNED** by ${interaction.user}`
-                if(!silent) {
-                    interaction.channel?.send(inChannel);
-                }
-                await target?.send(DM).catch((error) => console.log(error));
-                target?.ban({reason:'User recive three warings over the past 90 days', days:1}).catch((error) => console.log(error));
-            } else if(!silent) {
-                interaction.channel?.send(inChannel);
-            } else {
-                target?.send(DM);
-            }
+const button: Button = {
+    name: 'warn',
+    execute(interaction: ButtonInteraction) {
+        const splitArgs = interaction.customId.split(' '),
+            target = interaction.guild!.members.cache.find((member)=> member.id == splitArgs[2])!
+        switch (splitArgs[1]) {
+            case 'prev':
+                prev(interaction, target, parseInt(splitArgs[3], 10));
+                break;
+            case 'next':
+                next(interaction, target,  parseInt(splitArgs[3], 10));
+                break;
+            case 'warn':
+                warn(interaction, splitArgs[2], Boolean(splitArgs[3]));
+                break;
+            case 'cancel':
+                cancel(interaction, splitArgs[2]);
+                break;
+            default:
+                break;
         }
-        interaction.update({content:content, embeds:[], components:[]})
     }
 }
+async function prev(interaction:ButtonInteraction, target:GuildMember, startingWarning:number) {
+    
+}
+async function next(interaction:ButtonInteraction, target:GuildMember, startingWarning:number) {
+    const guild = interaction.guild!,
+        warnnings = await warningSchema.find({guildID: guild.id, userID: target.id});
+
+    //interaction.update({embeds:[embed], components:[row], ephemeral:true})
+}
+async function warn(interaction:ButtonInteraction, warningId:string, isSilent:boolean) {
+    const temp = await warningTemp.findById(warningId);
+    const warning = new warningSchema({
+        guildID: temp!.guildID,
+        userID: temp!.userID,
+        officerID: temp!.officerID,
+        reason: temp!.reason,
+        expireAt: temp!.expireAt
+    });
+    await warning.save()
+    let content = `A warning has been issed to <@${temp!.userID}>`
+    if(isSilent){
+        content = `A warning has been silently issed to <@${temp!.userID}>`
+    }
+    interaction.update({content: content, embeds:[], components:[]})
+    await warningTemp.findByIdAndDelete(warningId)
+}
+async function cancel(interaction:ButtonInteraction, warningId:string) {
+    await warningTemp.findByIdAndDelete(warningId)
+    interaction.update({content: 'Warning has been canceled', embeds:[], components:[]})
+}
+export = button;

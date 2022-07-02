@@ -1,15 +1,13 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
-import warnSchema from '../../schema/warnschema';
+import { ColorResolvable, CommandInteraction, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
+import {warningTemp, warningSchema} from '../../schema/warnschema';
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('warn')
-		.setDescription('Three Strike System')
-        
-        .addSubcommand(subcommand=>
-            // warn user - command issues warning to user
-            subcommand.setName('user')
+const builder = new SlashCommandBuilder()
+    .setName('warn')
+    .setDescription('Three Strike System')
+    .addSubcommand(subcommand=>
+        // warn user - command issues warning to user
+        subcommand.setName('user')
             .setDescription('Warn user')
             .addUserOption(option=>
                 option.setName('user')
@@ -26,195 +24,200 @@ module.exports = {
                 option.setName('duration')
                     .setDescription('Number of day that the warning will last')
                     .setMinValue(0)))
-        .addSubcommand(subcommand=>
-            // warn history - command show shitory of user
-            subcommand.setName('history')
-            .setDescription('get user history')
+    .addSubcommand(subcommand=>
+        // warn history - command show shitory of user
+        subcommand.setName('history')
+            .setDescription('Get user history')
             .addUserOption(option=>
                 option.setName('user')
                 .setDescription('Taget user')
-                .setRequired(true)))
+                .setRequired(true))
+            .addBooleanOption(option =>
+                option.setName('active')
+                    .setDescription('Do you want to see inactive warnings')))
+    .addSubcommand(subcommand => 
+        subcommand.setName('remove')
+            .setDescription('Remove a active warnning'));
 
-        .addSubcommandGroup(subCommandGroup=>
-            //warn remove - command sub group
-            subCommandGroup.setName('remove')
-            .setDescription('remove warnning(s)')
-
-            .addSubcommand(subCommand=>
-                //warn remove latest - command removes only the latest warning
-                subCommand.setName('latest')
-                    .setDescription('removes only the latest warning')
-                    .addUserOption(option=>
-                        option.setName('user')
-                        .setDescription('Taget user')
-                        .setRequired(true)))
-            .addSubcommand(subCommand=>
-                //warn remove all - command removes all warnings
-                subCommand.setName('all')
-                    .setDescription('removes all warnings')
-                    .addUserOption(option=>
-                        option.setName('user')
-                        .setDescription('Taget user')
-                        .setRequired(true)))),
+function execute(interaction: CommandInteraction) {
     
-	async execute(interaction: CommandInteraction) {
-        // Options
-        const options = interaction.options;
-        const subCommand = options.getSubcommand();
-        const silent = options.getBoolean('silent');
-        const target = options.getUser('user')!; // User is the target of the warn command
-        // interaction properties
-        const guild = interaction.guild!; // guild where the command came from
-        const officer = interaction.user!; // user
+    const officer = interaction.user;
+    const target = interaction.options.getUser('user', true);
+    const subcommand = interaction.options.getSubcommand(true)
 
-        // Exsiting  wranings
-        const warnnings = await warnSchema.find({guildID: guild.id, userID: target.id });
-        const length = warnnings.length;
-        
-        // Base Conferamtion embed
-        let embed =  new MessageEmbed()
-            .setTitle('Are You Sure?')
-            .setThumbnail(target.avatarURL()!)
-            .setColor('BLURPLE')
-            .setTimestamp();
+    // Prevents interactions beetween bots and admins waing them selfs
+    if (subcommand == 'history') {
+        history(interaction)
 
-        // Yes button Base Element
-        let approvalbutton = new MessageButton()
-            .setLabel('Yes')
-            .setStyle('SUCCESS');
+    } else if(target.id == officer.id || target.bot) {
+        interaction.reply({content:'You can not interact with that user', ephemeral:true})
+        console.log(`${interaction.user.tag} tried to interat with them selfs or a bot`);
+        return;
 
-        // No Button Base Element
-        let cancelButton = new MessageButton()
-            .setCustomId(`warn cancel ${target.id}`)
+    } else if (subcommand == 'user') {
+        user(interaction)
+
+    } else if (subcommand == 'remove') {
+        remove(interaction)
+    }
+}
+
+async function user(interaction: CommandInteraction) {
+    
+    const officer = interaction.user,
+        guild = interaction.guild!,
+        options = interaction.options,
+        target = options.getUser('user', true),
+        silent = options.getBoolean('silent'),
+        reason = options.getString('reason', true);
+
+    let duration = options.getNumber('duration'),
+        color:ColorResolvable = 'BLURPLE',
+        title = 'Are You Sure?',
+        label = 'Warn',
+        customId = `warn warn`,
+        description:string;
+
+    // Exsiting Warning histroy
+    const warnnings = await warningSchema.find({guildID: guild.id, userID: target.id, resovled: false, active: true}).gt('expireAt', new Date().setDate(new Date().getDate()-90)).limit(2);
+    const length = warnnings.length;
+
+
+    // Set the duration of the warnning in no option is given duation is set to 90 
+    const date = new Date;
+    if(!duration) {
+        duration = 90;
+    }
+    date.setDate(date.getDate() + duration);
+    
+    //
+    const warnning = new warningTemp({
+        guildID: guild.id, 
+        userID: target.id, 
+        officerID: officer.id, 
+        reason: reason,
+        expireAt: date
+    });
+    await warnning.save()
+    //console.log(warnning.id)
+    customId +=' ' + warnning.id
+    if(!silent || silent == null) {
+        customId += ' false'
+    } else {
+        customId += ' true'
+    }
+    
+    switch (length) {
+        case 0:
+            color ='GREEN'
+            description = `This would be ${target}'s first warnning`;
+            break;
+        case 1:                
+            color = 'YELLOW'
+            description = `This would be ${target}'s Secound warnning`;
+            break;
+        case 2:
+            color = 'RED'
+            title = 'YOU ARE ABOUT TO BAN THIS USER'
+            description = `${target} has recive two previous warnnings. This would be thier thred and Final warnning`;
+            label = 'Ban'
+            break;
+        default:
+            description = 'error'
+            break;
+    }
+    const embed = new MessageEmbed()
+        .setTitle(title)
+        .setDescription(description)
+        .addField('Reason', reason)
+        .setThumbnail(target.avatarURL()!)
+        .setColor(color)
+        .setTimestamp();
+
+    const row = new MessageActionRow().addComponents([
+        new MessageButton()
+            .setCustomId(customId)
+            .setLabel(label)
+            .setStyle('DANGER'), 
+        new MessageButton()
+            .setCustomId(`warn cancel ${warnning.id}`)
             .setLabel('Cancel')
-            .setStyle('DANGER');
+            .setStyle('SECONDARY')
+    ]);
 
-        // subGomandGroup remove
-        if(options.getSubcommandGroup(false) == 'remove') {
-            // Officer can not interact with bot or them self
-            if(target.id == officer.id || target.bot) {
-                interaction.reply({content:'You can not interact with that user', ephemeral:true})
-                console.log(`${interaction.user.tag} tried to interat with them selfs or a bot`);
-                return;
-            }
+    interaction.reply({embeds: [embed], components: [row], ephemeral: true})
+
+}
+
+async function history(interaction: CommandInteraction){
+
+    const guild = interaction.guild!;
+
+    // Command Options
+    const options = interaction.options;
+    const target = options.getUser('user', true);
+    const isActive = options.getBoolean('active') || false;
+
+    const warnnings = await warningSchema.find({guildID: guild.id, userID: target.id, resovled: !isActive});
+    const length = warnnings.length;
+    
+        
+    // warn color
+    let embed =  new MessageEmbed()
+        .setTitle('Warnning of History User')
+        .setThumbnail(target.avatarURL()!)
+        .setColor('BLURPLE')
+        .setTimestamp()
+
+    if(length == 0) {
+        embed = embed.setDescription(`User ${target} has not resvied any warnnings`)
+            .setColor('GREEN');
+
+    } else {
+        embed = embed.setDescription(`Waring history of user ${target}.`);
+    }
+    if (length > 0)
+        for (let count = 0; count < 2; count++) {
             
-            embed = embed.setDescription('You are about to remove the the Following warning(s)');
-            if(subCommand == 'latest') {
-                
-                approvalbutton = approvalbutton.setCustomId(`warn deleteOne ${target.id} ${warnnings[length-1]._id}`);
+            const warnning = warnnings[count];
 
-                embed = embed.addFields(
-                    {name:'Reason', value:warnnings[length-1].reason, inline: true},
-                    {name:'Date', value:`<t:${Math.floor((warnnings[length-1].createdAt as Date).getTime() / 1000)}:f>`, inline:true},
-                    {name:'Reporting Officer', value:`${guild.members.cache.find(user => user.id == warnnings[length-1].officerID)}`, inline:true}
-                );
-            
-            } else { //reomve all warnings
-                
-                approvalbutton = approvalbutton.setCustomId(`warn deleteAll ${target.id} `); 
-
-                warnnings.reverse().forEach((warnning)=>{
-                    embed = embed.addFields(
-                        {name:'\u200b' ,value:'\u200b'},
-                        {name:'Reason', value:warnning.reason, inline: true},
-                        {name: 'Date', value:`<t:${Math.floor((warnning.createdAt as Date).getTime() / 1000)}:f>`, inline:true},
-                        {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline: true}
-                    );
-                });
+            if(count == 0) {
+                embed = embed.addField('\u200b' ,'\u200b');
             }
 
-            const row = new MessageActionRow().addComponents([ approvalbutton, cancelButton]);
-            // remove reply
-            interaction.reply({embeds: [embed], components:[row], ephemeral:true})
-
-        } else if(subCommand == 'user'){
-            // Officer can not interact with bot or them self
-            if(target.id == officer.id || target.bot) {
-                interaction.reply({content:'You can not interact with that user', ephemeral:true})
-                console.log(`${interaction.user.tag} tried to interat with them selfs or a bot`);
-                return;
-            }
-            
-            if(silent) {
-                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} ${length} silent`);
-            } else {
-                approvalbutton = approvalbutton.setCustomId(`warn warnning ${target.id} ${length}`);
-            }
-            const date = new Date;
-            let days = 90;
-            const durationOption = options.getNumber('duration');
-            if(durationOption) {
-               days = durationOption;
-            }
-            date.setDate(date.getDate() + days);
-            
-            const reason = options.getString('reason')!;
-            const warnning = new warnSchema({
-                guildID: guild.id, 
-                userID: target.id, 
-                officerID: officer.id, 
-                reason: reason,
-                expireAt: date
-            });
-
-            warnning.save();
-
-            embed = embed.addField('Reason',reason);
-
-            switch (length) {
-                case 0:
-                    embed = embed.setColor('GREEN')
-                        .setDescription(`This would be ${target}'s first warnning`);
-                    break;
-                case 1:                
-                    embed = embed.setColor('YELLOW')
-                        .setDescription(`This would be ${target}'s Secound warnning`);
-                    break;
-                case 2:
-                    embed = embed.setColor('RED')
-                        .setTitle(`YOU ARE ABOUT TO BAN THIS USER`)
-                        .setDescription(`${target} has recive two previous warnnings. This would be thier thred and Final warnning`);
-                    break;
-                default:
-                    break;
-            }
-            // confrimation buttons
-            const row = new MessageActionRow().addComponents([approvalbutton, 
-                cancelButton.setCustomId(`warn cancel ${target.id} ${(warnSchema.findOne({guildID:guild.id,userID:target.id}) as any)._id}`)]);
-            
-                interaction.reply({embeds:[embed], components:[row], ephemeral: true});
-        } else if(subCommand == 'history') { 
-            // warn history
-            embed = embed.setTitle('Warnning of History User')
-                .setDescription(`Waring history of user ${target}.`);
-            switch (length) {
-                case 0:
-                    embed = embed.setDescription(`User ${target} has not resvied any warnnings`)
-                case 1:
-                    embed = embed.setColor('GREEN');
-                    break;
-                case 2:
-                    embed = embed.setColor('YELLOW');
-                    break;
-                case 3:
-                    embed = embed.setColor('RED');
-                    break;
-                default:
-                    break;
-            }
-            let first = true;
-            warnnings.reverse().forEach((warnning) => {
-                if(!first) {
-                    embed = embed.addField('\u200b' ,'\u200b');
-                }
-                embed = embed.addFields(
-                    {name:'Reason', value:warnning.reason, inline:true},
-                    {name:'Date', value:`<t:${Math.floor((warnning.createdAt as Date).getTime() / 1000)}:f>`, inline:true},
-                    {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline:true}
-                );
-                first = false;
-            });
-            interaction.reply({embeds:[embed], ephemeral:true})
+            embed = embed.addFields(
+                {name:'Reason', value: warnning.reason, inline:true},
+                {name:'Date', value:`<t:${Math.floor((warnning.createdAt as Date).getTime() / 1000)}:f>`, inline:true},
+                {name:'Reporting Officer', value: `${guild.members.cache.find(user => user.id == warnning.officerID)}`, inline:true}
+            );
         }
-	},
-};
+
+    let row = new MessageActionRow().addComponents([new MessageButton()
+            .setStyle('PRIMARY')
+            .setLabel('Prev')
+            .setCustomId(`warn next ${target}`)
+            .setDisabled(true)
+
+        , new MessageButton()
+            .setStyle('PRIMARY')
+            .setLabel('Next')
+            .setCustomId(`warn next ${target} 3`)
+            .setDisabled(length <= 3)
+    ]);
+    if(isActive) {
+        interaction.reply({embeds:[embed], ephemeral:true})
+
+    } else {
+        interaction.reply({embeds:[embed], components:[row], ephemeral:true})
+    }
+}
+
+function remove(interaction: CommandInteraction) {
+
+}
+
+export = {
+	name: 'warn',
+	data: builder,
+	execute: execute,
+}

@@ -1,8 +1,10 @@
 import { Guild } from "discord.js";
 import guildsettings from "../schema/guildsettings"
 
-module.exports = {
-	name: 'guildCreate',
+import { Event } from '../types';
+
+const event: Event = {
+    name: 'guildCreate',
 	once: false,
 	async execute(guild: Guild) {
 
@@ -21,3 +23,5 @@ module.exports = {
         newguild.save();
     }
 }
+
+export = event;

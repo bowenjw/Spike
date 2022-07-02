@@ -1,8 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed} from 'discord.js';
+import { CommandInteraction  } from 'discord.js';
 import { ChannelType } from 'discord-api-types/v10';
-module.exports = {
-	data: new SlashCommandBuilder()
+
+import { Command } from '../../types'
+
+const command: Command = {
+    name: 'pronoun',
+    data: new SlashCommandBuilder()
 		.setName('pronoun')
 		.setDescription('manage Pronoun message')
         .addSubcommand(subCommand => 
@@ -20,4 +24,6 @@ module.exports = {
 	async execute(interaction: CommandInteraction) {
 		
 	},
-};
+}
+
+export = command;

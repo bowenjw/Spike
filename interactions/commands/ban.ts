@@ -5,10 +5,10 @@ import client from '../..';
 import { Command } from '../../types'
 
 const command: Command = {
-	name: 'ping',
+	name: 'ban',
 	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
+		.setName('ban')
+		.setDescription('ban hammer'),
 	async execute(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const embed = new MessageEmbed()

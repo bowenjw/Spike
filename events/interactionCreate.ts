@@ -1,7 +1,8 @@
 import {CommandInteraction, GuildChannel, Interaction} from 'discord.js';
-import { ChannelType } from 'discord-api-types/v10';
 
-module.exports = {
+import { Event } from '../types';
+
+const event: Event = {
 	name: 'interactionCreate',
 	once: false,
 	async execute(interaction: Interaction) {
@@ -31,4 +32,6 @@ module.exports = {
 				await (interaction as CommandInteraction).reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	}
-};
+}
+
+export = event;

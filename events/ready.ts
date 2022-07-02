@@ -1,10 +1,15 @@
-import { Client } from "discord.js";
+import { Client } from 'discord.js';
+import reloadedCommands from '../deploy-commands';
+import { Event } from '../types'
 
-module.exports = {
+const event: Event = {
 	name: 'ready',
 	once: true,
-	async execute(client: Client) {
-		console.log(`Ready! Logged in as ${client.user!.tag}`);
+	execute(client: Client) {
+		reloadedCommands()
+		console.log(`\nReady! Logged in as ${client.user!.tag}`);
 		
-	},
+	}
 };
+
+export = event

@@ -7,9 +7,8 @@ dotenv.config();
 
 // Conect to the Data Base
 mongoose.connect(process.env.MONGO_URI!,{keepAlive:true})
-	.then(() => console.log('Conected to DB'))
+	.then(() => console.log('Conected to DB\n'))
 	.catch((err) => console.log(err));
-
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS]});
 
