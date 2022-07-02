@@ -2,7 +2,7 @@
   "name": "spike-bot",
   "version": "0.2.1",
   "description": "Discord Bot for discord based projects",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "npx ts-node index.ts",
     "dev": " npx nodemon index.ts",
@@ -14,7 +14,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
     "@discordjs/rest": "^0.5.0",
-    "discord-api-types": "^0.35.0",
+    "discord-api-types": "^0.36.0",
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
     "mongoose": "^6.4.0"
