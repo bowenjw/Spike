@@ -2,7 +2,7 @@
   "name": "spike-bot",
   "version": "0.2.1",
   "description": "Discord Bot for discord based projects",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "npx ts-node index.ts",
     "dev": " npx nodemon index.ts",

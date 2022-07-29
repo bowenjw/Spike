@@ -1,10 +1,11 @@
-import {CommandInteraction, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
-import {client} from '../../client';
-module.exports = {
+import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { client } from '../../client';
+import { Command } from '../../types';
+const command: Command = {
+	name: 'ping',
 	data: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
-		
 	async execute(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const embed = new EmbedBuilder()
@@ -21,4 +22,5 @@ module.exports = {
 			components: [],
 		});
 	},
-};
+}
+export = command;

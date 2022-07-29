@@ -1,60 +1,61 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 
-dotenv.config();
 
-interface Icommand {
-	data: SlashCommandBuilder
-}
+import { Command } from './types'
+import client from '.';
+
+dotenv.config();
 
 // Place your client and guild ids here
 const token = process.env.DISCORD_TOKEN;
 const appid = process.env.APPLICATIONID;
 const guildId = process.env.GUILDID;
 
-const rest = new REST({ version: '9' }).setToken(token!);
+const rest = new REST({ version: '10' }).setToken(token!);
 
-// Removes exsiting commands
-try {
-	// Remove gobal commands
-	rest.get(Routes.applicationCommands(appid!))
-	.then((data:any) => {
-		const promises = [];
-		for (const command of data) {
-			const deleteUrl = Routes.applicationCommand(appid!, command.id);
-			promises.push(rest.delete(`/${deleteUrl}`));
-		}
-		return Promise.all(promises);
-	});
-	// Remove guild commands
-	rest.get(Routes.applicationGuildCommands(appid!, guildId!))
-    .then((data:any) => {
-        const promises = [];
-        for (const command of data) {
-            const deleteUrl = Routes.applicationGuildCommand(appid!, guildId!,command.id);
-            promises.push(rest.delete(`/${deleteUrl}`));
-        }
-        return Promise.all(promises);
-    }).then( async () => { // Added New commands
+function reloadedCommands() {
 
-		const commands = [];
-		const commandFiles = fs.readdirSync('./interactions/commands').filter(file => file.endsWith('.ts'));
-		
-		for (const file of commandFiles) {
-			const command:Icommand = require(`./interactions/commands/${file}`);
-			commands.push(command.data.toJSON());
-		}
-		console.log('Started refreshing application (/) commands.');
-		await rest.put(
-			Routes.applicationGuildCommands(appid!, guildId!),
-			{ body: commands },
-		);
-		console.log('Successfully reloaded application (/) commands.');
-	});
+	console.log('Started refreshing application (/) commands.')
+
+	rest.get(Routes.applicationCommands(appid!)).then((data:any) => removeCommands(data)).catch((err) => console.log(err));
+
+	console.log('Successfully removed application (/) commands')
+
+	addCommands();
+
+	console.log('Successfully reloaded application (/) commands.');
+}
+
+function removeCommands(data: any) {
 	
-} catch (error) {
-	console.log(error);
-};
+	const promises = [];
+
+    for (const command of data) {
+        const deleteUrl = Routes.applicationGuildCommand(appid!, guildId!,command.id);
+        promises.push(rest.delete(`/${deleteUrl}`));
+    }
+    return Promise.all(promises);
+	
+}
+async function addCommands() {
+
+	const commandsFilePath = './interactions/commands/'
+	const commands = [];
+	const commandFiles = fs.readdirSync(commandsFilePath).filter(file => file.endsWith('.ts'));
+
+	for (const file of commandFiles) {
+		const command: Command = require(commandsFilePath + file);
+		commands.push(command.data.toJSON());
+		console.log(`Loaded application (/) command ${command.name}.`)
+	}
+
+	await rest.put(
+		Routes.applicationGuildCommands(appid!, guildId!),
+		{ body: commands },
+	);
+}
+
+export = reloadedCommands
