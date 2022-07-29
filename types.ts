@@ -11,7 +11,8 @@ export interface Event {
 export interface Command {
     name: string,
     description?: string,
-    data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
+    global: boolean,
+    SlashCommandBilder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
     execute(interaction: CommandInteraction): any
 }
 

@@ -4,7 +4,8 @@ import { Command } from '../../types'
 
 const command: Command = {
 	name: '8ball',
-	data: new SlashCommandBuilder()
+	global: true,
+	SlashCommandBilder: new SlashCommandBuilder()
 		.setName('8ball')
 		.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 		.addStringOption(option =>

@@ -1,82 +1,28 @@
-<<<<<<< HEAD
 import {CommandInteraction, ActionRow, ButtonBuilder, EmbedBuilder, SlashCommandBuilder, CommandInteractionOptionResolver, SlashCommandUserOption} from 'discord.js';
 import warnSchema from '../../schema/warnschema';
-module.exports = {
-    global: false,
-	data: new SlashCommandBuilder()
-		.setName('moderations')
-		.setDescription('moderation')
-        .addSubcommand(subcommand => 
-            subcommand.setName('ban')
-            .setDescription('ban member')
-            .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true))
-            .addStringOption(option => option.setName('duration').setDescription('use if is a tempban'))
-            .addStringOption(option => option.setName('reason').setDescription('reason of ban or tempban')))
-        .addSubcommandGroup(subcommandGroup =>
-            subcommandGroup.setName('warn')
-            .addSubcommand(subcommand => 
-                subcommand.setName('new')
-                .setDescription('warn member')
-                .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true)))
-            .addSubcommand(subcommand => 
-                subcommand.setName('clear')
-                .setDescription('clear warning(s)')
-                .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true)))
-            .addSubcommand(subcommand =>
-                subcommand.setName('view')
-                .setDescription('view warnings of user')
-                .addStringOption(option => option.setName('user_id').setDescription('User Discord id').setRequired(true)))),
-	async execute(interaction: CommandInteraction) {
-        
-        const options = interaction.options as CommandInteractionOptionResolver,
-            subcommandGroup = options.getSubcommandGroup(false),
-            subcommand = options.getSubcommand(true),
-            member = options.getMember('member');
-
-
-    }
-};
-=======
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { ColorResolvable, CommandInteraction, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
-import {warningTemp, warningSchema} from '../../schema/warnschema';
-
 const builder = new SlashCommandBuilder()
-    .setName('warn')
-    .setDescription('Three Strike System')
-    .addSubcommand(subcommand=>
-        // warn user - command issues warning to user
-        subcommand.setName('user')
-            .setDescription('Warn user')
-            .addUserOption(option=>
-                option.setName('user')
-                .setDescription('Taget user')
-                .setRequired(true))
-            .addStringOption(option=>
-                option.setName('reason')
-                .setDescription('Why user was warned')
-                .setRequired(true))
-            .addBooleanOption(option=>
-                option.setName('silent')
-                    .setDescription('hide warnning from users'))
-            .addNumberOption(option =>
-                option.setName('duration')
-                    .setDescription('Number of day that the warning will last')
-                    .setMinValue(0)))
-    .addSubcommand(subcommand=>
-        // warn history - command show shitory of user
-        subcommand.setName('history')
-            .setDescription('Get user history')
-            .addUserOption(option=>
-                option.setName('user')
-                .setDescription('Taget user')
-                .setRequired(true))
-            .addBooleanOption(option =>
-                option.setName('active')
-                    .setDescription('Do you want to see inactive warnings')))
+    .setName('moderations')
+    .setDescription('moderation')
     .addSubcommand(subcommand => 
-        subcommand.setName('remove')
-            .setDescription('Remove a active warnning'));
+        subcommand.setName('ban')
+        .setDescription('ban member')
+        .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true))
+        .addStringOption(option => option.setName('duration').setDescription('use if is a tempban'))
+        .addStringOption(option => option.setName('reason').setDescription('reason of ban or tempban')))
+    .addSubcommandGroup(subcommandGroup =>
+        subcommandGroup.setName('warn')
+        .addSubcommand(subcommand => 
+            subcommand.setName('new')
+            .setDescription('warn member')
+            .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true)))
+        .addSubcommand(subcommand => 
+            subcommand.setName('clear')
+            .setDescription('clear warning(s)')
+            .addUserOption(option => option.setName('member').setDescription('target member').setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand.setName('view')
+            .setDescription('view warnings of user')
+            .addStringOption(option => option.setName('user_id').setDescription('User Discord id').setRequired(true)))),
 
 function execute(interaction: CommandInteraction) {
     
@@ -256,8 +202,8 @@ function remove(interaction: CommandInteraction) {
 }
 
 export = {
-	name: 'warn',
-	data: builder,
+    global: false,
+	name: 'moderation',
+	builder: builder,
 	execute: execute,
 }
->>>>>>> ec38585e5778952730b7fb0af657fa3a5804a609
