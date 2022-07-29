@@ -5,7 +5,6 @@ import { Routes } from 'discord-api-types/v10';
 
 
 import { Command } from './types'
-import client from '.';
 
 dotenv.config();
 
@@ -48,7 +47,7 @@ async function addCommands() {
 
 	for (const file of commandFiles) {
 		const command: Command = require(commandsFilePath + file);
-		commands.push(command.data.toJSON());
+		commands.push(command.SlashCommandBilder.toJSON());
 		console.log(`Loaded application (/) command ${command.name}.`)
 	}
 

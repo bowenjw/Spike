@@ -1,5 +1,4 @@
-import {CommandInteraction, GuildChannel, BaseInteraction} from 'discord.js';
-import { ChannelType } from 'discord-api-types/v10';
+import {CommandInteraction, GuildChannel, BaseInteraction, ChannelType} from 'discord.js';
 import { Event } from '../types';
 
 const event: Event = {

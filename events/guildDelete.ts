@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import guildsettings from "../schema/guildsettings";
-import {warningSchema} from "../schema/warnschema";
+import { warningSchema } from "../schema/warnschema";
 
 import { Event } from '../types';
 
