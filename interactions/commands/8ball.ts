@@ -2,10 +2,10 @@ import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, Slas
 
 import { Command } from '../../types'
 
-const command: Command = {
+export const command: Command = {
 	name: '8ball',
 	global: true,
-	SlashCommandBilder: new SlashCommandBuilder()
+	SlashCommandBuilder: new SlashCommandBuilder()
 		.setName('8ball')
 		.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 		.addStringOption(option =>
@@ -88,5 +88,3 @@ const command: Command = {
 		await interaction.reply({ ephemeral: false, embeds: [embed] });
 	},
 }
-
-export = command;

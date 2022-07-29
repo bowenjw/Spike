@@ -12,7 +12,7 @@ export interface Command {
     name: string,
     description?: string,
     global: boolean,
-    SlashCommandBilder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
+    SlashCommandBuilder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
     execute(interaction: CommandInteraction): any
 }
 

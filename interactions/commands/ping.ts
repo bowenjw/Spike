@@ -1,10 +1,10 @@
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { client } from '../../client';
 import { Command } from '../../types';
-const command: Command = {
+export const command: Command = {
 	name: 'ping',
 	global: true,
-	SlashCommandBilder: new SlashCommandBuilder()
+	SlashCommandBuilder: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
 	async execute(interaction: CommandInteraction) {
@@ -23,5 +23,3 @@ const command: Command = {
 		});
 	},
 }
-
-export = command;
