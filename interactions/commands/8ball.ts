@@ -1,5 +1,4 @@
-import {SlashCommandBuilder} from "@discordjs/builders";
-import {CommandInteraction, MessageEmbed} from 'discord.js';
+import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -73,12 +72,12 @@ module.exports = {
 			reply = 'Very doubtful.';
 			break;
 		}
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor('#000000')
 			.setTitle('The Magic 8 Ball™')
 			.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 			.addFields(
-				{ name: 'Question', value: interaction.options.getString('question')! },
+				{ name: 'Question', value: (interaction.options as CommandInteractionOptionResolver).getString('question',true) },
 				{ name: 'Answer', value: reply })
 			.setThumbnail('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyiQvzUGEAdRklJkeFaKspuQPDicqsp5ff3A&usqp=CAU')
 			.setTimestamp();

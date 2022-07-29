@@ -1,6 +1,5 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from 'discord.js';
-import client from '../../index';
+import {CommandInteraction, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
+import {client} from '../../client';
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
@@ -8,8 +7,8 @@ module.exports = {
 		
 	async execute(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
-		const embed = new MessageEmbed()
-			.setColor('BLURPLE')
+		const embed = new EmbedBuilder()
+			.setColor("Blurple")
 			.setTitle('Ping!')
 			.addFields(
 				{ name: 'Command Latency', value: `${Date.now() - interaction.createdTimestamp}ms`, inline: true },

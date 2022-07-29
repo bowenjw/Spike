@@ -1,17 +1,17 @@
-import {CommandInteraction, GuildChannel, Interaction} from 'discord.js';
+import {CommandInteraction, GuildChannel, BaseInteraction} from 'discord.js';
 import { ChannelType } from 'discord-api-types/v10';
 
 module.exports = {
 	name: 'interactionCreate',
 	once: false,
-	async execute(interaction: Interaction) {
+	async execute(interaction: BaseInteraction) {
 		// console.log(`${interaction.user.tag} in #${(interaction.channel as TextChannel).name} triggered an interaction.`);
 
 		// Command interaction
 		try {
-			if(interaction.channel?.type == "DM") {
+			if(interaction.channel?.type == ChannelType.DM) {
 				return;
-			} else if (interaction.isCommand()) {
+			} else if (interaction.isChatInputCommand()) {
 				console.log(`${interaction.user.tag} used Command ${interaction.commandName} from ${interaction.guild?.name} in channel ${(interaction.channel as GuildChannel).name}`);
 				const command = await require(`../interactions/commands/${interaction.commandName}`);
 				command.execute(interaction);
