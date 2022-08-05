@@ -1,13 +1,15 @@
-import {CommandInteraction, ActionRow, ButtonBuilder, EmbedBuilder, SlashCommandBuilder, CommandInteractionOptionResolver, SlashCommandUserOption} from 'discord.js';
-import { Command } from '../../types';
+import { CommandInteraction, CommandInteractionOptionResolver, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { Command } from '../../../types';
 //import warnSchema from '../../schema/warnschema';
 export const command:Command = {
     name: 'moderation',
     description: 'moderation command',
     global: false,
-    SlashCommandBuilder = new SlashCommandBuilder()
+    commandBuilder: new SlashCommandBuilder()
         .setName('moderations')
         .setDescription('moderation')
+        .setDMPermission(false)
+        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers | PermissionFlagsBits.BanMembers)
         .addSubcommand(subcommand => 
             subcommand.setName('ban')
             .setDescription('ban member')
@@ -32,29 +34,27 @@ export const command:Command = {
                 subcommand.setName('view')
                 .setDescription('view warnings of user')
                 .addStringOption(option => option.setName('user_id').setDescription('User Discord id').setRequired(true)))),
-    execute: execute
-
-}
-async function execute(interaction: CommandInteraction) {
-    
-    const officer = interaction.user,
-    options = interaction.options as CommandInteractionOptionResolver,
-    subcommandGroup = options.getSubcommandGroup(false),
-    subcommand = options.getSubcommand(true);
-    if(subcommandGroup == "warn"){
-        //warn(options);
-    }
-    else {
-        switch (subcommand) {
-            case "ban":
-                
-                break;
-            case "unban":
-    
-                break;
-            default:
-                break;
+    async execute(interaction: CommandInteraction) {
+        const officer = interaction.user,
+        options = interaction.options as CommandInteractionOptionResolver,
+        subcommandGroup = options.getSubcommandGroup(false),
+        subcommand = options.getSubcommand(true);
+        if(subcommandGroup == "warn"){
+            //warn(options);
         }
+        else {
+            switch (subcommand) {
+                case "ban":
+                    
+                    break;
+                case "unban":
+        
+                    break;
+                default:
+                    break;
+            }
+        }
+        
     }
-    
+
 }

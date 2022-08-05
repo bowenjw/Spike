@@ -1,13 +1,15 @@
-import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
+import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder} from 'discord.js';
 
-import { Command } from '../../types'
+import { Command } from '../../../types'
 
 export const command: Command = {
 	name: '8ball',
 	global: true,
-	SlashCommandBuilder: new SlashCommandBuilder()
+	commandBuilder: new SlashCommandBuilder()
 		.setName('8ball')
 		.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
+		.setDMPermission(true)
+		.setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
 		.addStringOption(option =>
 			option.setName('question')
 				.setDescription('The question you wish to ask')
@@ -77,7 +79,7 @@ export const command: Command = {
 			break;
 		}
 		const embed = new EmbedBuilder()
-			.setColor('#000000')
+			.setColor('DarkButNotBlack')
 			.setTitle('The Magic 8 Ball™')
 			.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 			.addFields(

@@ -9,4 +9,5 @@ dotenv.config();
 
 // Login to Discord with your client's token
 const token = process.env.DISCORD_TOKEN;
+
 client.login(token);
