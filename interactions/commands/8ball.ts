@@ -1,8 +1,8 @@
 import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder} from 'discord.js';
 
-import { Command } from '../../../types'
+import { Command } from '../../types'
 
-export const command: Command = {
+const command: Command = {
 	name: '8ball',
 	global: true,
 	commandBuilder: new SlashCommandBuilder()
@@ -90,3 +90,4 @@ export const command: Command = {
 		await interaction.reply({ ephemeral: false, embeds: [embed] });
 	},
 }
+export = command;

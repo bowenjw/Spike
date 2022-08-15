@@ -1,13 +1,14 @@
 import { Client } from 'discord.js';
-import { reloadedCommands } from '../deploy-commands';
+import { registerGlobalCommands } from "../interactions/command";
 import { Event } from '../types'
 
-export const event: Event = {
+const event: Event = {
 	name: 'ready',
 	once: true,
 	execute(client: Client) {
 		//reloadedCommands()
 		console.log(`\nReady! Logged in as ${client.user!.tag}`);
-		
+		registerGlobalCommands();
 	}
 };
+export = event;

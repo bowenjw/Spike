@@ -2,12 +2,10 @@
   "name": "spike-bot",
   "version": "0.2.1",
   "description": "Discord Bot for discord based projects",
-  "type": "module",
   "main": "index.ts",
   "scripts": {
-    "start": "npx ts-node index.ts",
-    "dev": " npx nodemon index.ts",
-    "com": "npx ts-node deploy-commands",
+    "start": "npx ts-node ./index.ts",
+    "dev": " npx nodemon ./index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
