@@ -1,5 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "@discordjs/builders"
-import { ButtonInteraction, CommandInteraction } from "discord.js"
+import { ButtonInteraction, CommandInteraction, ContextMenuCommandInteraction, ContextMenuCommandBuilder, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js"
 
 export interface Event {
     name: string,
@@ -20,4 +19,10 @@ export interface Button {
     name: string,
     description?: string,
     execute(interaction: ButtonInteraction): any
+}
+export interface ContextMenu {
+    name: string,
+    description?: string
+    contextMenuBuilder: ContextMenuCommandBuilder,
+    execute(interaction: ContextMenuCommandInteraction): any
 }

@@ -1,64 +1,38 @@
 import { REST } from '@discordjs/rest';
-import { GuildResolvable, RESTPatchAPIApplicationCommandJSONBody, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake } from 'discord.js';
+import { GuildResolvable, RESTGetAPIApplicationCommandsResult, RESTPatchAPIApplicationCommandJSONBody, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake } from 'discord.js';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { Command } from '../types'
+import { Command, ContextMenu } from '../types'
 import { client } from '../client';
 
 dotenv.config();
 
-const token = process.env.DISCORD_TOKEN!,
+const BaseFilePath = './interactions',
+token = process.env.DISCORD_TOKEN!,
 appId = process.env.APPLICATIONID!,
 // guildId = process.env.GUILDID!,
 rest = new REST({ version: '10' }).setToken(token);
 
-async function registerGuildCommands(guildResolvable: GuildResolvable) {
-    const fsFilePath = './interactions/commands',
-    guild = await client.guilds.fetch({cache: true, force: false, guild: guildResolvable, withCounts: false});
-    
-    deleteCommands(appId, guild.id)
-    putCommands(appId, getcommandJSONs(fsFilePath), guild.id);
-
+export async function putGlobalCommands() {
+    const newCommands = await getcommandJSONs();
+    putCommands(newCommands);
 }
 
-export async function registerGlobalCommands() {
-    const fsFilePath = './interactions/commands';
-    deleteCommands(appId);
-    putCommands(appId, getcommandJSONs(fsFilePath));
+async function getcommandJSONs() {
+    const commands: RESTPostAPIApplicationCommandsJSONBody[] = [],
+    chatCommands = fs.readdirSync(`${BaseFilePath}/commands`).filter(file => file.endsWith('.ts')),
+    contextMenuCommands = fs.readdirSync(`${BaseFilePath}/contextmenu`).filter(file => file.endsWith('.ts'))
 
-}
-
-function getcommandJSONs(fsFilePath: string) {
-    const commands: RESTPostAPIApplicationCommandsJSONBody[] = [];
-    const files = fs.readdirSync(fsFilePath).filter(file => file.endsWith('.ts'))
     // console.log(files); // loges command files read
-    for (const file of files) {
-        const path = `../${fsFilePath}/${file}`;
-        // console.log(path) // looges command path
-        const command: Command = require(path);
-        // console.log(command) // loges commad
-        // console.log(command.name);
+    for (const file of chatCommands) {
+        const command: Command = await require(`../${BaseFilePath}/commands/${file}`);
         commands.push(command.commandBuilder.toJSON());
     }
-    return commands;
-}
-/**
- * Removes gobal or guild commands
- * @param appId Application ID
- * @param guildId guild ID if needed
- */
-async function deleteCommands(appId: Snowflake, guildId?: Snowflake) {
-    
-    const existingCommands = await rest.get(await getRoute(appId, guildId)) as unknown
-    // console.log(existingCommands);
-    let deleteUrl: string;
-    for (const command of existingCommands as any[]) {
-        if(guildId)
-            deleteUrl = Routes.applicationGuildCommand(appId, guildId, command.id)
-        else
-            deleteUrl = Routes.applicationCommand(appId,command.id);
-        rest.delete(`/${deleteUrl}`);
+    for (const file of contextMenuCommands) {
+        const command: ContextMenu = await require(`../${BaseFilePath}/contextmenu/${file}`);
+        commands.push(command.contextMenuBuilder.toJSON());
     }
+    return commands;
 }
 /**
  * 
@@ -66,7 +40,7 @@ async function deleteCommands(appId: Snowflake, guildId?: Snowflake) {
  * @param commands command that will be
  * @param guildId guild id if guild command
  */
-async function putCommands(appId: Snowflake, commands:RESTPostAPIApplicationCommandsJSONBody[], guildId?: Snowflake) {
+async function putCommands(commands:RESTPostAPIApplicationCommandsJSONBody[], guildId?: Snowflake) {
     
     const route = await getRoute(appId, guildId);
     
@@ -80,29 +54,6 @@ async function putCommands(appId: Snowflake, commands:RESTPostAPIApplicationComm
 		console.error(error);
 	}
 }
-
-/**
- * 
- * param appId Application ID
- * param command command that will be
- * param guildId guild id if guild command
-export async function patchCommand(appId:Snowflake, command:RESTPatchAPIApplicationCommandJSONBody, guildId?: Snowflake) {
-
-    const route = await getRoute(appId, guildId);
-
-    try {
-		console.log('Started patching application (/) commands.');
-
-		await rest.patch(route, { body: command });
-
-		console.log('Successfully patching application (/) commands.');
-	} catch (error) {
-		console.error(error);
-	}
-
-}
- */
-
 /**
  * 
  * @param appId Application ID
@@ -120,7 +71,7 @@ async function getRoute(appId:Snowflake, guildId?: Snowflake) {
     }
     return route;
 }
-async function getCommandByName(appId:Snowflake, command:string, guildId?: Snowflake) {
-    const route = await getRoute(appId, guildId);
-
+async function getCommandByName(appId: Snowflake, command: string, guildId?: Snowflake) {
+    const existingCommands = await rest.get(await getRoute(appId, guildId)) as unknown as any[];
+    console.log(existingCommands);
 }

@@ -7,7 +7,8 @@ const command: Command = {
 	global: true,
 	commandBuilder: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Gets the current latencey of the bot'),
+		.setDescription('Gets the current latencey of the bot')
+		.setDMPermission(true),
 	async execute(interaction: CommandInteraction) {
 		const embed = new EmbedBuilder()
 			.setColor("Blurple")
@@ -19,4 +20,4 @@ const command: Command = {
 		await interaction.reply({ ephemeral: true, embeds: [embed] });
 	},
 }
-export = command
+export = command;
