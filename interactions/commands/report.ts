@@ -1,5 +1,6 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { client } from '../../client';
+import { report } from '../../system/report';
 import { Command } from '../../types';
 const command: Command = {
 	name: 'ping',
@@ -10,21 +11,19 @@ const command: Command = {
 		.setDescription('Report user')
 		.setDMPermission(false)
         .addUserOption((option) => 
-            option.setName("user")
-            .setDescription("User being reported")
+            option.setName('user')
+            .setDescription('User being reported')
             .setRequired(true))
         .addStringOption((option) =>
-            option.setName("reason")
-            .setDescription("Why are your reporting this user?")
+            option.setName('reason')
+            .setDescription('Why are your reporting this user?')
             .setRequired(true))
-        .addStringOption((option) =>
-            option.setName("message_id")
-            .setDescription("ID of message to add additional context")
-            .setRequired(false))
         .addAttachmentOption((option) =>
-            option.setName("screenshot"))
-            .setDescription(),
+            option.setName('screenshot')
+            .setDescription('Addition context')
+            .setRequired(false)),
 	async execute(interaction: CommandInteraction) {
+        report(interaction)
 	},
 }
 export = command;

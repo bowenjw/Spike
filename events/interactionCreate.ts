@@ -1,5 +1,6 @@
-import {CommandInteraction, GuildChannel, BaseInteraction, ChannelType, ChatInputCommandInteraction, ButtonInteraction, ContextMenuCommandInteraction} from 'discord.js';
-import { Event, Command, ContextMenu, Button } from '../types';
+import {CommandInteraction, GuildChannel, BaseInteraction, ChatInputCommandInteraction, ButtonInteraction, ContextMenuCommandInteraction} from 'discord.js';
+import { runApplicationCommand } from '../interactions/applicationcommands';
+import { Event } from '../types';
 
 const event: Event = {
 	name: 'interactionCreate',
@@ -10,20 +11,7 @@ const event: Event = {
 		// Command interaction
 		try {
 			console.log(`${interaction.user.tag} used Button from ${interaction.guild?.name} in channel ${(interaction.channel as GuildChannel).name}`);
-			if(interaction.channel?.type == ChannelType.DM) {
-				return;
-			} else if (interaction.isChatInputCommand()) {
-				const command: Command = await require(`../interactions/commands/${interaction.commandName}`);
-				command.execute(interaction);
-			}
-			else if(interaction.isButton()) {
-				const command: Button = await require(`../interactions/buttons/${interaction.customId.split(' ')[0]}`);
-				command.execute(interaction);
-			}
-			else if(interaction.isContextMenuCommand()) {
-				const command: ContextMenu = await require(`../interactions/contextmenu/${interaction.commandName}`);
-				command.execute(interaction);
-			}
+			runApplicationCommand(interaction);
 		} catch (error: unknown) {
 			console.error(error);
 			if((interaction as CommandInteraction).deferred){

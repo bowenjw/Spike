@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { putGlobalCommands } from "../interactions/command";
+import { putGlobalCommands } from "../interactions/applicationcommands";
 import { Event } from '../types'
 
 const event: Event = {
