@@ -2,7 +2,13 @@ import {Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 
 // Create a new client instance
-export const client = new Client({ intents: [GatewayIntentBits.Guilds]});
+export const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
+    ],
+});
 
 dotenv.config();
 

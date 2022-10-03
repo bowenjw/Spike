@@ -43,7 +43,6 @@ async function getcommandJSONs() {
 }
 /**
  * 
- * @param appId Application ID
  * @param commands command that will be
  * @param guildId guild id if guild command
  */

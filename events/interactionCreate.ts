@@ -1,11 +1,11 @@
 import {CommandInteraction, GuildChannel, BaseInteraction, ChatInputCommandInteraction, ButtonInteraction, ContextMenuCommandInteraction} from 'discord.js';
-import { runApplicationCommand } from '../interactions/applicationcommands';
+import { runApplicationCommand } from '../interactions/applicationCommands';
 import { Event } from '../types';
 
 const event: Event = {
 	name: 'interactionCreate',
 	once: false,
-	async execute(interaction: BaseInteraction | CommandInteraction| ChatInputCommandInteraction | ContextMenuCommandInteraction | ButtonInteraction) {
+	async execute(interaction: BaseInteraction | CommandInteraction | ChatInputCommandInteraction | ContextMenuCommandInteraction | ButtonInteraction) {
 		// console.log(`${interaction.user.tag} in #${(interaction.channel as TextChannel).name} triggered an interaction.`);
 
 		// Command interaction

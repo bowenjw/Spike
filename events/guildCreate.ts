@@ -8,7 +8,7 @@ const event: Event = {
 	once: false,
 	async execute(guild: Guild) {
 
-        const newguild = new guildsettings({
+        /* const newguild = new guildsettings({
             guildID:guild.id,
             ping:{
                 enabled:true,
@@ -20,7 +20,8 @@ const event: Event = {
                 enabled:false,
             }
         });
-        newguild.save();
+        newguild.save();*/
+        console.log(`joined server ${guild.name}`)
     }
 }
 

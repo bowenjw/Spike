@@ -8,8 +8,9 @@ const event: Event = {
     name: 'guildDelete',
 	once: false,
 	async execute(guild: Guild) {
-        guildsettings.findOne({guildID:guild.id}).deleteOne().catch((error)=>{console.log(error);});
-        warningSchema.find({guildID:guild.id}).deleteMany().catch((error)=>{console.log(error);});
+        // guildsettings.findOne({guildID:guild.id}).deleteOne().catch((error)=>{console.log(error);});
+        // warningSchema.find({guildID:guild.id}).deleteMany().catch((error)=>{console.log(error);});
+        console.log(`left server ${guild.name}`)
     }
 }
 
