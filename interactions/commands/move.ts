@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, GuildVoiceChannelResolvable, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, GuildVoiceChannelResolvable, PermissionFlagsBits, SlashCommandBuilder, StageChannelResolvable } from 'discord.js';
 import { Command } from '../../types';
 const command: Command = {
 	name: 'move',
@@ -10,14 +10,14 @@ const command: Command = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels | PermissionFlagsBits.MoveMembers)
 		.setDMPermission(false)
         .addChannelOption(option =>
-            option.addChannelTypes(ChannelType.GuildVoice)
+            option.addChannelTypes(ChannelType.GuildVoice, ChannelType.GuildStageVoice)
             .setName("destination")
             .setDescription("channel to move all users to")
             .setRequired(true)
         ),
 	async execute(interaction: ChatInputCommandInteraction) {
         const sourceChannel = (await interaction.guild?.members.fetch(interaction.user.id))?.voice.channel,
-        destination = interaction.options.getChannel("destination", true) as GuildVoiceChannelResolvable;
+        destination = interaction.options.getChannel("destination", true) as GuildVoiceChannelResolvable | StageChannelResolvable;
         let content = "test"
         // console.log(sourceChannel?.members)
         if (sourceChannel == null || sourceChannel == undefined) {
