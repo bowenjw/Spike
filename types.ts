@@ -4,7 +4,7 @@ export interface Event {
     name: string,
     description?: string,
     once?: boolean,
-    execute(args:any): any,
+    execute(...args: any[]): any,
 }
 
 export interface Command {

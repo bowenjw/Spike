@@ -1,16 +1,11 @@
 import { REST } from '@discordjs/rest';
-import { ApplicationCommandType, BaseInteraction, ChannelType, ModalBuilder, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake, TextInputBuilder, TextInputComponent } from 'discord.js';
+import { BaseInteraction, ChannelType, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake, TextInputBuilder, TextInputComponent } from 'discord.js';
 import fs from 'fs';
-import dotenv from 'dotenv';
 import { Button, Command, ContextMenu } from '../types'
-import { client } from '../client';
-import { ActionRowBuilder } from '@discordjs/builders';
+import { client, token, applicationID } from '../index';
 
-dotenv.config();
 
 const BaseFilePath = './interactions',
-token = process.env.DISCORD_TOKEN!,
-appId = process.env.APPLICATIONID!,
 // guildId = process.env.GUILDID!,
 rest = new REST({ version: '10' }).setToken(token);
 
@@ -21,9 +16,9 @@ export async function putGlobalCommands() {
 
 async function getcommandJSONs() {
     const commands: RESTPostAPIApplicationCommandsJSONBody[] = [],
-    chatCommands = fs.readdirSync(`${BaseFilePath}/commands`).filter(file => file.endsWith('.ts')),
-    userContextMenus = fs.readdirSync(`${BaseFilePath}/usercontextmenu`).filter(file => file.endsWith('.ts')),
-    messageContextMenus = fs.readdirSync(`${BaseFilePath}/messagecontextmenu`).filter(file => file.endsWith('.ts'));
+    chatCommands = fs.readdirSync(`${BaseFilePath}/commands`).filter(file => file.endsWith('.ts'))
+    // userContextMenus = fs.readdirSync(`${BaseFilePath}/usercontextmenu`).filter(file => file.endsWith('.ts')),
+    // messageContextMenus = fs.readdirSync(`${BaseFilePath}/messagecontextmenu`).filter(file => file.endsWith('.ts'));
 
 
     // console.log(files); // loges command files read
@@ -31,14 +26,14 @@ async function getcommandJSONs() {
         const command: Command = await require(`../${BaseFilePath}/commands/${file}`);
         commands.push(command.commandBuilder.toJSON());
     }
-    for (const file of userContextMenus) {
+    /*for (const file of userContextMenus) {
         const command: ContextMenu = await require(`../${BaseFilePath}/usercontextmenu/${file}`);
         commands.push(command.contextMenuBuilder.toJSON());
     }
     for (const file of messageContextMenus) {
         const command: ContextMenu = await require(`../${BaseFilePath}/messagecontextmenu/${file}`);
         commands.push(command.contextMenuBuilder.toJSON());
-    }
+    }*/
     return commands;
 }
 /**
@@ -48,7 +43,7 @@ async function getcommandJSONs() {
  */
 async function putCommands(commands:RESTPostAPIApplicationCommandsJSONBody[], guildId?: Snowflake) {
     
-    const route = await getRoute(appId, guildId);
+    const route = await getRoute(applicationID, guildId);
     
     try {
 		console.log('Started refreshing application (/) commands.');

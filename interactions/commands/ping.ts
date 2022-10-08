@@ -1,5 +1,5 @@
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { client } from '../../client';
+import { client } from '../../index';
 import { Command } from '../../types';
 const command: Command = {
 	name: 'ping',
