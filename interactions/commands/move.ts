@@ -16,8 +16,8 @@ const command: Command = {
             .setRequired(true)
         ),
 	async execute(interaction: ChatInputCommandInteraction) {
-        const sourceChannel = (await interaction.guild?.members.fetch(interaction.user.id))?.voice.channel,
-        destination = interaction.options.getChannel("destination", true) as GuildVoiceChannelResolvable | StageChannelResolvable;
+        const sourceChannel = (await interaction.guild!.members.fetch(interaction.user.id))?.voice.channel,
+            destination = interaction.options.getChannel("destination", true) as GuildVoiceChannelResolvable | StageChannelResolvable;
         let content = "test"
         // console.log(sourceChannel?.members)
         if (sourceChannel == null || sourceChannel == undefined) {
