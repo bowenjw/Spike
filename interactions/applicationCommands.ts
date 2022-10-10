@@ -16,9 +16,9 @@ export async function putGlobalCommands() {
 
 async function getcommandJSONs() {
     const commands: RESTPostAPIApplicationCommandsJSONBody[] = [],
-    chatCommands = fs.readdirSync(`${BaseFilePath}/commands`).filter(file => file.endsWith('.ts'))
+    chatCommands = fs.readdirSync(`${BaseFilePath}/commands`).filter(file => file.endsWith('.ts')),
     // userContextMenus = fs.readdirSync(`${BaseFilePath}/usercontextmenu`).filter(file => file.endsWith('.ts')),
-    // messageContextMenus = fs.readdirSync(`${BaseFilePath}/messagecontextmenu`).filter(file => file.endsWith('.ts'));
+    messageContextMenus = fs.readdirSync(`${BaseFilePath}/messagecontextmenu`).filter(file => file.endsWith('.ts'));
 
 
     // console.log(files); // loges command files read
@@ -29,11 +29,11 @@ async function getcommandJSONs() {
     /*for (const file of userContextMenus) {
         const command: ContextMenu = await require(`../${BaseFilePath}/usercontextmenu/${file}`);
         commands.push(command.contextMenuBuilder.toJSON());
-    }
+    }*/
     for (const file of messageContextMenus) {
         const command: ContextMenu = await require(`../${BaseFilePath}/messagecontextmenu/${file}`);
         commands.push(command.contextMenuBuilder.toJSON());
-    }*/
+    }
     return commands;
 }
 /**
