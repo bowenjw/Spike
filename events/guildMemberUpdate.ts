@@ -15,7 +15,7 @@ const event: Event = {
 				.setThumbnail(newMember.displayAvatarURL())
 				.setColor('#fffa77')
 				.setTimestamp();
-		console.log(entry)
+		// console.log(entry)
 
 		if(!oldMember.communicationDisabledUntilTimestamp && newMember.communicationDisabledUntilTimestamp){
 			const endedDate = Math.floor(newMember.communicationDisabledUntil!.getTime()/1000)
