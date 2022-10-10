@@ -1,4 +1,4 @@
-import {CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder} from 'discord.js';
+import {ChatInputCommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder} from 'discord.js';
 
 import { Command } from '../../types'
 
@@ -9,12 +9,12 @@ const command: Command = {
 		.setName('8ball')
 		.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 		.setDMPermission(true)
-		.setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
+		.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
 		.addStringOption(option =>
 			option.setName('question')
 				.setDescription('The question you wish to ask')
 				.setRequired(true)),
-	async execute(interaction: CommandInteraction) {
+	async execute(interaction: ChatInputCommandInteraction) {
 		let reply = '';
 		switch (Math.floor(Math.random() * 20)) {
 		case 0:

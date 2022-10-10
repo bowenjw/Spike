@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { client } from '../../index';
 import { Command } from '../../types';
 const command: Command = {
@@ -9,7 +9,7 @@ const command: Command = {
 		.setName('ping')
 		.setDescription('Gets the current latencey of the bot')
 		.setDMPermission(true),
-	async execute(interaction: CommandInteraction) {
+	async execute(interaction: ChatInputCommandInteraction) {
 		const embed = new EmbedBuilder()
 			.setColor("Blurple")
 			.setTitle('Current Latencey')
