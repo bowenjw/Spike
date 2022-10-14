@@ -5,7 +5,7 @@ import { ContextMenu } from "../../types";
 const menu = new ContextMenuCommandBuilder()
     .setName('Report Message')
     .setDMPermission(false)
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator)
+    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
     .setType(ApplicationCommandType.Message)
 const contextmenu: ContextMenu = {
     name:menu.name,

@@ -5,7 +5,7 @@ const builder = new SlashCommandBuilder()
     .setName('report')
     .setDescription('Report a user or message')
     .setDMPermission(false)
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator)
+    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
     .addUserOption(option => option
         .setName('target')
         .setDescription('target')
