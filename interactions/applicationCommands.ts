@@ -1,7 +1,7 @@
 import { REST } from '@discordjs/rest';
-import { BaseInteraction, ChannelType, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake, TextInputBuilder, TextInputComponent } from 'discord.js';
+import { BaseInteraction, RESTPostAPIApplicationCommandsJSONBody, Routes, Snowflake } from 'discord.js';
 import fs from 'fs';
-import { Button, Command, ContextMenu } from '../types'
+import { Command, ContextMenu, Interaction } from '../types'
 import { client, token, applicationID } from '../index';
 
 
@@ -77,26 +77,21 @@ async function getCommandByName(appId: Snowflake, command: string, guildId?: Sno
     console.log(existingCommands);
 }
 export async function runApplicationCommand(interaction: BaseInteraction) {
-    if(interaction.channel?.type == ChannelType.DM) {
-        return;
-    }
-     else if (interaction.isChatInputCommand()) {
-        const command: Command = await require(`../${BaseFilePath}/commands/${interaction.commandName}`);
-        command.execute(interaction);
+    let command:Interaction
+    if (interaction.isChatInputCommand()) {
+        command = await require(`../${BaseFilePath}/commands/${interaction.commandName}`);
     }
     else if(interaction.isUserContextMenuCommand()) {
-        const command: ContextMenu = await require(`../${BaseFilePath}/usercontextmenu/${interaction.commandName}`);
-        command.execute(interaction);
+        command = await require(`../${BaseFilePath}/usercontextmenu/${interaction.commandName}`);
     }
     else if(interaction.isMessageContextMenuCommand()) {
-        const command: ContextMenu = await require(`../${BaseFilePath}/messagecontextmenu/${interaction.commandName}`);
-        command.execute(interaction);
+        command = await require(`../${BaseFilePath}/messagecontextmenu/${interaction.commandName}`);
     }
     else if(interaction.isButton()) {
-        const command: Button = await require(`../${BaseFilePath}/buttons/${interaction.customId.split(' ')[0]}`);
-        command.execute(interaction);
+        command = await require(`../${BaseFilePath}/buttons/${interaction.customId.split(' ')[0]}`);
     }
     else if(interaction.isModalSubmit()) {
-        console.log(interaction);
+        command = await require(`../${BaseFilePath}/modal/${interaction.customId.split(' ')[0]}`);
     }
+    command!.execute(interaction);
 }
