@@ -6,7 +6,7 @@ const command: Command = {
 	global: true,
 	commandBuilder: new SlashCommandBuilder()
 		.setName('move')
-		.setDescription('Gets the current latencey of the bot')
+		.setDescription('Moves members from one VC to another')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels | PermissionFlagsBits.MoveMembers)
 		.setDMPermission(false)
         .addChannelOption(option =>
