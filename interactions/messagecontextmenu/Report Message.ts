@@ -1,15 +1,10 @@
-import { ApplicationCommandType, ContextMenuCommandBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandType, ContextMenuCommandBuilder, MessageInteraction, PermissionFlagsBits } from "discord.js";
 import { messageReport } from "../../system/report_modal";
-import { ContextMenu } from "../../types";
 
-const menu = new ContextMenuCommandBuilder()
+
+export const builder = new ContextMenuCommandBuilder()
     .setName('Report Message')
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
     .setType(ApplicationCommandType.Message)
-const contextmenu: ContextMenu = {
-    name:menu.name,
-    contextMenuBuilder: menu,
-    execute: messageReport
-}
-export = contextmenu
+export {messageReport as execute}

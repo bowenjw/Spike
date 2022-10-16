@@ -2,6 +2,7 @@ import fs from 'fs';
 import mongoose from 'mongoose';
 import {Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
+import { putCommands } from './interactions/applicationCommands';
 // Conect to the Data Base
 // mongoose.connect(process.env.MONGO_URI!,{keepAlive:true})
 //	.then(() => console.log('Conected to DB\n'))
@@ -15,10 +16,9 @@ export const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildVoiceStates,
     ],
-}),
-	token = process.env.DISCORD_TOKEN!,
+});
+const token = process.env.DISCORD_TOKEN!,
 	applicationID = process.env.DISCORD_APPLICATION_ID!;
-
 // Event file location
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
 

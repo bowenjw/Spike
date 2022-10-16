@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { putGlobalCommands } from "../interactions/applicationCommands";
+import { putCommands } from "../interactions/applicationCommands";
 import { Event } from '../types'
 
 const event: Event = {
@@ -7,8 +7,7 @@ const event: Event = {
 	once: true,
 	execute(client: Client) {
 		console.log(`\nReady! Logged in as ${client.user!.tag}`);
-		putGlobalCommands();
-		//patchGobalCommands();
+		putCommands()
 	}
 };
 export = event;

@@ -1,7 +1,7 @@
-import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
-import { Command } from "../../types";
+import { PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { chatReport } from "../../system/report_modal";
-const builder = new SlashCommandBuilder()
+
+export const builder = new SlashCommandBuilder()
     .setName('report')
     .setDescription('Report a user or message')
     .setDMPermission(false)
@@ -19,13 +19,4 @@ const builder = new SlashCommandBuilder()
         .setDescription('Channel where misconduct happend')
         .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice, ChannelType.PublicThread, ChannelType.PrivateThread, ChannelType.GuildStageVoice)
         .setRequired(false))*/
-
-
-const command:Command = {
-    name: builder.name,
-    description: builder.description,
-    commandBuilder: builder,
-    execute: chatReport
-}
-
-export = command;
+export {chatReport as execute}

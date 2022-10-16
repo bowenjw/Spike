@@ -55,17 +55,21 @@ export async function userReport(interaction: UserContextMenuCommandInteraction)
 }
 
 export async function messageReport(interaction: MessageContextMenuCommandInteraction) {
-    const user = await interaction.guild?.members.fetch(interaction.targetMessage.author) as GuildMember,
-        messageModal = baseModal.setTitle(`Report ${user.displayName}`)
+    const user = await interaction.guild?.members.fetch(interaction.targetMessage.author)
+    if(user){
+        const    messageModal = baseModal.setTitle(`Report ${user.displayName}`)
         .addComponents(
             new ActionRowBuilder<TextInputBuilder>().addComponents(baseReason),
         ).setCustomId(`report ${user.id}`)
-    interaction.showModal(messageModal)
+        interaction.showModal(messageModal)
+    } else {
+        interaction.reply({content:'Member no longer in Server', ephemeral:true})
+    }
 }
 
 export async function modalReport(interaction: ModalSubmitInteraction) {
     interaction.reply({content:'Your report has been securely Submited',ephemeral:true})
-    const target = await interaction.guild?.members.fetch(interaction.customId.split(' ')[1])!,
+    const target = await interaction.guild!.members.fetch(interaction.customId.split(' ')[1]),
         channel = await getReportChannel(interaction.guild!, target),
         reporter = interaction.member as GuildMember
     const embed = baseReportEmbed
