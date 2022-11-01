@@ -1,4 +1,4 @@
-import { APIApplicationCommandOptionChoice, ChannelType, ChatInputCommandInteraction, GuildMember, SlashCommandBuilder, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
+import { APIApplicationCommandOptionChoice, ChannelType, ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
 const durations: APIApplicationCommandOptionChoice<number>[] = [
     
 
@@ -39,11 +39,12 @@ timeoutCommand = new SlashCommandSubcommandBuilder()
 export const builder = new SlashCommandBuilder()
     .setName('moderation')
     .setDescription('Moderation Commands')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(moveCommand)
     .addSubcommand(timeoutCommand)
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    console.log(interaction)
+ // console.log(interaction)
     switch (interaction.options.getSubcommand(true)) {
         case 'move':
             moveFunction(interaction)
@@ -61,7 +62,7 @@ async function moveFunction(interaction: ChatInputCommandInteraction) {
     const source = (await interaction.guild!.members.fetch(interaction.user.id))?.voice.channel,
         destination = interaction.options.getChannel("destination", true) as VoiceChannel;
     let content = "You must be in a Voice Channel to use this command"
-    // console.log(sourceChannel?.members)
+ // console.log(sourceChannel?.members)
     
     if (source != null) {
         source.members.forEach(async member => member.voice.setChannel(destination));

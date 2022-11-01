@@ -22,23 +22,10 @@ export async function putCommands() {
 async function getCommandJSONs() {
     const commands:RESTPostAPIApplicationCommandsJSONBody[] = [],
     commandFilesDir: string[] = [],
-    interactions = [
-        "commands",
-    //  "button",
-    //  "selectmenu",
-        "usercontextmenu",
-        "messagecontextmenu"
-    ],
-    interactionBuilder = [
-        "commands",
-        "usercontextmenu",
-        "messagecontextmenu"
-    ];
-    for (const interaction of interactions) {
-        const files = fs.readdirSync(`${BaseFilePath}/${interaction}`).filter(file => file.endsWith('.ts'))
-        for (const file of files) {
-            commandFilesDir.push(`./${interaction}/${file.slice(0,-3)}`)
-        }
+    commandDir = 'application_command';
+    const files = fs.readdirSync(`${BaseFilePath}/${commandDir}`).filter(file => file.endsWith('.ts'))
+    for (const file of files) {
+        commandFilesDir.push(`./${commandDir}/${file.slice(0,-3)}`)
     }
     // console.log(commandFilesDir)
     for (const dir of commandFilesDir) {
