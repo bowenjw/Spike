@@ -1,14 +1,10 @@
-import { Client } from 'discord.js';
-import { putGlobalCommands } from "../interactions/applicationcommands";
-import { Event } from '../types'
+import { Client, Events } from 'discord.js';
+import { putCommands } from "../interactions/applicationCommands";
 
-const event: Event = {
-	name: 'ready',
-	once: true,
-	execute(client: Client) {
-		console.log(`\nReady! Logged in as ${client.user!.tag}`);
-		putGlobalCommands();
-		//patchGobalCommands();
-	}
-};
-export = event;
+export const name = Events.ClientReady,
+once = true;
+
+export function execute(client: Client) {
+	console.log(`\nReady! Logged in as ${client.user!.tag}`);
+	putCommands()
+}
