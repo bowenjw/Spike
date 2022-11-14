@@ -1,8 +1,5 @@
-import { APIApplicationCommandOptionChoice, ChannelType, ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
-const durations: APIApplicationCommandOptionChoice<number>[] = [
-    
+import { APIApplicationCommandOptionChoice, ChannelType, ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandUserOption, VoiceChannel } from "discord.js";
 
-]
 const moveCommand = new SlashCommandSubcommandBuilder()
     .setName('move')
     .setDescription('Moves members from one VC to another')
@@ -19,10 +16,6 @@ timeoutCommand = new SlashCommandSubcommandBuilder()
         .setName('user')
         .setDescription('The user to timeout')
         .setRequired(true))
-    .addStringOption(option => option
-        .setName('reason')
-        .setDescription('The reason for timing them out')
-        .setRequired(true))
     .addNumberOption(option => option
         .setName('durations')
         .setDescription('How long they should be timed out for')
@@ -35,15 +28,18 @@ timeoutCommand = new SlashCommandSubcommandBuilder()
             { name: '12 hours', value: 43200 },
             { name: '1 Day', value: 86400 },
             { name: '3 Days', value: 259200 }))
-
-export const builder = new SlashCommandBuilder()
+    .addStringOption(option => option
+        .setName('reason')
+        .setDescription('The reason for timing them out'))
+            
+export const slashCommandBuilder = new SlashCommandBuilder()
     .setName('moderation')
     .setDescription('Moderation Commands')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(moveCommand)
     .addSubcommand(timeoutCommand)
 
-export async function execute(interaction: ChatInputCommandInteraction) {
+export async function commandExecute(interaction: ChatInputCommandInteraction) {
  // console.log(interaction)
     switch (interaction.options.getSubcommand(true)) {
         case 'move':
@@ -73,7 +69,7 @@ async function moveFunction(interaction: ChatInputCommandInteraction) {
 
 async function timeoutFunction(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getMember('user') as GuildMember,
-        reason = interaction.options.getString('reason',true),
+        reason = interaction.options.getString('reason') || 'No Reason given',
         duration = interaction.options.getNumber('durations', true)
     user.timeout(duration*1000, reason)
     const endedDate = Math.floor(new Date().getTime()/1000) + duration

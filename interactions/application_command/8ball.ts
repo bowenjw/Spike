@@ -7,7 +7,7 @@ const question = new SlashCommandStringOption()
 	.setRequired(true)
 
 // Slash command
-export const builder = new SlashCommandBuilder()
+export const slashCommandBuilder = new SlashCommandBuilder()
 	.setName('8ball')
 	.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 	.setDMPermission(true)
@@ -18,7 +18,7 @@ export const builder = new SlashCommandBuilder()
  * 
  * @param interaction applicatrion command interaction
  */
-export async function execute(interaction: ChatInputCommandInteraction) {
+async function commandExecute(interaction: ChatInputCommandInteraction) {
 	let reply = '';
 	switch (Math.floor(Math.random() * 20)) {
 	case 0:

@@ -1,13 +1,13 @@
 import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { client } from '../../index';
 
-export const builder = new SlashCommandBuilder()
+export const slashCommandBuilder = new SlashCommandBuilder()
 	.setName('ping')
 	.setDescription('Gets the current latencey of the bot')
     .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
 	.setDMPermission(true)
 
-export async function execute(interaction: ChatInputCommandInteraction) {
+export async function commandExecute(interaction: ChatInputCommandInteraction) {
 	const embed = new EmbedBuilder()
 		.setColor("Blurple")
 		.setTitle('Current Latencey')
