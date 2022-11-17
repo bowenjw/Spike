@@ -83,27 +83,28 @@ userContextMenuCommand = new ContextMenuCommandBuilder()
     .setType(ApplicationCommandType.User)
 */
 export async function commandExecute(interaction: CommandInteraction) {
-    const warnConfig = (await guilds.findOne({ guildID: interaction.guildId }))?.warnSystem
-    if(!warnConfig?.enabled) {
+    const config = await guilds.findOne({ guildId: interaction.guildId })
+    if(!config?.warnSystem.enabled) {
         interaction.reply({
             content: 'Warnning Subsystem is disabled use </config system:1039674799120711781> to enable it',
             ephemeral: true
         });
         return;
     }
+    console.log(config)
     if(interaction.isChatInputCommand()) {
         switch (interaction.options.getSubcommand(true)) {
             case 'add':
-                await add(interaction, warnConfig)
+                await add(interaction, config?.warnSystem)
                 break;
             case 'remove':
-                remove(interaction, warnConfig)
+                remove(interaction, config?.warnSystem)
                 break;
             case 'view':
-                view(interaction, warnConfig)
+                view(interaction, config?.warnSystem)
                 break;
             case 'update':
-                update(interaction, warnConfig)
+                update(interaction, config?.warnSystem)
                 break;
             default:
                 break;
@@ -143,12 +144,11 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
         .addFields(
             { name: 'Target', value: `${target.tag}\n${target}`, inline: true },
             { name: 'Officer', value: `${officer.tag}\n${officer}`, inline: true},
-            { name: 'Exspires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
+            { name: 'Expires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
         .setFooter({text: `ID: ${record._id}`})
         .setTimestamp(),
-    channel = interaction.guild?.channels.cache.get(config.channel) as TextChannel
-    
-    // console.log(channel)
+    channel = interaction.guild?.channels.cache.get(config.channel)! as TextChannel
+    console.log(channel)
     interaction.reply({embeds:[embed], ephemeral:true})
     if(channel)
         channel.send({embeds:[embed]})
@@ -161,7 +161,7 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
             .setTitle(`You have been Banned from ${interaction.guild?.name}`)
             .setDescription(`After getting three active warnnings you are banned.\n**Reason:** ${reason}`)
         target.send({embeds:[dmEmbed]})
-        interaction.guild?.members.ban(target) 
+        interaction.guild?.members.ban(target).catch(err => console.log(err))
     } else {
         dmEmbed = dmEmbed
             .setTitle(`Warnning from ${interaction.guild?.name}`)

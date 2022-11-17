@@ -15,13 +15,13 @@ export async function execute(interaction: BaseInteraction ) {
 			import(`../interactions/application_command/${interaction.commandName.toLowerCase()}`).then((obj:Command) => obj.commandExecute(interaction))
 
 		else if(interaction.isButton())
-			import(`../interactions/button/${interaction.customId.split(' ')[0].toLowerCase()}`).then((obj: button) => obj.buttomInteractionExecute(interaction))
+			import(`../interactions/button/${interaction.customId.split(' ')[0]}`).then((obj: button) => obj.buttomInteractionExecute(interaction))
 
 		else if(interaction.isSelectMenu())
-			import(`../interactions/selectmenu/${interaction.customId.split(' ')[0].toLowerCase()}`).then((obj: selectMenue) => obj.selectMenueInteractionExecute(interaction))
+			import(`../interactions/selectmenu/${interaction.customId.split(' ')[0]}`).then((obj: selectMenue) => obj.selectMenueInteractionExecute(interaction))
 
 		else if(interaction.isModalSubmit())
-			import(`../interactions/modal/${interaction.customId.split(' ')[0].toLowerCase()}`).then((obj: modal) => obj.modalInteractionExecute(interaction))
+			import(`../interactions/modal/${interaction.customId.split(' ')[0]}`).then((obj: modal) => obj.modalInteractionExecute(interaction))
 			
 	} catch (error: unknown) {
 		console.log(error);
