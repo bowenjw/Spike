@@ -42,7 +42,7 @@ async function updateWarnning(id:string, reason:string, officerId:string, date?:
     return warnnings.findByIdAndUpdate(id, {reason:reason, officerId:officerId})
 }
 
-export function renderWarnings(records: recordDoc[], start:number = 0) {
+export function renderWarnings(records: recordDoc[], userId:string ,start:number = 0) {
     const embeds: EmbedBuilder[] = [],
     actionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>(),
     length = records.length
@@ -67,11 +67,11 @@ export function renderWarnings(records: recordDoc[], start:number = 0) {
         embeds.push(embed)
     }
     const leftButton = new ButtonBuilder()
-        .setCustomId(`viewWarn ${records[0].userId} ${start + 3}`)
+        .setCustomId(`viewWarn ${userId} ${start + 3}`)
         .setEmoji('⬅️')
         .setStyle(ButtonStyle.Secondary),
     rightButton = new ButtonBuilder()
-        .setCustomId(`viewWarn ${records[0].userId} ${start - 3}`)
+        .setCustomId(`viewWarn ${userId} ${start - 3}`)
         .setEmoji('➡️')
         .setDisabled(true)
         .setStyle(ButtonStyle.Secondary)
@@ -80,9 +80,12 @@ export function renderWarnings(records: recordDoc[], start:number = 0) {
         if(start + 3 > length)
             leftButton.setDisabled(true)
     }
+    console.log(length)
     if(length > 3) {
         actionRow.addComponents(leftButton,rightButton)
         return {embeds:embeds, components:[actionRow]}
+    } else if(length == 0) {
+        return { content: 'User does not have any warns' }
     } else {
         return {embeds:embeds}
     }

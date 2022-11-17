@@ -120,6 +120,7 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
         interaction.reply({ content:'Target can not be a bot or your self', ephemeral:true })
         return;
     }
+
     const records = await warnning.get(interaction.guildId!, target.id),
     length = records.length,
     record = await warnning.add(
@@ -127,10 +128,13 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
         target.id, officer.id, 
         reason, null),
     exspiresAt = Math.floor(record.expireAt.getTime()/1000)
+
     if(reason == null)
         reason = 'No reason Given'
+
     if(records.length >= 2)
         color = 'Red'
+
     const embed = new EmbedBuilder()
         .setTitle('Warn')
         .setDescription(`**Reason:** ${reason}`)
@@ -148,6 +152,7 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
     interaction.reply({embeds:[embed], ephemeral:true})
     if(channel)
         channel.send({embeds:[embed]})
+        
     let dmEmbed = new EmbedBuilder()
         
     if(length == 2) {
@@ -155,17 +160,20 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
             .setColor('Red')
             .setTitle(`You have been Banned from ${interaction.guild?.name}`)
             .setDescription(`After getting three active warnnings you are banned.\n**Reason:** ${reason}`)
+        target.send({embeds:[dmEmbed]})
+        interaction.guild?.members.ban(target) 
     } else {
         dmEmbed = dmEmbed
-        .setTitle(`Warnning from ${interaction.guild?.name}`)
-        .setDescription(`**Reason:** ${reason}`)
-        .setColor('Yellow').addFields({
-            name: 'About', 
-            value:'Should you recive three(3) active warrning this will resalt in a ban', 
-            inline:true
-        })
-    }
+            .setTitle(`Warnning from ${interaction.guild?.name}`)
+            .setDescription(`**Reason:** ${reason}`)
+            .setColor('Yellow').addFields({
+                name: 'About', 
+                value:'Should you recive three(3) active warrning this will resalt in a ban', 
+                inline:true
+            })
     target.send({embeds:[dmEmbed]})
+        
+    }
 
 }
 
@@ -192,7 +200,9 @@ async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
         months = interaction.options.getInteger('scope'),
         guildId = interaction.guildId!,
         date = new Date()
-
+    
+    console.log(target)
+    
     let records:(Document<unknown, any, Iwarn> & Iwarn & {_id: Types.ObjectId;})[]
     // console.log(months)
     if(months == null) {
@@ -203,7 +213,7 @@ async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
         date.setMonth(-months)
         records = await warnning.get(guildId, target.id, date)
     }
-    interaction.reply(renderWarnings(records))
+    interaction.reply(renderWarnings(records, target.id))
     
 }
 
@@ -219,7 +229,7 @@ async function update(interaction: ChatInputCommandInteraction, config: ISystem)
             .addFields(
                 { name: 'Target', value: `<@${record?.userId}>`, inline: true },
                 { name: 'Officer', value: `<@${record?.officerId}>`, inline: true},
-                { name: 'Exspires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
+                { name: 'Expires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
             .setFooter({text: `ID: ${record?._id}`})
             .setTimestamp(record?.createdAt)
     interaction.reply({embeds:[embed]})
