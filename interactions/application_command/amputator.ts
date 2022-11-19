@@ -19,7 +19,7 @@ slashCommandBuilder = new SlashCommandBuilder()
         .setDescription("Link to AMPed webstie")
         .setRequired(true))
 
-async function commandExecute(interaction: ChatInputCommandInteraction | MessageContextMenuCommandInteraction) {
+export async function commandExecute(interaction: ChatInputCommandInteraction | MessageContextMenuCommandInteraction) {
     
     const regLink = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/gim
     let match: RegExpExecArray | null,
