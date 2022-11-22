@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, ColorResolvable, CommandInteraction, Embed
 import { Document, Types } from "mongoose";
 import { guilds, ISystem } from "../../util/schema/guilds";
 import { Iwarn } from "../../util/schema/warns";
-import { renderWarnings, warnning } from "../../util/warnning";
+import { renderWarnings, warning } from "../../util/warning";
 
 const premission = PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
 userOption = new SlashCommandUserOption()
@@ -11,7 +11,7 @@ userOption = new SlashCommandUserOption()
     .setRequired(true),
 warnRemove = new SlashCommandSubcommandBuilder()
     .setName('remove')
-    .setDescription('Remove warnning from user')
+    .setDescription('Remove warning from user')
     .addStringOption(option => option
         .setName('id')
         .setDescription('The Id number for the warn')
@@ -20,7 +20,7 @@ warnRemove = new SlashCommandSubcommandBuilder()
         .setRequired(true))
     .addBooleanOption(option => option
         .setName('delete')
-        .setDescription('Permanently delete warnning from record')),
+        .setDescription('Permanently delete warning from record')),
 warnView = new SlashCommandSubcommandBuilder()
     .setName('view')
     .setDescription('See warns of a user')
@@ -45,10 +45,10 @@ warnAdd = new SlashCommandSubcommandBuilder()
         .setMaxLength(400))
     .addIntegerOption(option => option
         .setName('duration')
-        .setDescription('Number of days, the warnning will last for')),
+        .setDescription('Number of days, the warning will last for')),
 warnUpdate = new SlashCommandSubcommandBuilder()
     .setName('update')
-    .setDescription('Update warnning')
+    .setDescription('Update warning')
     .addStringOption(option => option
         .setName('id')
         .setDescription('The Id number for the warn')
@@ -122,9 +122,9 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
         return;
     }
 
-    const records = await warnning.get(interaction.guildId!, target.id),
+    const records = await warning.get(interaction.guildId!, target.id),
     length = records.length,
-    record = await warnning.add(
+    record = await warning.add(
         interaction.guildId!, 
         target.id, officer.id, 
         reason, null),
@@ -159,12 +159,12 @@ async function add(interaction: ChatInputCommandInteraction, config: ISystem) {
         dmEmbed = dmEmbed
             .setColor('Red')
             .setTitle(`You have been Banned from ${interaction.guild?.name}`)
-            .setDescription(`After getting three active warnnings you are banned.\n**Reason:** ${reason}`)
+            .setDescription(`After getting three active warnings you are banned.\n**Reason:** ${reason}`)
         target.send({embeds:[dmEmbed]})
         interaction.guild?.members.ban(target).catch(err => console.log(err))
     } else {
         dmEmbed = dmEmbed
-            .setTitle(`Warnning from ${interaction.guild?.name}`)
+            .setTitle(`Warning from ${interaction.guild?.name}`)
             .setDescription(`**Reason:** ${reason}`)
             .setColor('Yellow').addFields({
                 name: 'About', 
@@ -183,11 +183,11 @@ async function remove(interaction: ChatInputCommandInteraction, config: ISystem)
     let record:(Document<unknown, any, Iwarn> & Iwarn & {_id: Types.ObjectId;}) | null,
     content:string
     if(permDelete){
-        record = await warnning.removeById(id, permDelete)
-        content = `Warnning for <@${record?.userId}> has been deleted`
+        record = await warning.removeById(id, permDelete)
+        content = `Warning for <@${record?.userId}> has been deleted`
     } else {
-        record = await warnning.removeById(id)
-        content = `Warnning for <@${record?.userId}> has been removed`
+        record = await warning.removeById(id)
+        content = `Warning for <@${record?.userId}> has been removed`
     }
     interaction.reply({content:content, ephemeral:true})
     const channel = interaction.guild?.channels.cache.get(config.channel) as TextChannel
@@ -206,12 +206,12 @@ async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
     let records:(Document<unknown, any, Iwarn> & Iwarn & {_id: Types.ObjectId;})[]
     // console.log(months)
     if(months == null) {
-        records = await warnning.get(guildId, target.id, date)
+        records = await warning.get(guildId, target.id, date)
     } else if(months == 0) {
-        records = await warnning.get(guildId, target.id)
+        records = await warning.get(guildId, target.id)
     } else {
         date.setMonth(-months)
-        records = await warnning.get(guildId, target.id, date)
+        records = await warning.get(guildId, target.id, date)
     }
     interaction.reply(renderWarnings(records, target.id))
     
@@ -220,7 +220,7 @@ async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
 async function update(interaction: ChatInputCommandInteraction, config: ISystem) {
     const id = interaction.options.getString('id', true),
     reason = interaction.options.getString('reason', true),
-    record = await warnning.updateById(id,reason,interaction.user.id),
+    record = await warning.updateById(id,reason,interaction.user.id),
     exspiresAt = Math.floor(record!.expireAt.getTime()/1000)
     const embed = new EmbedBuilder()
             .setTitle('Warn')

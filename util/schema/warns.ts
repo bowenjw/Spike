@@ -1,7 +1,7 @@
 import { Snowflake } from 'discord.js';
 import {Schema, model} from 'mongoose';
 
-interface IwarnningCounter {
+interface IwarningCounter {
     guildId: Snowflake,
     counter: number
 }
@@ -23,7 +23,7 @@ const warn = new Schema<Iwarn>({
     expireAt: { type: Date, required:true }
 }, {timestamps: true}),
 
-warnningCounter = new Schema<IwarnningCounter>({
+warningCounter = new Schema<IwarningCounter>({
     guildId: {
         type: String,
         required: true,
@@ -37,5 +37,5 @@ warnningCounter = new Schema<IwarnningCounter>({
     }
 })
 
-export const warnnings = model<Iwarn>('warnnings', warn),
-warningCounters = model<IwarnningCounter>('warnningCounter', warnningCounter)
+export const warnings = model<Iwarn>('warnings', warn),
+warningCounters = model<IwarningCounter>('warningCounter', warningCounter)

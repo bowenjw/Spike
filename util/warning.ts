@@ -1,45 +1,45 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder, InteractionReplyOptions, MessageActionRowComponentBuilder, Snowflake } from "discord.js";
 import { Document, Types } from "mongoose";
-import { Iwarn, warnnings } from "./schema/warns";
+import { Iwarn, warnings } from "./schema/warns";
 
 export type recordDoc = Document<unknown, any, Iwarn> & Iwarn & {_id: Types.ObjectId;}
-export const warnning ={
-    add: addWarnning,
-    //remove: removeWarnning,
-    removeById: removeWarnningById,
-    get: viewWarnning,
-    updateById: updateWarnning
+export const warning ={
+    add: addWarning,
+    //remove: removeWarning,
+    removeById: removeWarningById,
+    get: viewWarning,
+    updateById: updateWarning
 }
 
 const date = new Date()
 date.setDate(new Date().getDate()+90)
-async function addWarnning(guildId: Snowflake, userId: Snowflake, officerId: Snowflake, reason: string | null, endedDate: Date | null ) {
+async function addWarning(guildId: Snowflake, userId: Snowflake, officerId: Snowflake, reason: string | null, endedDate: Date | null ) {
     let setReason = reason, expireAt = endedDate;
     if(setReason == null)
         setReason = 'No Reason Given'
     if(expireAt == null)
         expireAt = date
-    return warnnings.create({ guildId:guildId, userId: userId, officerId: officerId, reason: setReason, expireAt: expireAt})
+    return warnings.create({ guildId:guildId, userId: userId, officerId: officerId, reason: setReason, expireAt: expireAt})
 }
 
-async function removeWarnningById(id:string, permanentlyDelete:boolean = false) {
+async function removeWarningById(id:string, permanentlyDelete:boolean = false) {
     if(permanentlyDelete)
-        return await warnnings.findByIdAndRemove(id)
+        return await warnings.findByIdAndRemove(id)
     else
-       return await warnnings.findByIdAndUpdate(id,{expireAt: new Date()})
+       return await warnings.findByIdAndUpdate(id,{expireAt: new Date()})
 }
 
-async function viewWarnning(guildId: Snowflake, userId: Snowflake, expireAt?: Date) {
+async function viewWarning(guildId: Snowflake, userId: Snowflake, expireAt?: Date) {
     let search: any
     if(!expireAt)
         search = {guildId: guildId, userId: userId}
     else
         search = {guildId: guildId, userId: userId, expireAt: { $gte: expireAt}}
-    return warnnings.find(search)
+    return warnings.find(search)
 }
 
-async function updateWarnning(id:string, reason:string, officerId:string, date?:Date) {
-    return warnnings.findByIdAndUpdate(id, {reason:reason, officerId:officerId})
+async function updateWarning(id:string, reason:string, officerId:string, date?:Date) {
+    return warnings.findByIdAndUpdate(id, {reason:reason, officerId:officerId})
 }
 
 export function renderWarnings(records: recordDoc[], userId:string ,start:number = 0) {

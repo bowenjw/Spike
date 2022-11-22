@@ -18,7 +18,7 @@ export const slashCommandBuilder = new SlashCommandBuilder()
  * 
  * @param interaction applicatrion command interaction
  */
-async function commandExecute(interaction: ChatInputCommandInteraction) {
+export async function commandExecute(interaction: ChatInputCommandInteraction) {
 	let reply = '';
 	switch (Math.floor(Math.random() * 20)) {
 	case 0:

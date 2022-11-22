@@ -49,10 +49,8 @@ export async function commandExecute(interaction: ChatInputCommandInteraction | 
     } else {
         return;
     }
-
-    interaction.deferReply({ephemeral: true})
     // console.log(deampLink);
-    interaction.followUp({
+    interaction.reply({
         content: `${await Amputator(links)}`,
         ephemeral: !interaction.isMessageContextMenuCommand()
     })
