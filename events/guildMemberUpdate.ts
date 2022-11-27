@@ -9,7 +9,7 @@ export async function execute(oldMember: GuildMember, newMember: GuildMember) {
 
 	if(memberTimedout || memberTimeoutEnded) {
 		const guild = newMember.guild,
-		timeoutLog = (await config.get(guild.id))?.TimeoutLog
+		timeoutLog = (await config.get(guild))?.TimeoutLog
 
 		if(!timeoutLog?.enabled) {
 			return;

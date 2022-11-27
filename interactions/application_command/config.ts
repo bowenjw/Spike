@@ -45,7 +45,7 @@ export async function commandExecute(interaction: ChatInputCommandInteraction) {
     if(subcommand == 'system') {
         const enable = interaction.options.getBoolean('enable'),
         channel = interaction.options.getChannel('channel'),
-        record = await config.get(interaction.guildId!)
+        record = await config.get(interaction.guild!)
         if(!record)
             return;
         if(enable == null && !channel) {

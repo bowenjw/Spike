@@ -1,17 +1,32 @@
-import { Snowflake } from "discord.js";
-import { guilds } from "./schema/guilds";
+import { Guild, TextChannel } from "discord.js";
+import { guilds, ISystem } from "./schema/guilds";
 
-export const config = {
-    get: getConfig
+enum Systems {
+    TimeoutLog = 0,
+    warn = 1,
 }
 
-async function getConfig(guildId: Snowflake) {
+export const config = {
+    get: getConfig,
+    setFeture,
+}
+
+async function getConfig(guild: Guild) {
     try {
-        const record = await guilds.findOne({guildId: guildId})
+        const record = await guilds.findOne({guild:{id:guild.id}})
         if(record)
             return record
         else 
-            return await guilds.create({guildId: guildId})
+            return guilds.create({guild:{id:guild.id, name:guild.name}})
     } catch (error) {console.log(error)}
 
+}
+async function setFeture(guild:Guild, feture: number, enable:boolean, channel: TextChannel ) {
+    const config = await getConfig(guild);
+    let fetureConfig:ISystem | null
+    if(enable)
+        fetureConfig!.enabled = enable;
+    if(channel)
+       fetureConfig!.channel = channel.id;
+    console.log(fetureConfig!)
 }

@@ -6,39 +6,27 @@ export interface ISystem {
     enabled: boolean
 }
 export interface IGuild{
-    guildId: Snowflake,
+    guild: {
+        id: Snowflake,
+        name: string
+    },
     warnSystem: ISystem
     TimeoutLog: ISystem
 }
 
 const guild = new Schema<IGuild>({
-    guildId: {
-        type: String,
-        required: true,
-        unique: true,
+    guild: {
+        id: { Type: String, required: true, unique: true},
+        name: { Type: String, required: true }
     },
     warnSystem: {
-        channel: {
-            type: String,
-            required: false,
-        },
-        enabled: {
-            type: Boolean,
-            require: true,
-            default: false,
-        },
+        channel: { type: String, required: false },
+        enabled: { type: Boolean, require: true, default: false },
         
     },
     TimeoutLog: {
-        channel: {
-            type: String,
-            required: false,
-        },
-        enabled: {
-            type: Boolean,
-            require: true,
-            default: false,
-        },
+        channel: { type: String, required: false },
+        enabled: { type: Boolean, require: true, default: false },
     }
 });
 

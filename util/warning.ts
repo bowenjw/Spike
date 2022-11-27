@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder, InteractionReplyOptions, MessageActionRowComponentBuilder, Snowflake } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder, InteractionReplyOptions, MessageActionRowComponentBuilder, Snowflake, User } from "discord.js";
 import { Document, Types } from "mongoose";
 import { Iwarn, warnings } from "./schema/warns";
 
@@ -13,13 +13,19 @@ export const warning ={
 
 const date = new Date()
 date.setDate(new Date().getDate()+90)
-async function addWarning(guildId: Snowflake, userId: Snowflake, officerId: Snowflake, reason: string | null, endedDate: Date | null ) {
+async function addWarning(guildId: Snowflake, target: User, officer: User, reason: string | null, endedDate: Date | null ) {
     let setReason = reason, expireAt = endedDate;
     if(setReason == null)
         setReason = 'No Reason Given'
     if(expireAt == null)
         expireAt = date
-    return warnings.create({ guildId:guildId, userId: userId, officerId: officerId, reason: setReason, expireAt: expireAt})
+    return warnings.create({ 
+        guildId:guildId, 
+        target:{ id:target.id, tag:target.tag }, 
+        officer:{ id:officer.id, tag:officer.tag },
+        reason: setReason, 
+        expireAt: expireAt
+    })
 }
 
 async function removeWarningById(id:string, permanentlyDelete:boolean = false) {
@@ -42,7 +48,7 @@ async function updateWarning(id:string, reason:string, officerId:string, date?:D
     return warnings.findByIdAndUpdate(id, {reason:reason, officerId:officerId})
 }
 
-export function renderWarnings(records: recordDoc[], userId:string ,start:number = 0) {
+export function renderWarnings(records: recordDoc[], target:User ,start:number = 0) {
     const embeds: EmbedBuilder[] = [],
     actionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>(),
     length = records.length
@@ -59,19 +65,19 @@ export function renderWarnings(records: recordDoc[], userId:string ,start:number
             .setDescription(`**Reason:** ${record.reason}`)
             .setColor(color)
             .addFields(
-                { name: 'Target', value: `<@${record.userId}>`, inline: true },
-                { name: 'Officer', value: `<@${record.officerId}>`, inline: true},
-                { name: 'Exspires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
+                { name: 'Target', value: `${record.target.tag}\n<@${record.target.id}>`, inline: true },
+                { name: 'Officer', value: `${record.officer.tag}\n<@${record.officer.id}>`, inline: true},
+                { name: 'Exspires', value: `<t:${exspiresAt}:R>\n<t:${exspiresAt}:F>`, inline: true})
             .setFooter({text: `ID: ${record._id}`})
             .setTimestamp(record.createdAt)
         embeds.push(embed)
     }
     const leftButton = new ButtonBuilder()
-        .setCustomId(`viewWarn ${userId} ${start + 3}`)
+        .setCustomId(`viewWarn ${target.id} ${start + 3}`)
         .setEmoji('⬅️')
         .setStyle(ButtonStyle.Secondary),
     rightButton = new ButtonBuilder()
-        .setCustomId(`viewWarn ${userId} ${start - 3}`)
+        .setCustomId(`viewWarn ${target.id} ${start - 3}`)
         .setEmoji('➡️')
         .setDisabled(true)
         .setStyle(ButtonStyle.Secondary)
