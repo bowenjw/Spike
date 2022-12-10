@@ -6,7 +6,7 @@ export function selectMenueInteractionExecute(interaction: AnySelectMenuInteract
     source = interaction.guild?.channels.cache.find(channel => channel.id === interaction.customId.split(' ')[2]) as VoiceChannel,
     members = source.members.filter(member => interaction.values.includes(member.id))
     
-    if(members.size < 1) {
+    if(members.size < 2) {
         interaction.reply({content:'Two or more moveable Members need to be selected', ephemeral:true})
     }
     else {

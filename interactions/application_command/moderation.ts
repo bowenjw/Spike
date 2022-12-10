@@ -21,13 +21,17 @@ timeoutCommand = new SlashCommandSubcommandBuilder()
         .setDescription('How long they should be timed out for')
         .setRequired(true)
         .setChoices(
+            { name: '60 secs', value: 60 },
+            { name: '5 mins', value: 300 },
+            { name: '10 mins', value: 600 },
             { name: '30 mins', value: 1800 },
-            { name: '1 hours', value: 3600 },
+            { name: '1 hour', value: 3600 },
             { name: '2 hours', value: 7200 },
             { name: '6 hours', value: 21600 },
             { name: '12 hours', value: 43200 },
             { name: '1 Day', value: 86400 },
-            { name: '3 Days', value: 259200 }))
+            { name: '3 Days', value: 259200 },
+            { name: '1 week', value: 604800 }))
     .addStringOption(option => option
         .setName('reason')
         .setDescription('The reason for timing them out'))
