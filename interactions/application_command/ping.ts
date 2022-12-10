@@ -12,7 +12,7 @@ export async function commandExecute(interaction: ChatInputCommandInteraction) {
 		.setColor("Blurple")
 		.setTitle('Current Latencey')
 		.addFields(
-			{ name: 'Command Latency', value: `${interaction.createdTimestamp - Date.now()}ms`, inline: true },
+			{ name: 'Command Latency', value: `${Date.now() - interaction.createdTimestamp}ms`, inline: true },
 			{ name: 'API Latency', value: `${Math.round(client.ws.ping)}ms`, inline: true })
 		.setTimestamp();
 	await interaction.reply({ ephemeral: true, embeds: [embed] });

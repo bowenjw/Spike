@@ -64,6 +64,9 @@ async function moveFunction(interaction: ChatInputCommandInteraction) {
     if(source == null) {
         interaction.reply({content:"You must be in a Voice Channel to use this command", ephemeral: true})
         return;
+    } else if(source.id == destination.id) {
+        interaction.reply({content:`Members are already in ${destination}`, ephemeral: true})
+        return;
     }
     //interaction.deferReply({ephemeral: true});
     const usermenu = new UserSelectMenuBuilder()
