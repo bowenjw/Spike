@@ -3,7 +3,7 @@ import { Document, Schema, model, Types } from 'mongoose';
 import { Fetures } from '../types';
 
 
-interface ISystem {
+export interface ISystem {
     channel: Snowflake,
     enabled: boolean
 }
@@ -14,7 +14,7 @@ interface IGuild{
     TimeoutLog: ISystem
 }
 
-type GuildRecord = (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; })
+export type GuildRecord = (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; })
 
 const guild = new Schema<IGuild>({
     id: { type: String, require: true, unique: true},
