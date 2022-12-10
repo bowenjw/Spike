@@ -1,4 +1,4 @@
-import { APIApplicationCommandOptionChoice, ChannelType, ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandUserOption, VoiceChannel } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, GuildMember, MessageActionRowComponentBuilder, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, UserSelectMenuBuilder, VoiceChannel } from "discord.js";
 
 const moveCommand = new SlashCommandSubcommandBuilder()
     .setName('move')
@@ -57,21 +57,29 @@ export async function commandExecute(interaction: ChatInputCommandInteraction) {
 async function moveFunction(interaction: ChatInputCommandInteraction) {
     const source = (await interaction.guild!.members.fetch(interaction.user.id))?.voice.channel,
         destination = interaction.options.getChannel("destination", true) as VoiceChannel;
-    let content = "You must be in a Voice Channel to use this command"
- // console.log(sourceChannel?.members)
-    
-    if (source != null) {
-        source.members.forEach(async member => member.voice.setChannel(destination));
-        content = `Users Moved have been moved to ${destination}`;
+    if(source == null) {
+        interaction.reply({content:"You must be in a Voice Channel to use this command", ephemeral: true})
+        return;
     }
-    interaction.reply({content: content ,ephemeral: true});
+    //interaction.deferReply({ephemeral: true});
+    const usermenu = new UserSelectMenuBuilder()
+        .setCustomId(`usermove ${destination.id} ${source.id}`)
+        .setPlaceholder('Select users')
+        .setMaxValues(8)
+        .setMinValues(1),
+  
+    topActionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(usermenu)
+    
+    interaction.reply({content:'Select users you would like to move', components:[topActionRow], ephemeral:true})
 }
 
 async function timeoutFunction(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getMember('user') as GuildMember,
-        reason = interaction.options.getString('reason') || 'No Reason given',
-        duration = interaction.options.getNumber('durations', true)
+    reason = interaction.options.getString('reason') || 'No Reason given',
+    duration = interaction.options.getNumber('durations', true),
+    endedDate = Math.floor(new Date().getTime()/1000) + duration
+
     user.timeout(duration*1000, reason)
-    const endedDate = Math.floor(new Date().getTime()/1000) + duration
+
     interaction.reply({content:`${user} has been timed out until <t:${endedDate}:F>`, ephemeral:true})
 }

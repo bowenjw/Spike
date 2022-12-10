@@ -1,10 +1,6 @@
 import { Guild, TextChannel } from "discord.js";
 import { guilds, ISystem } from "./schema/guilds";
-
-enum Systems {
-    TimeoutLog = 0,
-    warn = 1,
-}
+import { Fetures } from "./types";
 
 export const config = {
     get: getConfig,
