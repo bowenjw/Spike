@@ -1,10 +1,15 @@
-import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandChannelOption, SlashCommandIntegerOption, SlashCommandSubcommandBuilder, TextChannel } from "discord.js";
-import { Document, Types } from "mongoose";
-import { config } from "../../util/database";
-import { guilds, IGuild } from "../../util/schema/guilds";
-
-
-
+import { 
+    ChannelType, 
+    ChatInputCommandInteraction, 
+    PermissionFlagsBits, 
+    SlashCommandBooleanOption, 
+    SlashCommandBuilder, 
+    SlashCommandChannelOption, 
+    SlashCommandIntegerOption, 
+    SlashCommandSubcommandBuilder, 
+    TextChannel 
+} from "discord.js";
+import { guildDB } from "../../util/schema/guilds";
 
 const systemSelect = new SlashCommandIntegerOption()
     .setName('system')
@@ -44,48 +49,16 @@ export async function commandExecute(interaction: ChatInputCommandInteraction) {
     
     if(subcommand == 'system') {
         const enable = interaction.options.getBoolean('enable'),
-        channel = interaction.options.getChannel('channel'),
-        record = await config.get(interaction.guildId!)
+        channel = interaction.options.getChannel('channel') as TextChannel | null,
+        record = await guildDB.get(interaction.guild!)
         if(!record)
             return;
-        if(enable == null && !channel) {
+        if(enable == null && channel == null) {
             interaction.reply({content: 'No changes made to selected system', ephemeral: true});
             return;
         }
-        switch (interaction.options.getInteger('system', true)) {
-            case 0:
-                timeout(record, enable, channel as TextChannel)
-                break;
-            case 1:
-                warn(record, enable, channel as TextChannel)
-                break;
-            default:
-                break;
-        }
+        guildDB.setFeture(record,interaction.options.getInteger('system', true), enable, channel)
+        
         interaction.reply({content:'System configerations updated', ephemeral: true})
     }
-}
-
-function timeout(
-    record: (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; }),
-    enable: boolean | null, 
-    channel: TextChannel | null) {
-        
-    if(enable)
-        record.TimeoutLog.enabled = enable;
-    if(channel)
-        record.TimeoutLog.channel = channel.id;
-    record.save()
-}
-
-function warn(
-    record: (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; }),
-    enable: boolean | null,
-    channel: TextChannel | null) {
-        
-    if(enable)
-        record.warnSystem.enabled = enable;
-    if(channel)
-        record.warnSystem.channel = channel.id;
-    record.save()
 }

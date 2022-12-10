@@ -1,8 +1,8 @@
-import { ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import https from 'https'
 
 const permissionFlagsBits = PermissionFlagsBits.SendMessages;
-
+const hyperlink = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/gim
 export const messageContextMenuCommand = new ContextMenuCommandBuilder()
     .setName("Amputator")
     .setType(ApplicationCommandType.Message)
@@ -21,13 +21,13 @@ slashCommandBuilder = new SlashCommandBuilder()
 
 export async function commandExecute(interaction: ChatInputCommandInteraction | MessageContextMenuCommandInteraction) {
     
-    const regLink = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/gim
+   
     let match: RegExpExecArray | null,
         links: string[] = [];
     
     if(interaction.isChatInputCommand()){
         links[0] = interaction.options.getString("link",true);
-        if(!regLink.test(links[0])) {
+        if(!hyperlink.test(links[0])) {
             interaction.reply({
                 content: 'Please provide a link starting with `https://`',
                 ephemeral: true
@@ -35,7 +35,7 @@ export async function commandExecute(interaction: ChatInputCommandInteraction | 
             return;
         }
     } else if(interaction.isMessageContextMenuCommand()) {
-        while (( match = regLink.exec(interaction.targetMessage.content)) != null) {
+        while (( match = hyperlink.exec(interaction.targetMessage.content)) != null) {
             links.push(match[0])
         }
         if(links.length <= 0) {

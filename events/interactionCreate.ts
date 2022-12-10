@@ -1,5 +1,5 @@
 import {CommandInteraction, BaseInteraction, ButtonInteraction, Events} from 'discord.js';
-import {button, Command, modal, selectMenue } from '../util/types';
+import {button, Command, modal, selectMenu } from '../util/types';
 
 export const name = Events.InteractionCreate,
 once = false;
@@ -8,20 +8,27 @@ export async function execute(interaction: BaseInteraction ) {
 
 	// interaction
 	try {
-		
-		console.log(`${interaction.user.tag} used ${interaction.type} from ${interaction.guild?.name}`);
 
-		if (interaction.isCommand())
+		if (interaction.isCommand()) {
+			console.log(`${interaction.user.tag} used ${interaction.commandName} from ${interaction.guild?.name}`);
 			import(`../interactions/application_command/${interaction.commandName.toLowerCase()}`).then((obj:Command) => obj.commandExecute(interaction))
+		}
+		else if(interaction.isButton()) {
+			const name = interaction.customId.split(' ')[0]
+			console.log(`${interaction.user.tag} used ${name} button from ${interaction.guild?.name}`);
+			import(`../interactions/button/${name}`).then((obj: button) => obj.buttomInteractionExecute(interaction))
+		}
 
-		else if(interaction.isButton())
-			import(`../interactions/button/${interaction.customId.split(' ')[0]}`).then((obj: button) => obj.buttomInteractionExecute(interaction))
-
-		else if(interaction.isSelectMenu())
-			import(`../interactions/selectmenu/${interaction.customId.split(' ')[0]}`).then((obj: selectMenue) => obj.selectMenueInteractionExecute(interaction))
-
-		else if(interaction.isModalSubmit())
-			import(`../interactions/modal/${interaction.customId.split(' ')[0]}`).then((obj: modal) => obj.modalInteractionExecute(interaction))
+		else if(interaction.isAnySelectMenu()) {
+			const name = interaction.customId.split(' ')[0]
+			console.log(`${interaction.user.tag} used ${name} select menu from ${interaction.guild?.name}`);
+			import(`../interactions/selectmenu/${name}`).then((obj: selectMenu) => obj.selectMenueInteractionExecute(interaction))
+		}
+		else if(interaction.isModalSubmit()) {
+			const name = interaction.customId.split(' ')[0]
+			console.log(`${interaction.user.tag} used ${name} model from ${interaction.guild?.name}`);
+			import(`../interactions/modal/${name}`).then((obj: modal) => obj.modalInteractionExecute(interaction))
+		}
 			
 	} catch (error: unknown) {
 		console.log(error);

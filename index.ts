@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { connect } from 'mongoose';
-import { Client, GatewayIntentBits } from 'discord.js';
-import { config } from 'dotenv';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { config } from 'dotenv'
 import { Event } from './util/types';
 // Conect to the Data Base
 // mongoose.connect(process.env.MONGO_URI!,{keepAlive:true})
@@ -25,16 +25,15 @@ const token = process.env.DISCORD_TOKEN!,
 eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
 
 //event handler
-for (const file of eventFiles) {
-	import(`./events/${file}`).then((event:Event) => {
+eventFiles.forEach((fileName) => {
+	import(`./events/${fileName}`).then((event:Event) => {
 		if (event.once) {
-			client.once(event.name, (...args) => event.execute(...args));
-		}
-		else {
-			client.on(event.name, (...args) => event.execute(...args));
+			client.once(event.name, (...args) => event.execute(...args))
+		} else {
+			client.on(event.name, (...args) => event.execute(...args))
 		}
 	})
-}
+})
 
 connect(process.env.MONGO_URI!)
 

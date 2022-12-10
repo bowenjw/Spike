@@ -1,4 +1,11 @@
-import { ButtonInteraction, CommandInteraction, ContextMenuCommandBuilder, ModalSubmitInteraction, SelectMenuInteraction, SlashCommandBuilder } from "discord.js"
+import { 
+    AnySelectMenuInteraction,
+    ButtonInteraction,
+    CommandInteraction,
+    ContextMenuCommandBuilder,
+    ModalSubmitInteraction,
+    SlashCommandBuilder 
+} from "discord.js"
 
 export interface Event {
     name: string,
@@ -22,8 +29,8 @@ export interface button extends interaction {
     buttomInteractionExecute(interaction: ButtonInteraction): any
 }
 
-export interface selectMenue extends interaction {
-    selectMenueInteractionExecute(interaction: SelectMenuInteraction): any
+export interface selectMenu extends interaction {
+    selectMenueInteractionExecute(interaction: AnySelectMenuInteraction): any
 }
 
 export interface modal extends interaction {
