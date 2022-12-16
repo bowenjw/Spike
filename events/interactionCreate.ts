@@ -16,13 +16,13 @@ export async function execute(interaction: BaseInteraction ) {
 		else if(interaction.isButton()) {
 			const name = interaction.customId.split(' ')[0]
 			console.log(`${interaction.user.tag} used ${name} button from ${interaction.guild?.name}`);
-			import(`../interactions/button/${name}`).then((obj: button) => obj.buttomInteractionExecute(interaction))
+			import(`../interactions/button/${name}`).then((obj: button) => obj.buttonInteractionExecute(interaction))
 		}
 
 		else if(interaction.isAnySelectMenu()) {
 			const name = interaction.customId.split(' ')[0]
 			console.log(`${interaction.user.tag} used ${name} select menu from ${interaction.guild?.name}`);
-			import(`../interactions/selectmenu/${name}`).then((obj: selectMenu) => obj.selectMenueInteractionExecute(interaction))
+			import(`../interactions/select_menu/${name}`).then((obj: selectMenu) => obj.selectMenueInteractionExecute(interaction))
 		}
 		else if(interaction.isModalSubmit()) {
 			const name = interaction.customId.split(' ')[0]

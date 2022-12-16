@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { connect } from 'mongoose';
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { connect, set } from 'mongoose';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv'
 import { Event } from './util/types';
 // Conect to the Data Base
@@ -36,6 +36,6 @@ eventFiles.forEach((fileName) => {
 })
 
 connect(process.env.MONGO_URI!)
-
+set('strictQuery', false)
 // Login to Discord with your client's token
 client.login(token);

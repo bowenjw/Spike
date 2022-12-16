@@ -32,10 +32,11 @@ export async function timeoutLogMessage(guild:Guild, after: GuildMember, logChan
 }
 
 export async function getTimeoutLogChannel(guild:Guild) {
-		const timeoutLog = (await guildDB.get(guild))?.TimeoutLog
-		if(!timeoutLog?.enabled) {
-			return undefined;
-		} else {
-            return guild.channels.cache.get(timeoutLog.channel) as TextChannel
-        }
+	const timeoutLog = (await guildDB.get(guild))?.timeoutlog
+	console.log(timeoutLog)
+	if(!timeoutLog?.enabled) {
+		return undefined;
+	} else {
+		return guild.channels.cache.get(timeoutLog.channel!) as TextChannel
+	}
 }
