@@ -1,64 +1,96 @@
-import { 
-    ChannelType, 
-    ChatInputCommandInteraction, 
-    PermissionFlagsBits, 
-    SlashCommandBooleanOption, 
-    SlashCommandBuilder, 
-    SlashCommandChannelOption, 
-    SlashCommandIntegerOption, 
-    SlashCommandSubcommandBuilder, 
-    TextChannel 
-} from "discord.js";
-import { guildDB } from "../../util/schema/guilds";
+import { ChannelType, ChatInputCommandInteraction, PermissionsBitField, SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandChannelOption, TextChannel } from "discord.js";
+import { UpdateQuery } from "mongoose";
+import { guildDB, IGuild } from "../../util/schema/guilds";
 
-const systemSelect = new SlashCommandIntegerOption()
-    .setName('system')
-    .setDescription('sub function to modify')
-    .setRequired(true)
-    .addChoices(
-        { name: 'Timeout Log', value: 0 },
-        { name: 'Warn', value: 1 }
-    ),
-systemEnable = new SlashCommandBooleanOption()
-        .setName('enable')
-        .setDescription('Leave empty to not modifiy system state'),
+const active = new SlashCommandBooleanOption()
+    .setName('active')
+    .setDescription('Define the state of this feature')
+    .setRequired(false),
 
-channelSelect = new SlashCommandChannelOption()
-        .setName('channel')
-        .setDescription('channel to set as log for system')
-        .addChannelTypes(ChannelType.GuildText),
-
-system = new SlashCommandSubcommandBuilder()
-    .setName('system')
-    .setDescription('modify spific feture')
-    .addIntegerOption(systemSelect)
-    .addBooleanOption(systemEnable)
-    .addChannelOption(channelSelect)
+channel = new SlashCommandChannelOption()
+    .setName('channel')
+    .setDescription('Channel to set as log for system')
+    .addChannelTypes(ChannelType.GuildText)
 
 
 export const slashCommandBuilder = new SlashCommandBuilder()
     .setName('config')
     .setDescription('config command')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageGuild)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
     .setDMPermission(false)
-    .addSubcommand(system)
+    .addSubcommand(subcommand => subcommand
+        .setName('timeoutlog')
+        .setDescription('Set configeration for timeout log')
+        .addBooleanOption(active)
+        .addChannelOption(channel))
+    .addSubcommand(subcommand => subcommand
+        .setName('warning')
+        .setDescription('Set configeration for warning system')
+        .addBooleanOption(active)
+        .addChannelOption(channel)
+        .addStringOption(option => option
+            .setName('message')
+            .setDescription('Set a message given to members when banned')
+            .setMaxLength(400))
+        .addIntegerOption(option => option
+            .setName('maxwarns')
+            .setDescription('set to 0 to disable autoban')
+            .setMinValue(0)))
 
 export async function commandExecute(interaction: ChatInputCommandInteraction) {
-    const subcommandGroup = interaction.options.getSubcommandGroup(),
-    subcommand = interaction.options.getSubcommand(true)
-    
-    if(subcommand == 'system') {
-        const enable = interaction.options.getBoolean('enable'),
-        channel = interaction.options.getChannel('channel') as TextChannel | null,
-        record = await guildDB.get(interaction.guild!)
-        if(!record)
-            return;
-        if(enable == null && channel == null) {
-            interaction.reply({content: 'No changes made to selected system', ephemeral: true});
-            return;
-        }
-        guildDB.setFeture(record,interaction.options.getInteger('system', true), enable, channel)
-        
-        interaction.reply({content:'System configerations updated', ephemeral: true})
+    const subcommand = interaction.options.getSubcommand(true)
+    switch (subcommand) {
+        case 'warning':
+            warning(interaction)
+            break;
+        case 'timeoutlog':
+            timeoutLog(interaction)
+            break;
+        default:
+            interaction.reply({content:'Error', ephemeral:true})
+            break;
     }
 }
+
+
+async function warning(interaction: ChatInputCommandInteraction) {
+    const status = interaction.options.getBoolean('active'),
+    channel = interaction.options.getChannel('channel') as TextChannel | null,
+    max = interaction.options.getInteger('maxwarns'),
+    message = interaction.options.getString('message')
+
+    if(!(status != null || channel || max != null || message)) {
+        interaction.reply({content:'No changes made to warning system', ephemeral:true})
+        return
+    }
+    let update:any = new Object()
+
+    if(status != null) update['warning.enabled'] = status
+    if(channel) update['warning.channel'] = channel.id
+    if(max != null) update['warning.maxActiveWarns'] = max
+    if(message) update['warning.appealMessage'] = message
+
+    await guildDB.DB.findOneAndUpdate({id:interaction.guildId!},{$set:update})
+
+    interaction.reply({content:'Warning System has been updated', ephemeral:true})
+
+}
+async function timeoutLog(interaction: ChatInputCommandInteraction) {
+    const status = interaction.options.getBoolean('active'),
+    channel = interaction.options.getChannel('channel') as TextChannel | null
+
+    if(!(status != null || channel)) {
+        interaction.reply({content:'No changes made to warning system', ephemeral:true})
+        return
+    }
+    let update:any = new Object()
+
+    if(status != null) update["timeoutlog.enabled"] = status
+    if(channel) update["timeoutlog.channel"] = channel.id
+
+    await guildDB.DB.findOneAndUpdate({id:interaction.guildId!}, { $set: update})
+
+    interaction.reply({content:'Timeout log has been updated', ephemeral:true})
+
+}
+

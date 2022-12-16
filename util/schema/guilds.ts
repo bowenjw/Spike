@@ -4,14 +4,18 @@ import { Fetures } from '../types';
 
 
 export interface ISystem {
-    channel: Snowflake,
+    channel?: Snowflake,
     enabled: boolean
 }
-interface IGuild{
+export interface IwarnningSystem extends ISystem {
+    appealMessage?: string,
+    maxActiveWarns: number
+}
+export interface IGuild{
     id: Snowflake,
     name: string,
-    warnSystem: ISystem
-    TimeoutLog: ISystem
+    warning: IwarnningSystem
+    timeoutlog: ISystem
 }
 
 export type GuildRecord = (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; })
@@ -19,21 +23,23 @@ export type GuildRecord = (Document<unknown, any, IGuild> & IGuild & {_id: Types
 const guild = new Schema<IGuild>({
     id: { type: String, require: true, unique: true},
     name: { type: String, require: true },
-    warnSystem: {
+    warning: {
         channel: { type: String, require: false },
         enabled: { type: Boolean, require: true, default: false },
+        appealMessage: { type: String, require:false },
+        maxActiveWarns: {type: Number, require: true, default: 3}
     },
-    TimeoutLog: {
+    timeoutlog: {
         channel: { type: String, require: false },
         enabled: { type: Boolean, require: true, default: false },
     }
-}),
+})
 
-guilds = model<IGuild>('guilds', guild);
+const guilds = model<IGuild>('guilds', guild);
 
 export const guildDB = {
     get: getConfig,
-    setFeture,
+    DB: guilds
 }
 
 async function getConfig(guild: Guild) {
@@ -45,44 +51,4 @@ async function getConfig(guild: Guild) {
             return guilds.create({id:guild.id, name:guild.name})
     } catch (error) {console.log(error)}
 
-}
-async function setFeture(record: GuildRecord, feture: number, enable:boolean | null, channel: TextChannel | null ) {
-    
-    switch (feture) {
-
-        case Fetures.Timeout:
-            timeout(record, enable, channel)
-            break;
-
-        case Fetures.Warn:
-            warn(record, enable, channel)
-            break;
-
-        default:
-            break;
-    }
-}
-
-function timeout(
-    record: GuildRecord,
-    enable: boolean | null, 
-    channel: TextChannel | null) {
-        
-    if(enable)
-        record.TimeoutLog.enabled = enable;
-    if(channel)
-        record.TimeoutLog.channel = channel.id;
-    record.save()
-}
-
-function warn(
-    record: GuildRecord,
-    enable: boolean | null,
-    channel: TextChannel | null) {
-        
-    if(enable)
-        record.warnSystem.enabled = enable;
-    if(channel)
-        record.warnSystem.channel = channel.id;
-    record.save()
 }

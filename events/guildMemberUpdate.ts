@@ -16,6 +16,7 @@ export async function execute(before: GuildMember, after: GuildMember) {
 	} else if(before.isCommunicationDisabled() && !after.isCommunicationDisabled()) {
 		
 		const logChannel = await getTimeoutLogChannel(after.guild)
+		// console.log(logChannel)
 		if(logChannel != undefined) {
 			timeoutLogMessage(after.guild, after, logChannel, true)
 		}

@@ -1,11 +1,9 @@
-import { ChatInputCommandInteraction, ColorResolvable, CommandInteraction, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandUserOption, TextChannel, User } from "discord.js";
-import { Document, Types } from "mongoose";
-import { guildDB, ISystem } from "../../util/schema/guilds";
-import { renderWarnings, warnDB, warningRecord } from "../../util/schema/warns";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ColorResolvable, CommandInteraction, EmbedBuilder, Guild, GuildManager, GuildMember, MessageActionRowComponentBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, SlashCommandIntegerOption, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandUserOption, TextChannel, User } from "discord.js";
+import { guildDB, ISystem, IwarnningSystem } from "../../util/schema/guilds";
+import { warnDB, warningRecord } from "../../util/schema/warns";
+import { banDmEmbed, buttons, dmEmbed, removeWarnEmbed, viewWarningMessageRender, warnEmbedRender } from "../../util/system/warningRender";
 
-const premission = PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
-
-userOption = new SlashCommandUserOption()
+const userOption = new SlashCommandUserOption()
     .setName('target')
     .setDescription('User')
     .setRequired(true),
@@ -35,9 +33,14 @@ warnView = new SlashCommandSubcommandBuilder()
             { name: '3 Months', value: 3 },
             { name: '6 Months', value: 6 },
             { name: '9 Months', value: 9 },
-            { name: '1 year', value: 12 },
-        )),
-
+            { name: '1 year', value: 12 }))
+    .addBooleanOption(option => option
+        .setName('show')
+        .setDescription('Show the view warns in the channel')),
+duration = new SlashCommandIntegerOption()
+    .setName('duration')
+    .setDescription('Number of days, the warning till end of the warn')
+    .setMinValue(0),
 warnAdd = new SlashCommandSubcommandBuilder()
     .setName('add')
     .setDescription('Warn a user')
@@ -46,34 +49,16 @@ warnAdd = new SlashCommandSubcommandBuilder()
         .setName('reason')
         .setDescription('Reason why member is warned')
         .setMaxLength(400))
-    .addIntegerOption(option => option
-        .setName('duration')
-        .setDescription('Number of days, the warning will last for')),
-
-warnUpdate = new SlashCommandSubcommandBuilder()
-    .setName('update')
-    .setDescription('Update warning')
-    .addStringOption(option => option
-        .setName('id')
-        .setDescription('The Id number for the warn')
-        .setMaxLength(24)
-        .setMinLength(24)
-        .setRequired(true))
-    .addStringOption(option => option
-        .setName('reason')
-        .setDescription('Reason why member is warned')
-        .setRequired(true)
-        .setMaxLength(400))
-        
+    .addIntegerOption(duration)
+      
 export const slashCommandBuilder = new SlashCommandBuilder()
     .setName('warn')
     .setDescription('Warn Command')
     .setDMPermission(false)
-    .setDefaultMemberPermissions(premission)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
     .addSubcommand(warnRemove)
     .addSubcommand(warnView)
-    .addSubcommand(warnAdd)
-    .addSubcommand(warnUpdate)/**,
+    .addSubcommand(warnAdd)/**,
 messageContextMenuCommand = new ContextMenuCommandBuilder()
     .setName('Warn')
     .setDMPermission(false)
@@ -87,7 +72,7 @@ userContextMenuCommand = new ContextMenuCommandBuilder()
 */
 export async function commandExecute(interaction: CommandInteraction) {
     const config = await guildDB.get(interaction.guild!)
-    if(!config?.warnSystem.enabled) {
+    if(!config?.warning.enabled) {
         interaction.reply({
             content: 'Warnning Subsystem is disabled use </config system:1039674799120711781> to enable it',
             ephemeral: true
@@ -96,25 +81,22 @@ export async function commandExecute(interaction: CommandInteraction) {
     }
     // console.log(config)
     if(interaction.isChatInputCommand()) {
-        const officer = interaction.user,
-        target = interaction.options.getUser('target', true)
+        const officer = interaction.member as GuildMember,
+        target = interaction.options.getMember('target')! as GuildMember
 
-        if(target.bot || target == officer) {
+        if(target.user.bot || target == officer) {
             interaction.reply({ content:'Target can not be a bot or your self', ephemeral:true })
             return;
         }
         switch (interaction.options.getSubcommand(true)) {
             case 'add':
-                await add(interaction, target, officer, config?.warnSystem)
+                await add(interaction, target!, officer, config?.warning)
                 break;
             case 'remove':
-                remove(interaction, config?.warnSystem)
+                remove(interaction, config?.warning)
                 break;
             case 'view':
-                view(interaction, config?.warnSystem)
-                break;
-            case 'update':
-                update(interaction, config?.warnSystem)
+                view(interaction, config?.warning)
                 break;
             default:
                 break;
@@ -122,114 +104,115 @@ export async function commandExecute(interaction: CommandInteraction) {
     }
 }
 
-async function add(interaction: ChatInputCommandInteraction, target:User, officer:User, config: ISystem) {
-    
-    let reason = interaction.options.getString('reason'),
-    color: ColorResolvable = "Yellow"
-    const exsitingWarns = await warnDB.get(interaction.guildId!, target.id),
-    numberofWarns = exsitingWarns.length,
-    newWarn = await warnDB.add(interaction.guildId!, target, officer, reason, null),
-    exspiresAt = Math.floor(newWarn.expireAt.getTime()/1000);
-    if(reason == null)
-        reason = 'No reason Given'
-
-    if(numberofWarns >= 2)
-        color = 'Red'
-
-    const embed = new EmbedBuilder()
-        .setTitle('Warn')
-        .setDescription(`**Reason:** ${reason}`)
-        .setThumbnail(target.avatarURL())
-        .setColor(color)
-        .addFields(
-            { name: 'Target', value: `${target}\n${target.tag}`, inline: true },
-            { name: 'Officer', value: `${officer}\n${officer.tag}`, inline: true},
-            { name: 'Expires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
-        .setFooter({text: `ID: ${newWarn._id}`})
-        .setTimestamp(),
-    channel = interaction.guild?.channels.cache.get(config.channel) as TextChannel
-    // console.log(channel)
-    
-    if(channel)
-        channel.send({embeds:[embed]}).catch((err) => {console.log(err)})
-    
-    interaction.reply({embeds:[embed], ephemeral:true})
-    
-    let dmEmbed = new EmbedBuilder()
-
-    if(length == 2) {
-        dmEmbed = dmEmbed
-            .setColor('Red')
-            .setTitle(`You have been Banned from ${interaction.guild?.name}`)
-            .setDescription(`After getting three active warnings you are banned.\n**Reason:** ${reason}`)
-        target.send({embeds:[dmEmbed]})
-        interaction.guild?.members.ban(target).catch(err => console.log(err))
-    } else {
-        dmEmbed = dmEmbed
-            .setTitle(`Warning from ${interaction.guild?.name}`)
-            .setDescription(`**Reason:** ${reason}`)
-            .setColor('Yellow').addFields({
-                name: 'About', 
-                value:'Should you recive three(3) active warrning this will resalt in a ban', 
-                inline:true
-            })
-        target.send({embeds:[dmEmbed]})
+async function add(interaction: ChatInputCommandInteraction, target:GuildMember, officer:GuildMember, config: IwarnningSystem) {
+    if(target.permissions.has(PermissionsBitField.Flags.ManageGuild,true)) {
+        interaction.reply({content:'You can not warn this user bcaues that have `Manager Server` or `Administrator` permissions', ephemeral:true})
+        return
     }
+
+
+    let reason:string | null | undefined = interaction.options.getString('reason'),
+    days:number | null | undefined = interaction.options.getInteger('duration')
+    
+    // If reason is not given reason is set to undifined
+    if(reason == null) { reason = undefined }
+    if(days == null) { days = undefined}
+    
+    
+    const // exsitingWarns = await warnDB.find(interaction.guildId!, target.id),
+    newWarn = await warnDB.create(interaction.guildId!, target.user, officer.user, reason, days),
+    logChannel = interaction.guild?.channels.cache.get(config.channel!) as TextChannel,
+    numberOfWarns = (await warnDB.find(interaction.guildId!,target.id, new Date)).length,
+
+    // Log Embed
+    logEmbed = warnEmbedRender(newWarn, target.user),
+
+    //Action Row
+    viewWarnButton = buttons.viewWarnButton(target.id)
+   
+
+    // interaction reply
+    interaction.reply({ embeds:[logEmbed], components:[new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(viewWarnButton)], ephemeral:true })
+    
+
+    const actionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(buttons.updateButton(newWarn), viewWarnButton)
+    if(days != 0)
+        actionRow.addComponents(buttons.removeButton(newWarn))
+    // Message to log channel
+    if(logChannel) { logChannel.send({ embeds:[logEmbed], components:[actionRow] })}
+    
+    const dm = dmEmbed(interaction,newWarn,numberOfWarns)
+    // if user has gotten 3 active warnings and the most resent is not a 0 day warn and if they can be banned
+    if(days != 0 && numberOfWarns >= config.maxActiveWarns && target.bannable && config.maxActiveWarns != 0) {
+        const reason = `Automatic action after ${config.maxActiveWarns} concurrent warnings`
+        await target.send({embeds:[dm, banDmEmbed(interaction, reason, config.appealMessage)]})
+        target.ban({reason:reason})
+    } else {
+        target.send({embeds:[dm]}).catch(err => console.log(err))
+    }
+
+
+    
+
 }
 
 async function remove(interaction: ChatInputCommandInteraction, config: ISystem) {
+    
     const permDelete = interaction.options.getBoolean('delete'),
     id = interaction.options.getString('id',true)
-    let content:string
-    if(permDelete){
-        const record = await warnDB.removeById(id, permDelete)
-        content = `Warning for <@${record?.target.id}> has been deleted`
-    } else {
-        const record = await warnDB.removeById(id)
-        content = `Warning for <@${record?.target.id}> has been removed`
+
+    let status = 'Removed',
+    record: warningRecord | null | undefined
+    
+    if(permDelete && interaction.memberPermissions?.has(PermissionsBitField.Flags.ManageGuild, true)) {
+        record = await warnDB.removeById(id)
+        status = 'Deleted'
+    } else if(permDelete) {
+        interaction.reply({content:'You do not have the permission to delete warnings', ephemeral:true})
+        return
+
+    } else { record = await warnDB.updateById(id, interaction.user, undefined, 0) }
+
+    if(record == null) {
+        interaction.reply({content:'Error recored not found', ephemeral:true})
+        return
     }
-    interaction.reply({content:content, ephemeral:true})
-    const channel = interaction.guild?.channels.cache.get(config.channel) as TextChannel
-    if(channel)
-        channel.send({content:'A ' + content.toLowerCase() + ` by ${interaction.user}`})
+
+    const updateEmbed = removeWarnEmbed(record,status,interaction.user),
+    row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(buttons.viewWarnButton(record.target.id))
+    
+    const channel = interaction.guild?.channels.cache.get(config.channel!) as TextChannel
+    if(channel) { channel.send({embeds:[updateEmbed], components:[row]}).catch((err) => console.log(err)) }
+
+    interaction.reply({embeds:[updateEmbed], components:[row], ephemeral:true})
+
+
 }
 
 async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
     const target = interaction.options.getUser('target',true),
-        months = interaction.options.getInteger('scope'),
-        guildId = interaction.guildId!,
-        date = new Date()
+    months = interaction.options.getInteger('scope'),
+    guildId = interaction.guildId!,
+    actionRow:ActionRowBuilder<MessageActionRowComponentBuilder>[] = []
+    let date:Date | undefined = new Date(),
+    show:boolean | null | undefined = interaction.options.getBoolean('show')
     
-    console.log(target)
-    
-    let records:warningRecord[]
-    // console.log(months)
-    if(months == null) {
-        records = await warnDB.get(guildId, target.id, date)
-    } else if(months == 0) {
-        records = await warnDB.get(guildId, target.id)
-    } else {
+    if(months == 0) {
+        date = undefined
+    } else if(months != null) {
         date.setMonth(-months)
-        records = await warnDB.get(guildId, target.id, date)
     }
-    interaction.reply(renderWarnings(records, target))
-    
-}
 
-async function update(interaction: ChatInputCommandInteraction, config: ISystem) {
-    const id = interaction.options.getString('id', true),
-    reason = interaction.options.getString('reason', true),
-    record = await warnDB.updateById(id,reason,interaction.user.id),
-    exspiresAt = Math.floor(record!.expireAt.getTime()/1000)
-    const embed = new EmbedBuilder()
-            .setTitle('Warn')
-            .setDescription(`**Reason:** ${record?.reason}`)
-            .setColor('Green')
-            .addFields(
-                { name: 'Target', value: `<@${record?.target.id}>`, inline: true },
-                { name: 'Officer', value: `<@${record?.officer.id}>`, inline: true},
-                { name: 'Expires', value: `<t:${exspiresAt}:R>\n <t:${exspiresAt}:F>`, inline: true})
-            .setFooter({text: `ID: ${record?._id}`})
-            .setTimestamp(record?.createdAt)
-    interaction.reply({embeds:[embed]})
+    const records = await warnDB.find(guildId, target.id, date)
+
+    if(records.length == 0) {
+        interaction.reply({ content:`${target} has no active warns or warns in the selected scope`, ephemeral:true })
+        return
+    } else if(records.length > 3) {
+        actionRow.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(buttons.leftButton(target.id),buttons.rightButton(target.id) ))
+    }
+
+    if(show == null) { show = undefined }
+   
+    interaction.reply({embeds:viewWarningMessageRender(records), components:actionRow, ephemeral:!show})
 }

@@ -26,7 +26,7 @@ interface interaction {
 }
 
 export interface button extends interaction {
-    buttomInteractionExecute(interaction: ButtonInteraction): any
+    buttonInteractionExecute(interaction: ButtonInteraction): any
 }
 
 export interface selectMenu extends interaction {

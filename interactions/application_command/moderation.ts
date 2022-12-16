@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, GuildMember, MessageActionRowComponentBuilder, PermissionFlagsBits, SlashCommandBuilder, SlashCommandSubcommandBuilder, UserSelectMenuBuilder, VoiceChannel } from "discord.js";
+import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, GuildMember, MessageActionRowComponentBuilder, PermissionsBitField, SlashCommandBuilder, SlashCommandSubcommandBuilder, UserSelectMenuBuilder, VoiceChannel } from "discord.js";
 
 const moveCommand = new SlashCommandSubcommandBuilder()
     .setName('move')
@@ -43,7 +43,7 @@ timeoutCommand = new SlashCommandSubcommandBuilder()
 export const slashCommandBuilder = new SlashCommandBuilder()
     .setName('moderation')
     .setDescription('Moderation Commands')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
     .addSubcommand(moveCommand)
     .addSubcommand(timeoutCommand)
 
@@ -81,7 +81,7 @@ async function moveFunction(interaction: ChatInputCommandInteraction) {
         .setCustomId(`usermove ${destination.id} ${source.id}`)
         .setPlaceholder('Select users')
         .setMaxValues(8)
-        .setMinValues(1),
+        .setMinValues(2),
   
     topActionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(usermenu)
     
