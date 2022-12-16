@@ -87,6 +87,7 @@ export function banDmEmbed(interation:CommandInteraction, banReason:string, appe
         .setTimestamp()
         .setTitle('Banned')
         .setDescription(banReason)
+        .setColor(Colors.Red)
     if(appealMessage) embed.addFields({name:'Appeal Info', value:appealMessage})
     return embed
 }

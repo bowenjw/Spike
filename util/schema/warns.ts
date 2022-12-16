@@ -73,7 +73,7 @@ async function findWarnById(id:string) {
 
 async function updateWarning(id:string, updater:User, reason?:string, days?:number) {
     
-    if(!(reason || days)) return undefined
+    if(reason == undefined && days == undefined) return undefined
     
     const expireAt:Date = setDate(days)
     let update:any = new Object()
@@ -82,7 +82,7 @@ async function updateWarning(id:string, updater:User, reason?:string, days?:numb
     if(reason) update["reason"] = reason
     if(expireAt) update["expireAt"] = expireAt
     
-    return warnings.findByIdAndUpdate(id, update)
+    return await warnings.findByIdAndUpdate(id, update)
 }
 
 async function removeWarning(id:string) {

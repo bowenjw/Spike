@@ -140,16 +140,19 @@ async function add(interaction: ChatInputCommandInteraction, target:GuildMember,
         actionRow.addComponents(buttons.removeButton(newWarn))
     // Message to log channel
     if(logChannel) { logChannel.send({ embeds:[logEmbed], components:[actionRow] })}
-
-    target.send({embeds:[dmEmbed(interaction,newWarn,numberOfWarns)]}).catch(err => console.log(err))
-
-
+    
+    const dm = dmEmbed(interaction,newWarn,numberOfWarns)
     // if user has gotten 3 active warnings and the most resent is not a 0 day warn and if they can be banned
-    if(days != 0 && numberOfWarns == config.maxActiveWarns && target.bannable) {
-        const reason = `automatic action ${config.maxActiveWarns} concurrent warnings`
-        await target.send({embeds:[banDmEmbed(interaction, reason, config.appealMessage)]})
+    if(days != 0 && numberOfWarns >= config.maxActiveWarns && target.bannable && config.maxActiveWarns != 0) {
+        const reason = `Automatic action after ${config.maxActiveWarns} concurrent warnings`
+        await target.send({embeds:[dm, banDmEmbed(interaction, reason, config.appealMessage)]})
         target.ban({reason:reason})
+    } else {
+        target.send({embeds:[dm]}).catch(err => console.log(err))
     }
+
+
+    
 
 }
 

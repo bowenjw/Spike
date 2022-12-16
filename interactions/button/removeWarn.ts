@@ -1,5 +1,4 @@
 import { ActionRowBuilder, ButtonInteraction, MessageActionRowComponentBuilder, PermissionsBitField, TextChannel } from "discord.js";
-import { guildDB } from "../../util/schema/guilds";
 import { warnDB } from "../../util/schema/warns";
 import { buttons, warnEmbedRender } from "../../util/system/warningRender";
 
@@ -13,7 +12,7 @@ export async function buttonInteractionExecute(interaction:ButtonInteraction) {
     // }
     
     const warn = (await warnDB.updateById(interaction.customId.split(' ')[1],interaction.user,undefined,0))
-
+    console.log(warn)
     if(!warn) {
         interaction.message.delete()
         interaction.reply({content:'Warning has already been deleted', ephemeral:true})
