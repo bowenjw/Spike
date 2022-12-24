@@ -2,7 +2,7 @@ import fs from 'fs';
 import { connect, set } from 'mongoose';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv'
-import { Event } from './util/types';
+import { Event } from './src/interfaces/types';
 // Conect to the Data Base
 // mongoose.connect(process.env.MONGO_URI!,{keepAlive:true})
 //	.then(() => console.log('Conected to DB\n'))

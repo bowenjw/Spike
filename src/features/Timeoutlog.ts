@@ -1,5 +1,5 @@
 import { AuditLogEvent, EmbedBuilder, Guild, GuildMember, TextChannel } from "discord.js";
-import { guildDB } from "../schema/guilds";
+import { guildDB } from "../../util/schema/guilds";
 
 export async function timeoutLogMessage(guild:Guild, after: GuildMember, logChannel:TextChannel, timeoutEnded:boolean, ) {
     const auditlog = await guild.fetchAuditLogs({limit: 1, type: AuditLogEvent.MemberUpdate || AuditLogEvent.MemberDisconnect}),

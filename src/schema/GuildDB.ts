@@ -1,6 +1,9 @@
-import { Guild, Snowflake, TextChannel } from 'discord.js';
+import { Guild, Snowflake } from 'discord.js';
 import { Document, Schema, model, Types } from 'mongoose';
-import { Fetures } from '../types';
+
+
+
+
 
 
 export interface ISystem {

@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ColorResolvable, CommandInteraction, EmbedBuilder, Guild, GuildManager, GuildMember, MessageActionRowComponentBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, SlashCommandIntegerOption, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandUserOption, TextChannel, User } from "discord.js";
 import { guildDB, ISystem, IwarnningSystem } from "../../util/schema/guilds";
 import { warnDB, warningRecord } from "../../util/schema/warns";
-import { banDmEmbed, buttons, dmEmbed, removeWarnEmbed, viewWarningMessageRender, warnEmbedRender } from "../../util/system/warningRender";
+import { banDmEmbed, buttons, dmEmbed, removeWarnEmbed, viewWarningMessageRender, warnEmbedRender } from "../features/warningRender";
 
 const userOption = new SlashCommandUserOption()
     .setName('target')

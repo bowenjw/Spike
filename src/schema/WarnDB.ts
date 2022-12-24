@@ -1,6 +1,13 @@
 import { Snowflake, User } from 'discord.js';
 import { Document, Schema, model, Types, DateSchemaDefinition} from 'mongoose';
 
+
+
+
+
+
+
+
 interface Iuser {
     id: Snowflake,
     tag: String
@@ -22,6 +29,7 @@ const userObject = {
     id: { type: String, require:true },
     tag: { type: String, require:true }
 },
+noReason = 'No Reason Given',
 warn = new Schema<Iwarn>({
     guildId: { type: String, required: true, ref: 'guilds' },
     target: userObject,
@@ -30,11 +38,11 @@ warn = new Schema<Iwarn>({
         id: { type: String },
         tag: { type: String },
     },
-    reason: { type: String, required: true, default: 'No Reason Given' },
+    reason: { type: String, required: true, default: noReason },
     expireAt: { type: Date, required:true }
 }, {timestamps: true}),
-warnings = model<Iwarn>('warnings', warn),
-noReason = 'No Reason Given'
+warnings = model<Iwarn>('warnings', warn)
+
 
 export const warnDB = {
     create: createWarning,
@@ -68,7 +76,7 @@ async function findWarnings(guildId:Snowflake, targetId: Snowflake, expireAt?:Da
     return warnings.find(filter)
 }
 async function findWarnById(id:string) {
-    return warnings.findById(id)
+    return await warnings.findById(id)
 }
 
 async function updateWarning(id:string, updater:User, reason?:string, days?:number) {
@@ -88,7 +96,6 @@ async function updateWarning(id:string, updater:User, reason?:string, days?:numb
 async function removeWarning(id:string) {
     return warnings.findByIdAndRemove(id)
 }
-
 
 /**
  * 
