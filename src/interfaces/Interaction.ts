@@ -1,6 +1,6 @@
-import { BaseInteraction } from "discord.js";
+import { Interaction } from "discord.js";
 
-export interface Interaction {
+export interface Iinteraction {
     name: string;
-    execute(interaction: BaseInteraction): Promise<void>;
+    execute(interaction: Interaction): void;
 }

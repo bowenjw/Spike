@@ -1,24 +1,10 @@
-import { Guild, Snowflake } from 'discord.js';
+import { Guild } from 'discord.js';
 import { Document, Schema, model, Types } from 'mongoose';
+import { IGuild, ISystem, IwarnningSystem } from '../interfaces';
 
-
-
-
-
-
-export interface ISystem {
-    channel?: Snowflake,
-    enabled: boolean
-}
-export interface IwarnningSystem extends ISystem {
-    appealMessage?: string,
-    maxActiveWarns: number
-}
-export interface IGuild{
-    id: Snowflake,
-    name: string,
-    warning: IwarnningSystem
-    timeoutlog: ISystem
+enum Fetures {
+    Timeoutlog = "timeout",
+    Warnings = "warning"
 }
 
 export type GuildRecord = (Document<unknown, any, IGuild> & IGuild & {_id: Types.ObjectId; })
@@ -36,22 +22,25 @@ const guild = new Schema<IGuild>({
         channel: { type: String, require: false },
         enabled: { type: Boolean, require: true, default: false },
     }
-})
+}),
+guildsModel = model<IGuild>('guilds', guild);
 
-const guilds = model<IGuild>('guilds', guild);
-
-export const guildDB = {
-    get: getConfig,
-    DB: guilds
+export const guilds = {
+    get,
+    set,
+    DB: guildsModel
 }
 
-async function getConfig(guild: Guild) {
+async function get(guild: Guild) {
     try {
-        const record = await guilds.findOne({id:guild.id})
+        const record = await guildsModel.findOne({id:guild.id})
         if(record)
             return record
         else 
-            return guilds.create({id:guild.id, name:guild.name})
+            return await guildsModel.create({id:guild.id, name:guild.name})
     } catch (error) {console.log(error)}
+}
 
+async function set(guild: Guild, feture:Fetures, options:ISystem | IwarnningSystem) {
+    
 }

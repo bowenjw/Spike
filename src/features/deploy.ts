@@ -1,33 +1,27 @@
-import ExtendedClient from '../classes/Client';
+import ExtendedClient from '../classes/ExtendedClient';
 import { REST, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord.js';
-import { ApplicationCommand, ContextMenuCommandBuilder, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from 'discord.js';
-import { Command } from '../interfaces';
+import { ApplicationCommand } from 'discord.js';
+import { Icommand } from '../interfaces';
 import { readdirSync } from 'fs';
+import path from 'path';
 
-export default async function deploy(client: ExtendedClient) {
+export async function deploy(client: ExtendedClient) {
     // Skip if no-deployment flag is set
     if (process.argv.includes('--no-deployment')) return;
 
-    const rest = new REST({ version: '10' }).setToken(client.token!),
+    const rest = new REST({ version: client.RESTVersion }).setToken(client.token!),
         commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 
     console.log(`Deploying commands...`);
-    
-    readdirSync(client.commandPath).filter(file => file.endsWith('.ts'))
-    .forEach((file) => {
-        import(`${client.commandPath}/${file.slice(0,-3)}`)
-        .then((command:Command) => {
-            let builder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | ContextMenuCommandBuilder | undefined = command.slashCommandBuilder;
-            if(builder) commands.push(builder.toJSON());
-            
-            builder = command.messageContextMenuCommand;
-            if(builder) commands.push(builder.toJSON());
-
-            builder = command.userContextMenuCommand;
-            if(builder) commands.push(builder.toJSON());
+    // console.log(readdirSync(client.commandPath))
+    for (const file of readdirSync(client.commandPath)) {
+        await import( path.join(client.commandPath, file) )
+        .then((command:Icommand) => { 
+            // console.log(command)
+            commands.push(command.builder.toJSON()) 
         })
-    })
-
+    }
+    
     // Deploy global commands
     const applicationCommands = await rest.put(Routes.applicationCommands(client.user!.id), { body: commands })
         .catch(console.error) as ApplicationCommand[];

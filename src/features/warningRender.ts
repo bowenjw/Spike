@@ -1,5 +1,5 @@
 import { Snowflake, EmbedBuilder, ColorResolvable, ButtonBuilder, ButtonStyle, User, CommandInteraction, Colors } from "discord.js"
-import { warningRecord } from "../schema/warns"
+import { warningRecord } from "../schema/warnings"
 
 export enum WarmEmbedColor {
     Green = '#57F287',
@@ -20,7 +20,7 @@ export function warnEmbedRender(record:warningRecord, target:User) {
             { name: 'Expires', value: `<t:${expireAt}:R>\n <t:${expireAt}:F>`, inline: true})
         
         .setColor(WarmEmbedColor.Yellow)
-        .setThumbnail(target.avatarURL())
+        .setThumbnail(target.avatarURL({forceStatic:true}))
         .setFooter({text: `ID: ${record._id}`})
         .setTimestamp((record as any).updatedAt)
 

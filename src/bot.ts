@@ -1,7 +1,7 @@
 import { GatewayIntentBits as Intents } from 'discord.js';
-import ExtendedClient from './classes/Client';
+import ExtendedClient from './classes/ExtendedClient';
 import { config } from 'dotenv';
-import { connect, set } from 'mongoose';
+import mongoose from 'mongoose';
 
 // Load .env file contents
 config();
@@ -18,5 +18,5 @@ export const client = new ExtendedClient({
 client.init()
 
 // Mongoose
-connect(process.env.MONGO_URI!)
-set('strictQuery', false)
+mongoose.connect(process.env.MONGO_URI!)
+mongoose.set('strictQuery', false)

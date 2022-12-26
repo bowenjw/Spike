@@ -1,7 +1,7 @@
 import { AnySelectMenuInteraction, VoiceChannel } from "discord.js";
 
-export const customid = 'usermove'
-export function selectMenueInteractionExecute(interaction: AnySelectMenuInteraction){
+export const name = 'usermove'
+export function execute(interaction: AnySelectMenuInteraction){
     const destination = interaction.guild?.channels.cache.find(channel => channel.id === interaction.customId.split(' ')[1]) as VoiceChannel,
     source = interaction.guild?.channels.cache.find(channel => channel.id === interaction.customId.split(' ')[2]) as VoiceChannel,
     members = source.members.filter(member => interaction.values.includes(member.id))

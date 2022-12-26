@@ -1,16 +1,16 @@
 import { ActionRowBuilder, ButtonInteraction, MessageActionRowComponentBuilder } from "discord.js";
-import { warnDB } from "../../util/schema/warns";
-import { buttons, viewWarningMessageRender } from "../../util/system/warningRender";
+import { warnings } from "../../schema";
+import { viewWarningMessageRender, buttons } from "../../features/warningRender";
 
-export async function buttonInteractionExecute(interaction:ButtonInteraction) {
-    
+export const name = 'viewWarn'
+
+export async function execute(interaction:ButtonInteraction) {
+    // console.log(interaction.customId)
     const pream = interaction.customId.split(' '),
     targetId = pream[1], start = Number(pream[2]),
-    records = await warnDB.find(interaction.guildId!, targetId, new Date)
+    records = await warnings.find(interaction.guildId!, targetId, new Date)
     
-    if(records.length == 0) {
-        interaction.reply({content:`<@${targetId}> has no active warnings`, ephemeral:true})
-    } else if(isNaN(start)) {
+    if(isNaN(start)) {
         interaction.reply({embeds:viewWarningMessageRender(records,0), ephemeral:true})
     } else {
 
@@ -24,6 +24,6 @@ export async function buttonInteractionExecute(interaction:ButtonInteraction) {
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         buttons.leftButton(targetId,leftButtonDisabled,start),
         buttons.rightButton(targetId,rightButtonDisabled,start))
-        interaction.update({embeds:viewWarningMessageRender(await warnDB.find(interaction.guildId!, targetId), start), components:[row]})
+        interaction.update({embeds:viewWarningMessageRender(await warnings.find(interaction.guildId!, targetId), start), components:[row]})
     }
 }

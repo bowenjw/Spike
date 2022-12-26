@@ -1,7 +1,8 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ColorResolvable, CommandInteraction, EmbedBuilder, Guild, GuildManager, GuildMember, MessageActionRowComponentBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, SlashCommandIntegerOption, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandUserOption, TextChannel, User } from "discord.js";
-import { guildDB, ISystem, IwarnningSystem } from "../../util/schema/guilds";
-import { warnDB, warningRecord } from "../../util/schema/warns";
-import { banDmEmbed, buttons, dmEmbed, removeWarnEmbed, viewWarningMessageRender, warnEmbedRender } from "../features/warningRender";
+import { ActionRowBuilder, ChatInputCommandInteraction, CommandInteraction, GuildMember, MessageActionRowComponentBuilder, PermissionsBitField, SlashCommandBuilder, SlashCommandIntegerOption, SlashCommandSubcommandBuilder, SlashCommandUserOption, TextChannel } from "discord.js";
+import { banDmEmbed, buttons, dmEmbed, removeWarnEmbed, viewWarningMessageRender, warnEmbedRender } from "../../features/warningRender";
+import { guilds, warnings } from "../../schema";
+import { ISystem, IwarnningSystem } from "../../interfaces";
+import { warningRecord } from "../../schema/warnings";
 
 const userOption = new SlashCommandUserOption()
     .setName('target')
@@ -51,27 +52,17 @@ warnAdd = new SlashCommandSubcommandBuilder()
         .setMaxLength(400))
     .addIntegerOption(duration)
       
-export const slashCommandBuilder = new SlashCommandBuilder()
+export const builder = new SlashCommandBuilder()
     .setName('warn')
     .setDescription('Warn Command')
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
     .addSubcommand(warnRemove)
     .addSubcommand(warnView)
-    .addSubcommand(warnAdd)/**,
-messageContextMenuCommand = new ContextMenuCommandBuilder()
-    .setName('Warn')
-    .setDMPermission(false)
-    .setDefaultMemberPermissions(premission)
-    .setType(ApplicationCommandType.Message),
-userContextMenuCommand = new ContextMenuCommandBuilder()
-    .setName('Warn')
-    .setDMPermission(false)
-    .setDefaultMemberPermissions(premission)
-    .setType(ApplicationCommandType.User)
-*/
-export async function commandExecute(interaction: CommandInteraction) {
-    const config = await guildDB.get(interaction.guild!)
+    .addSubcommand(warnAdd)
+    
+export async function execute(interaction: CommandInteraction) {
+    const config = await guilds.get(interaction.guild!)
     if(!config?.warning.enabled) {
         interaction.reply({
             content: 'Warnning Subsystem is disabled use </config system:1039674799120711781> to enable it',
@@ -120,9 +111,9 @@ async function add(interaction: ChatInputCommandInteraction, target:GuildMember,
     
     
     const // exsitingWarns = await warnDB.find(interaction.guildId!, target.id),
-    newWarn = await warnDB.create(interaction.guildId!, target.user, officer.user, reason, days),
+    newWarn = await warnings.create(interaction.guildId!, target.user, officer.user, reason, days),
     logChannel = interaction.guild?.channels.cache.get(config.channel!) as TextChannel,
-    numberOfWarns = (await warnDB.find(interaction.guildId!,target.id, new Date)).length,
+    numberOfWarns = (await warnings.find(interaction.guildId!,target.id, new Date)).length,
 
     // Log Embed
     logEmbed = warnEmbedRender(newWarn, target.user),
@@ -165,13 +156,13 @@ async function remove(interaction: ChatInputCommandInteraction, config: ISystem)
     record: warningRecord | null | undefined
     
     if(permDelete && interaction.memberPermissions?.has(PermissionsBitField.Flags.ManageGuild, true)) {
-        record = await warnDB.removeById(id)
+        record = await warnings.removeById(id)
         status = 'Deleted'
     } else if(permDelete) {
         interaction.reply({content:'You do not have the permission to delete warnings', ephemeral:true})
         return
 
-    } else { record = await warnDB.updateById(id, interaction.user, undefined, 0) }
+    } else { record = await warnings.updateById(id, interaction.user, undefined, 0) }
 
     if(record == null) {
         interaction.reply({content:'Error recored not found', ephemeral:true})
@@ -203,7 +194,7 @@ async function view(interaction: ChatInputCommandInteraction, config: ISystem) {
         date.setMonth(-months)
     }
 
-    const records = await warnDB.find(guildId, target.id, date)
+    const records = await warnings.find(guildId, target.id, date)
 
     if(records.length == 0) {
         interaction.reply({ content:`${target} has no active warns or warns in the selected scope`, ephemeral:true })

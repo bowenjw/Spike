@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionsBitField, SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandChannelOption, TextChannel } from "discord.js";
-import { UpdateQuery } from "mongoose";
-import { guildDB, IGuild } from "../../util/schema/guilds";
+import { guilds } from "../../schema";
+
 
 const active = new SlashCommandBooleanOption()
     .setName('active')
@@ -13,7 +13,7 @@ channel = new SlashCommandChannelOption()
     .addChannelTypes(ChannelType.GuildText)
 
 
-export const slashCommandBuilder = new SlashCommandBuilder()
+export const builder = new SlashCommandBuilder()
     .setName('config')
     .setDescription('config command')
     .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
@@ -35,9 +35,10 @@ export const slashCommandBuilder = new SlashCommandBuilder()
         .addIntegerOption(option => option
             .setName('maxwarns')
             .setDescription('set to 0 to disable autoban')
-            .setMinValue(0)))
+            .setMinValue(0))),
+global = true
 
-export async function commandExecute(interaction: ChatInputCommandInteraction) {
+export async function execute(interaction: ChatInputCommandInteraction) {
     const subcommand = interaction.options.getSubcommand(true)
     switch (subcommand) {
         case 'warning':
@@ -70,7 +71,7 @@ async function warning(interaction: ChatInputCommandInteraction) {
     if(max != null) update['warning.maxActiveWarns'] = max
     if(message) update['warning.appealMessage'] = message
 
-    await guildDB.DB.findOneAndUpdate({id:interaction.guildId!},{$set:update})
+    await guilds.DB.findOneAndUpdate({id:interaction.guildId!},{$set:update})
 
     interaction.reply({content:'Warning System has been updated', ephemeral:true})
 
@@ -88,7 +89,7 @@ async function timeoutLog(interaction: ChatInputCommandInteraction) {
     if(status != null) update["timeoutlog.enabled"] = status
     if(channel) update["timeoutlog.channel"] = channel.id
 
-    await guildDB.DB.findOneAndUpdate({id:interaction.guildId!}, { $set: update})
+    await guilds.DB.findOneAndUpdate({id:interaction.guildId!}, { $set: update})
 
     interaction.reply({content:'Timeout log has been updated', ephemeral:true})
 

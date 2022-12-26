@@ -1,27 +1,6 @@
 import { Snowflake, User } from 'discord.js';
 import { Document, Schema, model, Types, DateSchemaDefinition} from 'mongoose';
-
-
-
-
-
-
-
-
-interface Iuser {
-    id: Snowflake,
-    tag: String
-}
-
-interface Iwarn  {
-    guildId: Snowflake,
-    target: Iuser,
-    officer: Iuser,
-    updater?:Iuser,
-    reason: string,
-    expireAt: Date,
-    createdAt: Date
-}
+import { Iwarn } from '../interfaces';
 
 export type warningRecord = Document<unknown, any, Iwarn> & Iwarn & {_id: Types.ObjectId;}
 
@@ -41,10 +20,10 @@ warn = new Schema<Iwarn>({
     reason: { type: String, required: true, default: noReason },
     expireAt: { type: Date, required:true }
 }, {timestamps: true}),
-warnings = model<Iwarn>('warnings', warn)
+warningModel = model<Iwarn>('warnings', warn)
 
 
-export const warnDB = {
+export const warnings = {
     create: createWarning,
     find: findWarnings,
     findById: findWarnById,
@@ -55,7 +34,7 @@ async function createWarning(guildId:Snowflake, target:User, officer:User, reaso
     
     const expireAt:Date = setDate(days)
     
-    return warnings.create({ 
+    return warningModel.create({ 
         guildId:guildId, 
         target:{ id:target.id, tag:target.tag }, 
         officer:{ id:officer.id, tag:officer.tag },
@@ -73,10 +52,10 @@ async function findWarnings(guildId:Snowflake, targetId: Snowflake, expireAt?:Da
     else
         filter = { guildId: guildId, "target.id":targetId }
 
-    return warnings.find(filter)
+    return warningModel.find(filter)
 }
 async function findWarnById(id:string) {
-    return await warnings.findById(id)
+    return await warningModel.findById(id)
 }
 
 async function updateWarning(id:string, updater:User, reason?:string, days?:number) {
@@ -90,11 +69,11 @@ async function updateWarning(id:string, updater:User, reason?:string, days?:numb
     if(reason) update["reason"] = reason
     if(expireAt) update["expireAt"] = expireAt
     
-    return await warnings.findByIdAndUpdate(id, update)
+    return await warningModel.findByIdAndUpdate(id, update)
 }
 
 async function removeWarning(id:string) {
-    return warnings.findByIdAndRemove(id)
+    return warningModel.findByIdAndRemove(id)
 }
 
 /**

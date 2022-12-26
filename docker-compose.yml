@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   bot:
-    image: spikebot
+    image: spike
     build:
       context: ./
       dockerfile: ./Dockerfile

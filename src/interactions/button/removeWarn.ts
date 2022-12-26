@@ -1,8 +1,10 @@
-import { ActionRowBuilder, ButtonInteraction, MessageActionRowComponentBuilder, PermissionsBitField, TextChannel } from "discord.js";
-import { warnDB } from "../../util/schema/warns";
-import { buttons, warnEmbedRender } from "../../util/system/warningRender";
+import { ActionRowBuilder, ButtonInteraction, MessageActionRowComponentBuilder } from "discord.js";
+import { warnEmbedRender, buttons } from "../../features/warningRender";
+import { warnings } from "../../schema";
 
-export async function buttonInteractionExecute(interaction:ButtonInteraction) {
+export const name = 'removeWarn'
+
+export async function execute(interaction:ButtonInteraction) {
 
     // console.log(interaction.memberPermissions?.has(PermissionsBitField.Flags.BanMembers, true))
 
@@ -11,7 +13,7 @@ export async function buttonInteractionExecute(interaction:ButtonInteraction) {
     //     return
     // }
     
-    const warn = (await warnDB.updateById(interaction.customId.split(' ')[1],interaction.user,undefined,0))
+    const warn = (await warnings.updateById(interaction.customId.split(' ')[1],interaction.user,undefined,0))
     console.log(warn)
     if(!warn) {
         interaction.message.delete()

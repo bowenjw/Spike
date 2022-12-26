@@ -1,40 +1,41 @@
-import {CommandInteraction, BaseInteraction, ButtonInteraction, Events} from 'discord.js';
-import {button, Command, modal, selectMenu } from '../util/types';
+import { Events, InteractionType, ApplicationCommandType, ComponentType, Interaction } from 'discord.js';
+import { Icommand, Iinteraction } from '../interfaces';
+import { client } from '../bot';
+import path from 'path';
 
 export const name = Events.InteractionCreate,
-once = false;
+once = false
 
-export async function execute(interaction: BaseInteraction ) {
 
-	// interaction
-	try {
+export async function execute(interaction: Interaction ) {
 
-		if (interaction.isCommand()) {
+	switch (interaction.type) {
+		case InteractionType.ApplicationCommand:
 			console.log(`${interaction.user.tag} used ${interaction.commandName} from ${interaction.guild?.name}`);
-			import(`../interactions/application_command/${interaction.commandName.toLowerCase()}`).then((obj:Command) => obj.commandExecute(interaction))
-		}
-		else if(interaction.isButton()) {
+			switch (interaction.commandType) {
+				case ApplicationCommandType.ChatInput:
+					client.commands.get(interaction.commandName)?.execute(interaction)
+					break;
+
+				case ApplicationCommandType.Message:
+				case ApplicationCommandType.User:
+					client.contextMenus.get(interaction.commandName)?.execute(interaction)
+					break;
+
+				default:
+					console.error('Application Command Not Supported')
+					break;
+			}
+			break;
+		// Message Component and Models
+		case InteractionType.MessageComponent:
+		case InteractionType.ModalSubmit:
 			const name = interaction.customId.split(' ')[0]
 			console.log(`${interaction.user.tag} used ${name} button from ${interaction.guild?.name}`);
-			import(`../interactions/button/${name}`).then((obj: button) => obj.buttonInteractionExecute(interaction))
-		}
-
-		else if(interaction.isAnySelectMenu()) {
-			const name = interaction.customId.split(' ')[0]
-			console.log(`${interaction.user.tag} used ${name} select menu from ${interaction.guild?.name}`);
-			import(`../interactions/select_menu/${name}`).then((obj: selectMenu) => obj.selectMenueInteractionExecute(interaction))
-		}
-		else if(interaction.isModalSubmit()) {
-			const name = interaction.customId.split(' ')[0]
-			console.log(`${interaction.user.tag} used ${name} model from ${interaction.guild?.name}`);
-			import(`../interactions/modal/${name}`).then((obj: modal) => obj.modalInteractionExecute(interaction))
-		}
-			
-	} catch (error: unknown) {
-		console.log(error);
-		if((interaction as ButtonInteraction).deferred){
-			(interaction as CommandInteraction).followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else
-			(interaction as CommandInteraction).reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			client.interactions.get(name)?.execute(interaction)
+			break;
+		default:
+			console.error('Interaction Type Not Supported')
+			break;
 	}
 }

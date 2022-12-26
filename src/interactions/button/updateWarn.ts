@@ -1,9 +1,11 @@
 import { ActionRowBuilder, ButtonInteraction, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { warnDB } from "../../util/schema/warns";
+import { warnings } from "../../schema";
 
-export async function buttonInteractionExecute(interaction:ButtonInteraction) {
+export const name = 'updateWarn'
+
+export async function execute(interaction:ButtonInteraction) {
     const warnId = interaction.customId.split(' ')[1],
-    record = await warnDB.findById(warnId)
+    record = await warnings.findById(warnId)
     if(!record) {
         interaction.reply({content:'Warning not found', ephemeral:true})
         return
@@ -17,7 +19,7 @@ export async function buttonInteractionExecute(interaction:ButtonInteraction) {
         .setRequired(true)
         .setPlaceholder('Reason why member was warned')),
     updateModel = new ModalBuilder()
-        .setCustomId(`updateWarn ${record._id}`)
+        .setCustomId(`warnUpdate ${record._id}`)
         .setTitle(`Update Reason for Warning`)
         .addComponents(warnTextInput)
     interaction.showModal(updateModel)

@@ -1,7 +1,10 @@
 import { ButtonInteraction, EmbedBuilder, GuildMember, PermissionsBitField } from "discord.js";
-import { warnDB } from "../../util/schema/warns";
+import { warnings } from "../../schema";
 
-export async function buttonInteractionExecute(interaction:ButtonInteraction) {
+
+export const name = 'unban'
+
+export async function execute(interaction:ButtonInteraction) {
     const user = interaction.member as GuildMember
     if(!user?.permissions.has(PermissionsBitField.Flags.BanMembers, true)){
         interaction.reply({content:'You do not have premitions to unban members please check with and administrator if this is an error', ephemeral:true})
@@ -13,7 +16,7 @@ export async function buttonInteractionExecute(interaction:ButtonInteraction) {
         targetid = perm[1]
 
         console.log(warnid)
-        warnDB.removeById(warnid) // Delete warning
+        warnings.removeById(warnid) // Delete warning
         
         await interaction.guild?.bans.remove(targetid).catch(err => console.log(err)) // Unban members
 

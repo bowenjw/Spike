@@ -1,12 +1,11 @@
 import { Client, Events } from 'discord.js';
-import deploy from '../features/deploy';
 import { client as bot } from '../bot';
-
+import { deploy } from '../features';
 
 export const name = Events.ClientReady,
-once = true;
-export async function execute(client: Client) {
-    await deploy(bot);
-	console.log(`\nReady! Logged in as ${client.user!.tag}`);
+    once = true
+export function execute(client: Client) {
+    deploy(bot);
+    console.log(`Ready! Logged in as ${client.user!.tag}`)
 }
 

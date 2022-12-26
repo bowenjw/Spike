@@ -1,4 +1,4 @@
-import {ChatInputCommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, SlashCommandStringOption} from 'discord.js';
+import { ChatInputCommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, SlashCommandStringOption } from 'discord.js';
 
 //command options
 const question = new SlashCommandStringOption()
@@ -6,19 +6,19 @@ const question = new SlashCommandStringOption()
 	.setDescription('The question you wish to ask')
 	.setRequired(true)
 
-// Slash command
-export const slashCommandBuilder = new SlashCommandBuilder()
+// export builder and global
+export const builder = new SlashCommandBuilder()
 	.setName('8ball')
 	.setDescription('The Magic 8 Ball™ has all the answers to all of your most pressing questions!')
 	.setDMPermission(true)
 	.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
-	.addStringOption(question)
-
+	.addStringOption(question),
+	global = true
 /**
  * 
  * @param interaction applicatrion command interaction
  */
-export async function commandExecute(interaction: ChatInputCommandInteraction) {
+export async function execute(interaction: ChatInputCommandInteraction) {
 	let reply = '';
 	switch (Math.floor(Math.random() * 20)) {
 	case 0:

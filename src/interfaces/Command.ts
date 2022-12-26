@@ -1,9 +1,7 @@
-import { CommandInteraction, ContextMenuCommandBuilder, SlashCommandBuilder } from "discord.js";
+import { ContextMenuCommandBuilder, Interaction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export interface Command {
-    userContextMenuCommand?: ContextMenuCommandBuilder,
-    messageContextMenuCommand?: ContextMenuCommandBuilder,
-    slashCommandBuilder?: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">,
+    builder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | ContextMenuCommandBuilder,
     global: Boolean,
-    execute(interaction: CommandInteraction): Promise<void>
+    execute(interaction: Interaction): void
 }
