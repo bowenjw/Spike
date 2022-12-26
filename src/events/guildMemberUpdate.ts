@@ -1,18 +1,17 @@
 import { EmbedBuilder, Events, GuildMember, TextChannel } from 'discord.js';
-import { timeoutEmbed } from '../features';
+import { timeoutEmbed, timeoutState } from '../features';
 import { Ievent } from '../interfaces';
 import { guilds } from '../schema';
 
-const event:Ievent = {
-	name: Events.GuildMemberUpdate,
-	once: false,
-	execute:execute
-}
+export const name = Events.GuildMemberUpdate,
+once = false
+
 export async function execute(before: GuildMember, after: GuildMember) {
 	timeoutLog(before, after)
 }
 
 async function timeoutLog(before: GuildMember, after: GuildMember) {
+
 	if(before.communicationDisabledUntil == after.communicationDisabledUntil) return;
 
 	const config = await guilds.get(after.guild)
@@ -23,11 +22,11 @@ async function timeoutLog(before: GuildMember, after: GuildMember) {
 	if(!channel) return;
 	let embed: EmbedBuilder
 	if(!before.isCommunicationDisabled() && after.isCommunicationDisabled()) {
-		embed = await timeoutEmbed(after, true)
+		embed = await timeoutEmbed(after,timeoutState.start)
 	} else if(before.isCommunicationDisabled() && !after.isCommunicationDisabled()) {
-		embed = await timeoutEmbed(after)
+		embed = await timeoutEmbed(after, timeoutState.end)
 	} else {
-		embed = await timeoutEmbed(after)
+		embed = await timeoutEmbed(after,timeoutState.update)
 	}
 
 	channel.send({embeds:[embed]})
