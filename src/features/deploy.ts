@@ -21,6 +21,13 @@ export async function deploy(client: ExtendedClient) {
             commands.push(command.builder.toJSON()) 
         })
     }
+    for (const file of readdirSync(client.contextMenuPath)) {
+        await import( path.join(client.contextMenuPath, file) )
+        .then((command:Icommand) => { 
+            // console.log(command)
+            commands.push(command.builder.toJSON()) 
+        })
+    }
     
     // Deploy global commands
     const applicationCommands = await rest.put(Routes.applicationCommands(client.user!.id), { body: commands })
