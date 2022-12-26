@@ -1,9 +1,11 @@
-import { ChatInputCommandInteraction, VoiceChannel, UserSelectMenuBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, SlashCommandBuilder, ChannelType } from "discord.js";
+import { ChatInputCommandInteraction, VoiceChannel, UserSelectMenuBuilder, ActionRowBuilder, MessageActionRowComponentBuilder, SlashCommandBuilder, ChannelType, PermissionsBitField } from "discord.js";
 import { Icommand, Iinteraction } from "../../interfaces";
 
 export const builder = new SlashCommandBuilder()
     .setName('move')
     .setDescription('Moves members from one VC to another')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.MoveMembers)
     .addChannelOption(option => option
         .setName("destination")
         .setDescription("Channel where members will be move to")
