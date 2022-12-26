@@ -2,11 +2,11 @@ version: '3.4'
 
 services:
   bot:
-    image: spikebot
+    image: spike
     build:
       context: ./
       dockerfile: ./Dockerfile
     restart: always
     env_file:
       - .env
-    network_mode: bridge
+    network_mode: host
