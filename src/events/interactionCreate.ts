@@ -1,7 +1,5 @@
 import { Events, InteractionType, ApplicationCommandType, ComponentType, Interaction } from 'discord.js';
-import { Icommand, Iinteraction } from '../interfaces';
 import { client } from '../bot';
-import path from 'path';
 
 export const name = Events.InteractionCreate,
 once = false
