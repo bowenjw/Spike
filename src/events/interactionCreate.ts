@@ -8,7 +8,7 @@ once = false
 
 
 export async function execute(interaction: Interaction ) {
-	console.log(interaction)
+	// console.log(interaction)
 	let interactionName:string
 	switch (interaction.type) {
 		case InteractionType.ApplicationCommand:

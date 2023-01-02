@@ -88,12 +88,12 @@ class ExtendedClient extends Client {
         // Login
         if (!process.env.DISCORD_TOKEN) console.error('No token was specified. Did you create a .env file?');
         this.login(process.env.DISCORD_TOKEN);
-
-        // Skip if no-deployment flag is set
-        if (process.argv.includes('--no-deployment')) return;
         
         // Deploying Commands
         async () => {
+            // Skip if no-deployment flag is set
+            if (process.argv.includes('--no-deployment')) return;
+            
             const rest = new REST({ version: '10' }).setToken(this.token!)
             const applicationCommands = await rest.put(Routes.applicationCommands(this.user!.id), { body: commands })
                 .catch(console.error) as ApplicationCommand[];
