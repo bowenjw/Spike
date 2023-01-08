@@ -17,7 +17,7 @@ export function warnEmbedRender(record:warningRecord, target:User) {
         .addFields(
             { name: 'Target', value: `${target}\n${target.tag}`, inline: true },
             { name: 'Officer', value: `<@${record.officer.id}>\n${record.officer.tag}`, inline: true},
-            { name: 'Expires', value: `<t:${expireAt}:R>\n <t:${expireAt}:F>`, inline: true})
+            { name: 'Exspiers', value: `<t:${expireAt}:R>\n <t:${expireAt}:F>`, inline: true})
         
         .setColor(WarmEmbedColor.Yellow)
         .setThumbnail(target.avatarURL({forceStatic:true}))
@@ -46,7 +46,7 @@ export function viewWarningMessageRender(records: warningRecord[], start:number 
             .addFields(
                 { name: 'Target', value: `${record.target.tag}\n<@${record.target.id}>`, inline: true },
                 { name: 'Officer', value: `${record.officer.tag}\n<@${record.officer.id}>`, inline: true},
-                { name: 'Exspires', value: `<t:${exspiresAt}:R>\n<t:${exspiresAt}:F>`, inline: true})
+                { name: 'Exspiers', value: `<t:${exspiresAt}:R>\n<t:${exspiresAt}:F>`, inline: true})
             .setFooter({text: `ID: ${record._id}`})
             .setTimestamp(record.createdAt)
         embeds.push(embed)
