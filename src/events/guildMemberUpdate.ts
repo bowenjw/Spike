@@ -31,10 +31,16 @@ async function timeoutLog(before: GuildMember, after: GuildMember) {
 			.setDisabled(true)))
 	} else if(before.isCommunicationDisabled() && !after.isCommunicationDisabled()) {
 		embed = await timeoutEmbed(after, timeoutState.end)
-	} else if (after.communicationDisabledUntil == undefined) {
+	} else if(before.communicationDisabledUntil != after.communicationDisabledUntil) {
+		embed = await timeoutEmbed(after,timeoutState.update)
+		rows.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents( new ButtonBuilder()
+			.setCustomId(`endtimeout`)
+			.setStyle(ButtonStyle.Danger)
+			.setLabel('Remove Timeout')
+			.setDisabled(true)))
+	} else {
 		return
 	}
-	} else return
 
 	channel.send({embeds:[embed], components:rows})
 }
