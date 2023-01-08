@@ -34,9 +34,7 @@ async function timeoutLog(before: GuildMember, after: GuildMember) {
 	} else if (after.communicationDisabledUntil == undefined) {
 		return
 	}
-	else {
-		embed = await timeoutEmbed(after,timeoutState.update)
-	}
+	} else return
 
 	channel.send({embeds:[embed], components:rows})
 }

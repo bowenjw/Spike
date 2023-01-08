@@ -9,7 +9,7 @@ export enum timeoutState {
 export async function timeoutEmbed(after: GuildMember, state:timeoutState) {
     
 	const guild = after.guild,
-	auditlog = (await guild.fetchAuditLogs({limit: 1, type: AuditLogEvent.MemberUpdate || AuditLogEvent.MemberDisconnect || AuditLogEvent.AutoModerationBlockMessage})).entries.first()!,
+	auditlog = (await guild.fetchAuditLogs({limit: 1, type: AuditLogEvent.MemberUpdate || AuditLogEvent.MemberDisconnect || AuditLogEvent.AutoModerationUserCommunicationDisabled})).entries.first()!,
 	executor = await guild.members.fetch(auditlog.executor?.id!);
 
 	const embed = new EmbedBuilder()

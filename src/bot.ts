@@ -15,8 +15,6 @@ export const client = new ExtendedClient({
     ]
 })
 
-client.init()
-
 // Mongoose
 mongoose.connect(process.env.MONGO_URI!)
 mongoose.set('strictQuery', false)
