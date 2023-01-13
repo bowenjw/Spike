@@ -17,7 +17,7 @@ export function warnEmbedRender(record:warningRecord, target:User) {
         .addFields(
             { name: 'Target', value: `${target}\n${target.tag}`, inline: true },
             { name: 'Officer', value: `<@${record.officer.id}>\n${record.officer.tag}`, inline: true},
-            { name: 'Exspiers', value: `<t:${expireAt}:R>\n <t:${expireAt}:F>`, inline: true})
+            { name: 'Expiers', value: `<t:${expireAt}:R>\n <t:${expireAt}:F>`, inline: true})
         
         .setColor(WarmEmbedColor.Yellow)
         .setThumbnail(target.avatarURL({forceStatic:true}))
