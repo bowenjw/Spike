@@ -46,7 +46,7 @@ export function viewWarningMessageRender(records: warningRecord[], start:number 
             .addFields(
                 { name: 'Target', value: `${record.target.tag}\n<@${record.target.id}>`, inline: true },
                 { name: 'Officer', value: `${record.officer.tag}\n<@${record.officer.id}>`, inline: true},
-                { name: 'Exspiers', value: `<t:${exspiresAt}:R>\n<t:${exspiresAt}:F>`, inline: true})
+                { name: 'Expiers', value: `<t:${exspiresAt}:R>\n<t:${exspiresAt}:F>`, inline: true})
             .setFooter({text: `ID: ${record._id}`})
             .setTimestamp(record.createdAt)
         embeds.push(embed)
