@@ -31,6 +31,8 @@ async function timeoutLog(before: GuildMember, after: GuildMember) {
 			.setDisabled(true)))
 	} else if(before.isCommunicationDisabled() && !after.isCommunicationDisabled()) {
 		embed = await timeoutEmbed(after, timeoutState.end)
+	} else if(after.communicationDisabledUntil == undefined){ 
+		return
 	} else if(before.communicationDisabledUntil != after.communicationDisabledUntil) {
 		embed = await timeoutEmbed(after,timeoutState.update)
 		rows.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents( new ButtonBuilder()
