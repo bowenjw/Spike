@@ -28,14 +28,15 @@ const event: Event = {
                         .setURL(`discord://discord.com/channels/${linkedMessageIds[0]}/${linkedMessageIds[1]}/${linkedMessageIds[2]}`)
                         .setStyle(ButtonStyle.Link)
                         .setLabel('Jump to Message')),
-                image = linkedMessage.attachments.find((a) => a.contentType == 'image/png' || a.contentType == 'image/jpg');
+                image = linkedMessage.attachments.find((a) => a.contentType && ['image/png', 'image/jpeg', 'image/gif'].includes(a.contentType));
+            // console.log(linkedMessage.attachments)
             if (image) {
                 embed.setImage(image.url);
             }
             if (linkedMessage.content) {
                 embed.setDescription(linkedMessage.content);
             }
-            await message.reply({ embeds:[embed], components:[row], allowedMentions:{ repliedUser:false } });
+            await message.reply({content:`Message from ${linkedMessage.channel}`, embeds:[embed], components:[row], allowedMentions:{ repliedUser:false } }).catch(console.log);
         }
 
 
