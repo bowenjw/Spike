@@ -21,14 +21,20 @@ const event: Event = {
                 linkedMembor = await message.guild.members.fetch(linkedMessage.author.id),
                 embed = new EmbedBuilder()
                     .setAuthor({ name:`${linkedMembor.displayName}`, iconURL:linkedMessage.author.displayAvatarURL({ forceStatic:true }) })
-                    .setDescription(linkedMessage.content)
                     .setColor(client.config.colors.embed)
                     .setTimestamp(linkedMessage.createdAt),
                 row = new ActionRowBuilder<MessageActionRowComponentBuilder>()
                     .addComponents(new ButtonBuilder()
                         .setURL(`discord://discord.com/channels/${linkedMessageIds[0]}/${linkedMessageIds[1]}/${linkedMessageIds[2]}`)
                         .setStyle(ButtonStyle.Link)
-                        .setLabel('Jump to Message'));
+                        .setLabel('Jump to Message')),
+                image = linkedMessage.attachments.find((a) => a.contentType == 'image/png' || a.contentType == 'image/jpg');
+            if (image) {
+                embed.setImage(image.url);
+            }
+            if (linkedMessage.content) {
+                embed.setDescription(linkedMessage.content);
+            }
             await message.reply({ embeds:[embed], components:[row], allowedMentions:{ repliedUser:false } });
         }
 
