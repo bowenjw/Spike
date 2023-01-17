@@ -11,7 +11,9 @@ new ExtendedClient({
     intents: [
         Intents.Guilds,
         Intents.GuildMembers,
+        Intents.GuildMessages,
         Intents.GuildVoiceStates,
+        Intents.MessageContent,
     ],
 }).login(process.env.TOKEN);
 
