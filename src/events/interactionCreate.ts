@@ -1,50 +1,88 @@
-import { Events, InteractionType, ApplicationCommandType, ComponentType, Interaction } from 'discord.js';
-import { client } from '../bot';
+import { ApplicationCommandType, ComponentType, Events, Interaction, InteractionType, RepliableInteraction } from 'discord.js';
+import ExtendedClient from '../classes/ExtendedClient';
+import { Event } from '../interfaces';
 
-export const name = Events.InteractionCreate,
-once = false
+const errorMessage = 'There was an error while executing this interaction.';
+// Send a warning on error
+async function replyError(error:unknown, client:ExtendedClient, interaction: RepliableInteraction) {
+    if (error instanceof Error) {
+        console.error(error);
+        if (client.config.interactions.replyOnError) return;
 
+        if (interaction.deferred) {
+            await interaction.followUp({ content: errorMessage }).catch(console.error);
+        }
+        else {
+            await interaction.reply({ content: errorMessage, ephemeral: true }).catch(console.error);
+        }
 
-export async function execute(interaction: Interaction ) {
-	// console.log(interaction)
-	let interactionName:string
-	switch (interaction.type) {
-		case InteractionType.ApplicationCommand:
-			switch (interaction.commandType) {
-				case ApplicationCommandType.ChatInput:
-					client.commands.get(interaction.commandName)?.execute(interaction)
-					break;
-				case ApplicationCommandType.Message:
-				case ApplicationCommandType.User:
-					client.contextMenus.get(interaction.commandName)?.execute(interaction)
-					break;
-				default:
-					break;
-			}
-			break;
-		case InteractionType.MessageComponent:
-			interactionName = interaction.customId.split(' ')[0]
-			switch (interaction.componentType) {
-				case ComponentType.Button:
-					client.buttons.get(interactionName)?.execute(interaction)
-					break;
-				case ComponentType.ChannelSelect:
-				case ComponentType.RoleSelect:
-				case ComponentType.MentionableSelect:
-				case ComponentType.StringSelect:
-					client.selectMenus.get(interactionName)?.execute(interaction)
-					break;
-
-				default:
-					break;
-			}
-
-			break;
-		case InteractionType.ModalSubmit:
-			interactionName = interaction.customId.split(' ')[0]
-			client.modals.get(interactionName)?.execute(interaction)
-			break;
-		default:
-			break;
-	}
+    }
 }
+
+const event: Event = {
+    name: Events.InteractionCreate,
+    execute: async (client, interaction: Interaction) => {
+        let interactionName:string;
+        try {
+            switch (interaction.type) {
+            case InteractionType.ApplicationCommand:
+
+                switch (interaction.commandType) {
+                // Chat Input Command
+                case ApplicationCommandType.ChatInput:
+                    client.commands.get(interaction.commandName)?.execute(client, interaction);
+                    break;
+
+                    // Context Menu
+                case ApplicationCommandType.Message:
+                case ApplicationCommandType.User:
+                    client.contextMenus.get(interaction.commandName)?.execute(client, interaction);
+                    break;
+                default:
+                    break;
+                }
+                break;
+                // Component (Button | Select Menu)
+            case InteractionType.MessageComponent:
+
+                if (!client.config.interactions.receiveMessageComponents) return;
+                interactionName = client.config.interactions.splitCustomId ? interaction.customId.split('_')[0] : interaction.customId;
+
+                switch (interaction.componentType) {
+                case ComponentType.Button:
+                    // Check if message components are enabled
+                    if (!client.config.interactions.receiveMessageComponents) return;
+                    client.buttons.get(interactionName)?.execute(client, interaction);
+                    break;
+
+                case ComponentType.ChannelSelect:
+                case ComponentType.RoleSelect:
+                case ComponentType.MentionableSelect:
+                case ComponentType.StringSelect:
+                    client.selectMenus.get(interactionName)?.execute(client, interaction);
+                    break;
+                default:
+                    break;
+                }
+
+                break;
+                // ModalSubmit
+            case InteractionType.ModalSubmit:
+                // Check if modal interactions are enabled
+                if (!client.config.interactions.receiveModals) return;
+                interactionName = client.config.interactions.splitCustomId ? interaction.customId.split('_')[0] : interaction.customId;
+                client.modals.get(interactionName)?.execute(client, interaction);
+                break;
+            default:
+                break;
+            }
+        }
+        catch (error) {
+            if (interaction.isRepliable()) replyError(error, client, interaction);
+            else console.error(error);
+        }
+    },
+
+};
+
+export default event;

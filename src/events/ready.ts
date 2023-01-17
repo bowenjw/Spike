@@ -1,8 +1,14 @@
-import { Client, Events } from 'discord.js';
+import { Events } from 'discord.js';
+import { Event } from '../interfaces';
 
-export const name = Events.ClientReady,
-    once = true
-export function execute(client: Client) {
-    console.log(`Ready! Logged in as ${client.user!.tag}`)
-}
+const event: Event = {
+    name: Events.ClientReady,
+    once: true,
+    execute: async (client) => {
+        // Skip if no-deployment flag is set, else deploys commands
+        if (!process.argv.includes('--no-deployment')) await client.deploy();
+        console.log(`\nReady! Logged in as ${client.user?.tag} (${client.user?.id})\n`);
+    },
+};
 
+export default event;

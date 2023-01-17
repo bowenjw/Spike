@@ -7,14 +7,15 @@ import mongoose from 'mongoose';
 config();
 
 // Initialization (specify intents and partials)
-export const client = new ExtendedClient({
+new ExtendedClient({
     intents: [
         Intents.Guilds,
         Intents.GuildMembers,
-        Intents.GuildVoiceStates
-    ]
-})
+        Intents.GuildVoiceStates,
+    ],
+}).login(process.env.TOKEN);
 
 // Mongoose
-mongoose.connect(process.env.MONGO_URI!)
-mongoose.set('strictQuery', false)
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+mongoose.connect(process.env.MONGO_URI!);
+mongoose.set('strictQuery', false);

@@ -1,11 +1,11 @@
-import { Snowflake } from "discord.js"
+import { Snowflake } from 'discord.js';
 
 interface Iuser {
     id: Snowflake,
-    tag: String
+    tag: string
 }
 
-export interface Iwarn  {
+export interface Iwarn {
     guildId: Snowflake,
     target: Iuser,
     officer: Iuser,
