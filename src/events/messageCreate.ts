@@ -36,7 +36,7 @@ const event: Event = {
             if (linkedMessage.content) {
                 embed.setDescription(linkedMessage.content);
             }
-            await message.reply({content:`Message from ${linkedMessage.channel}`, embeds:[embed], components:[row], allowedMentions:{ repliedUser:false } }).catch(console.log);
+            await message.reply({ content:`Message from ${linkedMessage.channel}`, embeds:[embed], components:[row], allowedMentions:{ repliedUser:false } }).catch(console.log);
         }
 
 
