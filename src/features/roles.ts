@@ -9,7 +9,7 @@ export enum Pronouns {
     Ask = '1089357395735629954',
 }
 
-export enum Religon {
+export enum Religion {
     Atheist = '1069517079876731040',
     Buddhist = '1069517511055392838',
     Christian = '1069517677149827112',
@@ -36,53 +36,53 @@ export enum Alignment {
     Right = '1003800906451664987'
 }
 
-export function religonMenu(roles:GuildMemberRoleManager) {
+export function religionMenu(roles:GuildMemberRoleManager) {
     // console.log(roles);
     return new ActionRowBuilder<StringSelectMenuBuilder>()
         .addComponents(new StringSelectMenuBuilder()
             .setCustomId('roles_r')
-            .setPlaceholder('Religon')
+            .setPlaceholder('Religion')
             .setOptions(
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Atheist)
+                    .setValue(Religion.Atheist)
                     .setEmoji('⚛️')
                     .setLabel('Atheist')
-                    .setDefault(roles.cache.has(Religon.Atheist)),
+                    .setDefault(roles.cache.has(Religion.Atheist)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Buddhist)
+                    .setValue(Religion.Buddhist)
                     .setEmoji('☸️')
                     .setLabel('Buddhist')
-                    .setDefault(roles.cache.has(Religon.Buddhist)),
+                    .setDefault(roles.cache.has(Religion.Buddhist)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Christian)
+                    .setValue(Religion.Christian)
                     .setEmoji('✝️')
                     .setLabel('Christian')
-                    .setDefault(roles.cache.has(Religon.Christian)),
+                    .setDefault(roles.cache.has(Religion.Christian)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Hindu)
+                    .setValue(Religion.Hindu)
                     .setEmoji('🕉️')
                     .setLabel('Hindu')
-                    .setDefault(roles.cache.has(Religon.Hindu)),
+                    .setDefault(roles.cache.has(Religion.Hindu)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Jew)
+                    .setValue(Religion.Jew)
                     .setEmoji('🕉️')
                     .setLabel('Jew')
-                    .setDefault(roles.cache.has(Religon.Jew)),
+                    .setDefault(roles.cache.has(Religion.Jew)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Pagan)
+                    .setValue(Religion.Pagan)
                     .setEmoji('1069554009452597330')
                     .setLabel('Pagan')
-                    .setDefault(roles.cache.has(Religon.Pagan)),
+                    .setDefault(roles.cache.has(Religion.Pagan)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Satanist)
+                    .setValue(Religion.Satanist)
                     .setEmoji('1069552860855013416')
                     .setLabel('Satanist')
-                    .setDefault(roles.cache.has(Religon.Satanist)),
+                    .setDefault(roles.cache.has(Religion.Satanist)),
                 new StringSelectMenuOptionBuilder()
-                    .setValue(Religon.Taoist)
+                    .setValue(Religion.Taoist)
                     .setEmoji('☯️')
                     .setLabel('Taoist')
-                    .setDefault(roles.cache.has(Religon.Taoist)),
+                    .setDefault(roles.cache.has(Religion.Taoist)),
             )
             .setMinValues(0)
             .setMaxValues(1),
@@ -206,8 +206,8 @@ export function roleButton(state:number) {
                 .setLabel('Alignment')
                 .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
-                .setCustomId('roles_religon')
-                .setLabel('Religon')
+                .setCustomId('roles_religion')
+                .setLabel('Religion')
                 .setStyle(ButtonStyle.Secondary),
         ]);
     row.components[state].setDisabled(true).setStyle(ButtonStyle.Primary);

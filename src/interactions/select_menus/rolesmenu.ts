@@ -1,10 +1,10 @@
 import { GuildMember, Snowflake, StringSelectMenuInteraction } from 'discord.js';
 import { Interaction } from '../../classes/Interaction';
-import { Alignment, alignmentMenu, Notifications, notificationsMenu, pronounMenu, Pronouns, Religon, religonMenu } from '../../features/roles';
+import { Alignment, alignmentMenu, Notifications, notificationsMenu, pronounMenu, Pronouns, Religion, religionMenu } from '../../features/roles';
 
 const pronoun:Snowflake[] = [Pronouns.He, Pronouns.She, Pronouns.They, Pronouns.Any, Pronouns.Ask],
-    religon:Snowflake[] = [Religon.Atheist, Religon.Buddhist, Religon.Christian, Religon.Eastern_Orthodox,
-        Religon.Hindu, Religon.Jew, Religon.Muslim, Religon.Pagan, Religon.Satanist, Religon.Taoist],
+    religon:Snowflake[] = [Religion.Atheist, Religion.Buddhist, Religion.Christian, Religion.Eastern_Orthodox,
+        Religion.Hindu, Religion.Jew, Religion.Muslim, Religion.Pagan, Religion.Satanist, Religion.Taoist],
     notifications:Snowflake[] = [Notifications.Server_Events, Notifications.Server_Updates, Notifications.Streams_video],
     alignment:Snowflake[] = [Alignment.Left, Alignment.Left_center, Alignment.Center, Alignment.Right_center, Alignment.Right];
 
@@ -26,7 +26,7 @@ export default new Interaction<StringSelectMenuInteraction>()
             break;
         case 'r':
             promis = role(interaction.values, religon, interaction);
-            menu = religonMenu;
+            menu = religionMenu;
             break;
         case 'a':
             promis = role(interaction.values, alignment, interaction);

@@ -1,6 +1,6 @@
 import { ButtonInteraction, EmbedBuilder, GuildMemberRoleManager, InteractionReplyOptions, InteractionUpdateOptions } from 'discord.js';
 import { Interaction } from '../../classes/Interaction';
-import { alignmentMenu, notificationsMenu, pronounMenu, religonMenu, roleButton } from '../../features/roles';
+import { alignmentMenu, notificationsMenu, pronounMenu, religionMenu, roleButton } from '../../features/roles';
 
 export default new Interaction<ButtonInteraction>()
     .setName('roles')
@@ -16,8 +16,8 @@ export default new Interaction<ButtonInteraction>()
         case 'pronoun':
             message = pronoun(interaction);
             break;
-        case 'religon':
-            message = religon(interaction);
+        case 'religion':
+            message = religion(interaction);
             break;
         case 'align':
             message = alignment(interaction);
@@ -59,13 +59,13 @@ function pronoun(interaction:ButtonInteraction): InteractionUpdateOptions | Inte
         ],
     };
 }
-function religon(interaction:ButtonInteraction) {
+function religion(interaction:ButtonInteraction) {
     if (!(interaction.member?.roles instanceof GuildMemberRoleManager)) { return; }
     return {
         embeds:[new EmbedBuilder()
-            .setTitle('Religon Roles')
+            .setTitle('Religion Roles')
             .setColor(interaction.client.config.colors.embed)],
-        components:[religonMenu(interaction.member.roles),
+        components:[religionMenu(interaction.member.roles),
             roleButton(3),
         ],
     };
