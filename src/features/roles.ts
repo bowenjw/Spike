@@ -199,7 +199,7 @@ export function roleButton(state:number) {
                 .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
                 .setCustomId('roles_pronoun')
-                .setLabel('Pronoun')
+                .setLabel('Pronouns')
                 .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
                 .setCustomId('roles_align')
