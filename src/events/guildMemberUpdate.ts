@@ -1,48 +1,18 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Events, GuildMember, MessageActionRowComponentBuilder, TextChannel } from 'discord.js';
-import { timeoutEmbed, timeoutState } from '../features';
-import { guilds } from '../schema';
+import { Colors, Events, GuildMember, TextChannel } from 'discord.js';
+import Event from '../classes/Event';
+import { userEmbed } from '../features/inspect';
 
-export const name = Events.GuildMemberUpdate,
-once = false
+const welcomeChannelID = process.env.USER_WELCOME_CHANNEL_ID;
 
-export async function execute(before: GuildMember, after: GuildMember) {
-	timeoutLog(before, after)
-}
+export default new Event()
+    .setName(Events.GuildMemberUpdate)
+    .setOnce(false)
+    .setExecute(execute);
 
-async function timeoutLog(before: GuildMember, after: GuildMember) {
-
-	if(before.communicationDisabledUntil == after.communicationDisabledUntil) return;
-
-	const config = await guilds.get(after.guild)
-
-	if(!config?.timeoutlog.enabled) return;
-
-	const channel = after.guild.channels.cache.find((channel) => channel.id == config.timeoutlog.channel) as TextChannel;
-	if(!channel) return;
-	let embed: EmbedBuilder
-	
-	const rows:ActionRowBuilder<MessageActionRowComponentBuilder>[] = []
-	if(!before.isCommunicationDisabled() && after.isCommunicationDisabled()) {
-		embed = await timeoutEmbed(after,timeoutState.start)
-		rows.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents( new ButtonBuilder()
-			.setCustomId(`endtimeout`)
-			.setStyle(ButtonStyle.Danger)
-			.setLabel('Remove Timeout')
-			.setDisabled(true)))
-	} else if(before.isCommunicationDisabled() && !after.isCommunicationDisabled()) {
-		embed = await timeoutEmbed(after, timeoutState.end)
-	} else if(after.communicationDisabledUntil == undefined){ 
-		return
-	} else if(before.communicationDisabledUntil != after.communicationDisabledUntil) {
-		embed = await timeoutEmbed(after,timeoutState.update)
-		rows.push(new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents( new ButtonBuilder()
-			.setCustomId(`endtimeout`)
-			.setStyle(ButtonStyle.Danger)
-			.setLabel('Remove Timeout')
-			.setDisabled(true)))
-	} else {
-		return
-	}
-
-	channel.send({embeds:[embed], components:rows})
+async function execute(oldMember:GuildMember, newMember:GuildMember) {
+    if (oldMember.pending && !newMember.pending) {
+        const channel = oldMember.guild.channels.cache.find((_c, k) => k == welcomeChannelID) as TextChannel;
+        channel.send({ embeds: [ (await userEmbed(newMember, Colors.Green)).addFields(
+            { name: 'More Info:', value:`${newMember}` })] });
+    }
 }

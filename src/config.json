@@ -1,0 +1,15 @@
+{
+    "guild": "your_guild_id",
+    "interactions": {
+        "receiveMessageComponents": true,
+        "receiveModals": true,
+        "receiveAutocomplete": true,
+        "replyOnError": true,
+        "splitCustomId": true,
+        "useGuildCommands": false
+    },
+    "colors": {
+        "embed": "#2b2d31"
+    },
+    "restVersion": "10"
+}
