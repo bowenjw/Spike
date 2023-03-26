@@ -15,6 +15,10 @@ async function execute(oldState:VoiceState, newState:VoiceState) {
     else if (oldState.channelId == null && newState.channel.type == ChannelType.GuildVoice) {
         newState.channel.send({ embeds: [vcEmbed(newState.member, true)] });
     }
+    else if (oldState.channelId == newState.channelId) {
+        return;
+    }
+    // Moved Channel
     else if (oldState.channel.type == ChannelType.GuildVoice && newState.channel.type == ChannelType.GuildVoice) {
         newState.channel.send({ embeds:[ vcEmbed(newState.member, true)] });
 
