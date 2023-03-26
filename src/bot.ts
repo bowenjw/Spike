@@ -1,7 +1,8 @@
-import { GatewayIntentBits as Intents } from 'discord.js';
-import ExtendedClient from './classes/ExtendedClient';
+import { DiscordjsError, DiscordjsErrorCodes, GatewayIntentBits as Intents, Partials } from 'discord.js';
+import path from 'path';
+import ExtendedClient, { ClientConfig } from './classes/Client';
 import { config } from 'dotenv';
-import mongoose from 'mongoose';
+import configJSON from './config.json';
 
 // Load .env file contents
 config();
@@ -10,14 +11,38 @@ config();
 new ExtendedClient({
     intents: [
         Intents.Guilds,
-        Intents.GuildMembers,
         Intents.GuildMessages,
-        Intents.GuildVoiceStates,
         Intents.MessageContent,
+        Intents.GuildMembers,
     ],
-}).login(process.env.TOKEN);
+    partials: [
+        Partials.Message,
+        Partials.Channel,
+        Partials.Reaction,
+        Partials.GuildMember,
+    ],
+    eventPath: path.join(__dirname, 'events'),
+    commandPath: path.join(__dirname, 'commands'),
+    contextMenuPath: path.join(__dirname, 'context_menus'),
+    buttonPath: path.join(__dirname, 'interactions', 'buttons'),
+    selectMenuPath: path.join(__dirname, 'interactions', 'select_menus'),
+    modalPath: path.join(__dirname, 'interactions', 'modals'),
+    clientConfig: configJSON as ClientConfig,
+}).login(process.env.TOKEN)
+    .catch((err:unknown) => {
+        if (err instanceof DiscordjsError) {
+            if (err.code == DiscordjsErrorCodes.TokenMissing) {
+                console.warn(`\n[Error] ${err.name}: ${err.message} Did you create a .env file?\n`);
+            }
+            else if (err.code == DiscordjsErrorCodes.TokenInvalid) {
+                console.warn(`\n[Error] ${err.name}: ${err.message} Check your .env file\n`);
+            }
+            else {
+                throw err;
+            }
+        }
+        else {
+            throw err;
+        }
+    });
 
-// Mongoose
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-mongoose.connect(process.env.MONGO_URI!);
-mongoose.set('strictQuery', false);

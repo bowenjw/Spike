@@ -1,9 +1,9 @@
-import { VoiceChannel } from 'discord.js';
-import { UserSelectMenu } from '../../interfaces';
+import { UserSelectMenuInteraction, VoiceChannel } from 'discord.js';
+import { Interaction } from '../../classes/Interaction';
 
-const menu:UserSelectMenu = {
-    name:'usermove',
-    execute: (_client, interaction) => {
+export default new Interaction<UserSelectMenuInteraction>()
+    .setName('usermove')
+    .setExecute(async (interaction) => {
         const destination = interaction.guild?.channels.cache.find(channel => channel.id === interaction.customId.split(' ')[1]) as VoiceChannel,
             source = interaction.guild?.channels.cache.find(channel => channel.id === interaction.customId.split(' ')[2]) as VoiceChannel,
             members = source.members.filter(member => interaction.values.includes(member.id));
@@ -15,7 +15,4 @@ const menu:UserSelectMenu = {
             members.forEach(async member => member.voice.setChannel(destination));
             interaction.update({ content:'Members have been moved', components:[] });
         }
-    },
-};
-
-export default menu;
+    });
