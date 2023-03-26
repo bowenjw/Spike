@@ -11,7 +11,7 @@ const row = new ActionRowBuilder<ButtonBuilder>()
 
 const embed = new EmbedBuilder()
     .setTitle('How To Debate Hunter')
-    .setDescription('Hunter debates members live on stream Monday, Wensday and Friday between <t:1679752800:t> and <t:1679756400:t>.\n\nIf you would like to debate Hunter Join the stage channel <#1089273962841768017>');
+    .setDescription('Hunter debates members live on stream Monday, Wednesday and Friday between <t:1679752800:t> and <t:1679756400:t>.\n\nIf you would like to debate Hunter Join the stage channel <#1089273962841768017>');
 export default new Interaction<ButtonInteraction>()
     .setName('debate')
     .setExecute(async (interaction) => {

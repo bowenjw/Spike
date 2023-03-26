@@ -22,7 +22,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await channel.send({
         embeds:[new EmbedBuilder()
             .setTitle('Welcome to the Hunter Avallone Discord')
-            .setDescription('The official Discord community for Hunter Avallone, the server is openly political with a left-leaning. We are looking for new members to engage and bring new ideas and perspectives, including ones that may not align with our own.')
+            .setDescription('The official Discord community for Hunter Avallone, the sever is openly political, mainly left-leaning . We are looking for new members to engage and bring new ideas and perspectives, including ones that may not align with our own.')
             .setColor(interaction.client.config.colors.embed)],
         components:[new ActionRowBuilder<ButtonBuilder>()
             .addComponents(new ButtonBuilder()

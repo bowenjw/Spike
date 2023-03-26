@@ -12,6 +12,7 @@ new ExtendedClient({
     intents: [
         Intents.Guilds,
         Intents.GuildMessages,
+        Intents.GuildVoiceStates,
         Intents.MessageContent,
         Intents.GuildMembers,
     ],

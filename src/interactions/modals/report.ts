@@ -35,7 +35,7 @@ function userReport(interaction:ModalSubmitInteraction, args: string[]):MessageC
         .setThumbnail(member.displayAvatarURL({ forceStatic:true, size: 4096 }))
         .addFields(
             { name: 'Reported', value: `${member}`, inline: true },
-            { name: 'Repoerted By', value: `${interaction.member}`, inline: true },
+            { name: 'Reported By', value: `${interaction.member}`, inline: true },
             { name: 'Comment', value: comment })
         .setColor(Colors.Red);
     return { embeds: [embed], components: [reportRow(args[2])] };
@@ -50,9 +50,9 @@ async function MessageReport(interaction:ModalSubmitInteraction, args: string[])
         .setTitle('Message Report')
         .setThumbnail(member.displayAvatarURL({ forceStatic:true, size: 1024 }) || member.user.avatarURL({ forceStatic: true, size: 1024 }))
         .addFields(
-            { name:'Channel', value: `${channel}`, inline: true },
-            { name:'Date Posted', value: codeBlock(message.createdAt.toUTCString()), inline: true },
-            { name:'Content of Message', value: message.content },
+            { name: 'Channel', value: `${channel}`, inline: true },
+            { name: 'Date Posted', value: codeBlock(message.createdAt.toUTCString()), inline: true },
+            { name: 'Content of Message', value: message.content },
             { name: 'Reported', value: `${member}`, inline: true },
             { name: 'Reported By', value: `${interaction.member}`, inline: true },
             { name: 'Comment', value: comment })
