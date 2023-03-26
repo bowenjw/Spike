@@ -1,4 +1,4 @@
-import { bold, ChannelType, ColorResolvable, Colors, EmbedBuilder, Events, GuildMember, VoiceState } from 'discord.js';
+import { bold, ChannelType, ColorResolvable, Colors, EmbedBuilder, Events, GuildMember, PermissionFlagsBits, VoiceState } from 'discord.js';
 import Event from '../classes/Event';
 
 export default new Event()
@@ -9,15 +9,32 @@ export default new Event()
 async function execute(oldState:VoiceState, newState:VoiceState) {
     // Leaves Channel
     if (newState.channelId == null && oldState.channel.type == ChannelType.GuildVoice) {
-        oldState.channel.send({ embeds: [await vcEmbed(newState.member)] });
+        oldState.channel.send({ embeds: [vcEmbed(newState.member)] });
     }
     // Joins Channel
     else if (oldState.channelId == null && newState.channel.type == ChannelType.GuildVoice) {
-        newState.channel.send({ embeds: [await vcEmbed(newState.member, true)] });
+        newState.channel.send({ embeds: [vcEmbed(newState.member, true)] });
+    }
+    else if (oldState.channel.type == ChannelType.GuildVoice && newState.channel.type == ChannelType.GuildVoice) {
+        newState.channel.send({ embeds:[ vcEmbed(newState.member, true)] });
+
+        if (newState.channel.permissionsFor(newState.guild.roles.everyone).has(PermissionFlagsBits.ViewChannel)) {
+            oldState.channel.send({ embeds:[
+                new EmbedBuilder()
+                    .setAuthor({ iconURL: newState.member.displayAvatarURL({ forceStatic: true, size: 1024 }), name:newState.member.user.tag })
+                    .setDescription(bold(`Member moved to ${newState.channel}`))
+                    .setColor(Colors.Yellow)
+                    .setTimestamp()] });
+        }
+        else {
+            oldState.channel.send({ embeds: [vcEmbed(newState.member)] });
+        }
+
+
     }
 }
 
-async function vcEmbed(member:GuildMember, joined = false) {
+function vcEmbed(member:GuildMember, joined = false) {
     let message:string = bold('Member left voice channel');
     let color:ColorResolvable = Colors.Red;
     if (joined) {
