@@ -12,6 +12,10 @@ export default new ContextMenuCommand()
     .setExecute(execute);
 
 async function execute(interaction:MessageContextMenuCommandInteraction) {
+    if (interaction.targetMessage.author.system || interaction.targetMessage.author.bot) {
+        interaction.reply({ content:'This message is from a bot and can not be reported', ephemeral:true });
+        return;
+    }
     interaction.showModal(reportModal
         .setCustomId(`report_m_${interaction.targetMessage.channelId}_${interaction.targetMessage.id}`));
 }
