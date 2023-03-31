@@ -18,23 +18,18 @@ export default new ChatInputCommand()
 async function execute(interaction: ChatInputCommandInteraction) {
     const channel = interaction.options.getChannel('channel', true);
     if (!(channel instanceof TextChannel)) { return; }
-    await channel.send('https://cdn.discordapp.com/attachments/1084915696997244959/1089344191345209354/Twitter-Banner.png');
     await channel.send({
         embeds:[new EmbedBuilder()
             .setTitle('Welcome to the Hunter Avallone Discord')
             .setDescription('The official Discord community for Hunter Avallone, the sever is openly political, mainly left-leaning . We are looking for new members to engage and bring new ideas and perspectives, including ones that may not align with our own.')
-            .setColor(interaction.client.config.colors.embed)],
+            .setColor(interaction.client.config.colors.embed)
+            .setImage('https://cdn.discordapp.com/attachments/1084915696997244959/1089344191345209354/Twitter-Banner.png')],
         components:[new ActionRowBuilder<ButtonBuilder>()
             .addComponents(new ButtonBuilder()
                 .setCustomId('rules')
                 .setLabel('Rules')
                 .setEmoji('📜')
                 .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-                .setCustomId('roles_note')
-                .setLabel('Roles')
-                .setEmoji('🛠️')
-                .setStyle(ButtonStyle.Success),
             new ButtonBuilder()
                 .setLabel('Debate Hunter')
                 .setCustomId('debate')
