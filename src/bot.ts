@@ -15,6 +15,7 @@ new ExtendedClient({
         Intents.GuildVoiceStates,
         Intents.MessageContent,
         Intents.GuildMembers,
+        Intents.GuildModeration,
     ],
     partials: [
         Partials.Message,

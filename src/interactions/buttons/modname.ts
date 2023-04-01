@@ -9,7 +9,7 @@ export default new Interaction<ButtonInteraction>()
         const isN = args[1] == 'n';
         const targetID = isY || isN ? args[2] : args[1];
         const member = await interaction.guild.members.fetch(targetID);
-        console.log(interaction.customId);
+        // console.log(interaction.customId);
         if (!member) {
             interaction.reply({
                 content: 'User is no longer in the server',
