@@ -1,4 +1,5 @@
 import { ButtonBuilder, ButtonStyle, codeBlock, ColorResolvable, EmbedBuilder, GuildMember, User } from 'discord.js';
+import { timeFormate } from './time';
 
 export async function userEmbed(member:GuildMember, colors: ColorResolvable) {
     const user = await member.user.fetch(true);
@@ -8,10 +9,10 @@ export async function userEmbed(member:GuildMember, colors: ColorResolvable) {
         .setThumbnail(iconURL)
         .setColor(colors)
         .setFields(
-            { name: 'Display Name:', value: codeBlock(member.displayName), inline: true },
+            { name: 'Nickname:', value: codeBlock(member.displayName), inline: true },
             { name: 'User ID:', value: codeBlock(member.id), inline: true },
-            { name: 'Created at:', value: codeBlock(user.createdAt.toUTCString()), inline: true },
-            { name: 'Joined at:', value: codeBlock(member.joinedAt.toUTCString()), inline: true },
+            { name: 'Created at:', value: timeFormate(user.createdAt, 'F'), inline: true },
+            { name: 'Joined at:', value: timeFormate(member.joinedAt, 'F'), inline: true },
         )
         .setImage(user.bannerURL({ size: 1024 }));
 }
