@@ -27,9 +27,8 @@ export default new Interaction<ButtonInteraction>()
                         return;
                     }
                     else if (err.code == 50013) {
-                        interaction.reply({
+                        interaction.update({
                             content:`Bot does not have permissions to moderate the nickname of ${member}`,
-                            ephemeral:true,
                         });
                     }
                 });
