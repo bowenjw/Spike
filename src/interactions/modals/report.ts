@@ -1,6 +1,6 @@
 import { ActionRowBuilder, bold, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message, MessageCreateOptions, ModalSubmitInteraction, Snowflake, TextChannel, ThreadChannel } from 'discord.js';
 import { Interaction } from '../../classes/Interaction';
-import { timeFormate } from '../../features/time';
+import { timeFormate } from '../../systems/time';
 
 const reportChannelID = process.env.REPORT_CHANNEL_ID;
 

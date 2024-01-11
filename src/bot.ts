@@ -1,18 +1,17 @@
 import { DiscordjsError, DiscordjsErrorCodes, GatewayIntentBits as Intents, Partials } from 'discord.js';
-import path from 'path';
-import ExtendedClient, { ClientConfig } from './classes/Client';
+import { join } from 'path';
+import { Client } from './Client';
 import { config } from 'dotenv';
-import configJSON from './config.json';
+import { connect } from 'mongoose';
 
 // Load .env file contents
 config();
 
 // Initialization (specify intents and partials)
-new ExtendedClient({
+const client = new Client({
     intents: [
         Intents.Guilds,
         Intents.GuildMessages,
-        Intents.GuildVoiceStates,
         Intents.MessageContent,
         Intents.GuildMembers,
         Intents.GuildModeration,
@@ -23,14 +22,33 @@ new ExtendedClient({
         Partials.Reaction,
         Partials.GuildMember,
     ],
-    eventPath: path.join(__dirname, 'events'),
-    commandPath: path.join(__dirname, 'commands'),
-    contextMenuPath: path.join(__dirname, 'context_menus'),
-    buttonPath: path.join(__dirname, 'interactions', 'buttons'),
-    selectMenuPath: path.join(__dirname, 'interactions', 'select_menus'),
-    modalPath: path.join(__dirname, 'interactions', 'modals'),
-    clientConfig: configJSON as ClientConfig,
-}).login(process.env.TOKEN)
+    receiveMessageComponents: true,
+    receiveModals: true,
+    receiveAutocomplete: true,
+    replyOnError: true,
+    splitCustomID: true,
+    splitCustomIDOn: '_',
+    useGuildCommands: false,
+});
+
+(async function start() {
+    await Promise.all([
+        client.init({
+            eventPath: join(__dirname, 'events'),
+            buttonPath: join(__dirname, 'interactions', 'buttons'),
+            selectMenuPath: join(__dirname, 'interactions', 'select_menus'),
+            modalPath: join(__dirname, 'interactions', 'modals'),
+            commandPath: join(__dirname, 'commands', 'chat', 'builders'),
+            contextMenuPath: join(__dirname, 'commands', 'context_menu'),
+        }),
+        connect(process.env.DB_URI),
+    ]);
+
+    await client.login(process.env.TOKEN);
+})();
+
+
+client.login(process.env.TOKEN)
     .catch((err:unknown) => {
         if (err instanceof DiscordjsError) {
             if (err.code == DiscordjsErrorCodes.TokenMissing) {

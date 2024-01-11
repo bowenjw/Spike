@@ -1,5 +1,5 @@
 import { AuditLogEvent, Colors, EmbedBuilder, Events, GuildMember, ThreadChannel } from 'discord.js';
-import Event from '../classes/Event';
+import { Event } from '../Client';
 
 const channelID = process.env.USER_WELCOME_CHANNEL_ID;
 

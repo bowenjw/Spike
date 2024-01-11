@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction } from 'discord.js';
-import { Interaction } from '../../classes/Interaction';
-import { moderateUserButton, userEmbed } from '../../features/inspect';
+import { ExtraColor, Interaction } from '../../Client';
+import { moderateUserButton, userEmbed } from '../../systems/inspect';
 
 export default new Interaction<ButtonInteraction>()
     .setName('inspect')
@@ -16,7 +16,7 @@ async function inspect(interaction: ButtonInteraction) {
     }
     else {
         interaction.reply({
-            embeds: [await userEmbed(member, interaction.client.config.colors.embed)],
+            embeds: [await userEmbed(member, ExtraColor.EmbedGray)],
             components: [new ActionRowBuilder<ButtonBuilder>().addComponents(moderateUserButton(member.user))],
             ephemeral: true,
         });

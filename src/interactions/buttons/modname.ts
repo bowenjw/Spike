@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, DiscordAPIError, bold } from 'discord.js';
-import { Interaction } from '../../classes/Interaction';
+import { Interaction } from '../../Client';
 
 export default new Interaction<ButtonInteraction>()
     .setName('moderatename')
@@ -8,7 +8,7 @@ export default new Interaction<ButtonInteraction>()
         const isY = args[1] == 'y';
         const isN = args[1] == 'n';
         const targetID = isY || isN ? args[2] : args[1];
-        const member = await interaction.guild.members.fetch(targetID);
+        const member = interaction.guild.members.cache.get(targetID);
         // console.log(interaction.customId);
         if (!member) {
             interaction.reply({
@@ -17,7 +17,7 @@ export default new Interaction<ButtonInteraction>()
             });
         }
         else if (isY) {
-            member.setNickname('Nickname moderated', `${interaction.user.tag} moderated ${member.user.tag}'s nickname formarly ${member.nickname}`)
+            member.setNickname('Nickname moderated', `${interaction.member} moderated ${member.user.username}'s nickname formarly ${member.nickname}`)
                 .then(() => interaction.reply({
                     content: `${member}'s nickname has been moderated`,
                     ephemeral:true }))
