@@ -1,9 +1,27 @@
-FROM node:lts-alpine
-RUN mkdir -p /usr/src/bot
-WORKDIR /usr/src/bot
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./" ]
-RUN npm ci --production --silent && mv node_modules ../
-COPY . /usr/src/bot
-RUN chown -R node /usr/src/bot
+FROM node:lts-iron AS builder
+WORKDIR /usr/bot
+
+COPY package.json .
+COPY yarn.lock .
+
+RUN yarn install --frozen-lockfile
+
+COPY . .
+
+RUN yarn build
+
+FROM node:lts-iron AS runner
+WORKDIR /usr/bot
+
+COPY package.json .
+COPY yarn.lock .
+COPY ./locales ./locales
+
+RUN yarn install --frozen-lockfile --production
+
+COPY --from=builder /usr/bot/dist/ ./dist
+COPY ./src/*.json ./dist
+
 USER node
-CMD ["npm", "start", "--no-deployment"]
+
+CMD [ "yarn", "start" ]

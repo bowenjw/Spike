@@ -1,12 +1,12 @@
-version: '3.4'
+version: '3.7'
 
 services:
-  bot:
-    image: spike
-    build:
-      context: ./
-      dockerfile: ./Dockerfile
-    restart: always
-    env_file:
-      - .env
-    network_mode: host
+    bot:
+        image: spike
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: always
+        env_file:
+            - .env
+        network_mode: host
