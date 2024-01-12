@@ -1,4 +1,4 @@
-import { PermissionsBitField, ChannelType, VoiceChannel, UserSelectMenuBuilder, ActionRowBuilder } from 'discord.js';
+import { ActionRowBuilder, ChannelType, PermissionsBitField, UserSelectMenuBuilder, VoiceChannel } from 'discord.js';
 import { ChatInputCommand } from '../../Client';
 
 
@@ -17,7 +17,6 @@ export default new ChatInputCommand()
             .setName('everyone')
             .setDescription('Do you want to move everyone in the VC')
             .setRequired(false)))
-    .setGlobal(true)
     .setExecute(async (interaction) => {
         const source = (await interaction.guild.members.fetch(interaction.user.id))?.voice.channel,
             destination = interaction.options.getChannel('destination', true) as VoiceChannel;

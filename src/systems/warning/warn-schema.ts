@@ -42,6 +42,7 @@ const warn = new Schema<Iwarn>(
             },
             async getWarnById(client:Client, id:string) {
                 const record = await this.findById(id);
+                if (!record) return undefined;
                 return new Warn(client, record);
             },
             async getWarns(member:GuildMember, expireAfter?:Date) {

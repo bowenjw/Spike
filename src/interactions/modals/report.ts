@@ -1,6 +1,5 @@
 import { ActionRowBuilder, bold, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message, MessageCreateOptions, ModalSubmitInteraction, Snowflake, TextChannel, ThreadChannel } from 'discord.js';
-import { Interaction } from '../../classes/Interaction';
-import { timeFormate } from '../../systems/time';
+import { Interaction, TimeStyles } from '../../Client';
 
 const reportChannelID = process.env.REPORT_CHANNEL_ID;
 
@@ -11,8 +10,9 @@ export default new Interaction<ModalSubmitInteraction>()
 
 async function execute(interaction:ModalSubmitInteraction) {
     interaction.reply({ content: 'Your report has been recived and will be reviewed', ephemeral: true });
-    const channel = interaction.guild.channels.cache.find((_c, k) => k == reportChannelID) as ThreadChannel;
-    const args = interaction.customId.split('_');
+    const { guild, customId, client } = interaction;
+    const channel = guild.channels.cache.find((_c, k) => k == reportChannelID) as ThreadChannel;
+    const args = customId.split(client.splitCustomIDOn);
     let message:MessageCreateOptions = { content: bold('Error') };
     switch (args[1]) {
     case 'm':
@@ -29,33 +29,35 @@ async function execute(interaction:ModalSubmitInteraction) {
 
 
 function userReport(interaction:ModalSubmitInteraction, args: string[]):MessageCreateOptions {
-    const member = interaction.guild.members.cache.find((_m, k) => k == args[2]);
-    const comment = interaction.fields.getTextInputValue('comment') || 'No Additional Comment';
+    const { guild, fields, member } = interaction;
+    const tMember = guild.members.cache.find((_m, k) => k == args[2]);
+    const comment = fields.getTextInputValue('comment') || 'No Additional Comment';
     const embed = new EmbedBuilder()
         .setTitle('User Report')
-        .setThumbnail(member.displayAvatarURL({ forceStatic:true, size: 4096 }))
+        .setThumbnail(tMember.displayAvatarURL({ forceStatic:true, size: 4096 }))
         .addFields(
-            { name: 'Reported', value: `${member}`, inline: true },
-            { name: 'Reported By', value: `${interaction.member}`, inline: true },
+            { name: 'Reported', value: `${tMember}`, inline: true },
+            { name: 'Reported By', value: `${member}`, inline: true },
             { name: 'Comment', value: comment })
         .setColor(Colors.Red);
     return { embeds: [embed], components: [reportRow(args[2])] };
 }
 
 async function MessageReport(interaction:ModalSubmitInteraction, args: string[]):Promise<MessageCreateOptions> {
-    const channel = interaction.guild.channels.cache.find((_m, k) => k == args[2]) as TextChannel;
+    const { guild, fields, member } = interaction;
+    const channel = guild.channels.cache.find((_m, k) => k == args[2]) as TextChannel;
     const message = channel.messages.cache.find((_m, k) => k == args[3]);
-    const member = await interaction.guild.members.fetch(message.author.id);
-    const comment = interaction.fields.getTextInputValue('comment') || 'No Additional Comment';
+    const tmember = await guild.members.fetch(message.author.id);
+    const comment = fields.getTextInputValue('comment') || 'No Additional Comment';
     const embed = new EmbedBuilder()
         .setTitle('Message Report')
-        .setThumbnail(member.displayAvatarURL({ forceStatic:true, size: 1024 }) || member.user.avatarURL({ forceStatic: true, size: 1024 }))
+        .setThumbnail(tmember.displayAvatarURL({ forceStatic:true, size: 1024 }) || tmember.user.avatarURL({ forceStatic: true, size: 1024 }))
         .addFields(
             { name: 'Channel', value: `${channel}`, inline: true },
-            { name: 'Date Posted', value: timeFormate(message.createdAt, 'F'), inline: true },
+            { name: 'Date Posted', value: message.createdAt.toDiscordString(TimeStyles.LongDateTime), inline: true },
             { name: 'Content of Message', value: message.content },
-            { name: 'Reported', value: `${member}`, inline: true },
-            { name: 'Reported By', value: `${interaction.member}`, inline: true },
+            { name: 'Reported', value: `${tmember}`, inline: true },
+            { name: 'Reported By', value: `${member}`, inline: true },
             { name: 'Comment', value: comment })
         .setColor(Colors.Red);
     return { embeds: [embed], components: [reportRow(message.author.id, message)] };

@@ -1,8 +1,8 @@
 import { DiscordjsError, DiscordjsErrorCodes, GatewayIntentBits as Intents, Partials } from 'discord.js';
-import { join } from 'path';
-import { Client } from './Client';
 import { config } from 'dotenv';
 import { connect } from 'mongoose';
+import { join } from 'path';
+import { Client } from './Client';
 
 // Load .env file contents
 config();

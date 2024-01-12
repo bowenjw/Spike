@@ -68,32 +68,32 @@ export const buttons = {
 
 function viewbutton(target:GuildMember) {
     return new ButtonBuilder()
-        .setCustomId(`viewWarn ${target.id}`)
+        .setCustomId(`warn_v_${target.id}`)
         .setLabel('View Warnings')
         .setStyle(ButtonStyle.Secondary);
 }
 function updateButton(warn:Warn) {
     return new ButtonBuilder()
-        .setCustomId(`updateWarn ${warn.id}`)
+        .setCustomId(`warn_u_${warn.id}`)
         .setLabel('Update Reason')
         .setStyle(ButtonStyle.Success);
 }
 function removeButton(warn:Warn) {
     return new ButtonBuilder()
-        .setCustomId(`removeWarn ${warn.id}`)
+        .setCustomId(`warn_r_${warn.id}`)
         .setLabel('End Warning')
         .setStyle(ButtonStyle.Danger);
 }
 function leftButton(targetid:string, disabled:boolean = false, start:number = 0) {
     return new ButtonBuilder()
-        .setCustomId(`viewWarn ${targetid} ${start + 3}`)
+        .setCustomId(`warn_v_${targetid} ${start + 3}`)
         .setEmoji('⬅️')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(disabled);
 }
 function rightButton(targetid:string, disabled:boolean = true, start:number = 0) {
     return new ButtonBuilder()
-        .setCustomId(`viewWarn ${targetid} ${start - 3}`)
+        .setCustomId(`warn_v_${targetid} ${start - 3}`)
         .setEmoji('➡️')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(disabled);

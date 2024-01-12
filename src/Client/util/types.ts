@@ -1,15 +1,5 @@
-import {
-    ChatInputCommandInteraction,
-    CommandInteraction,
-    ContextMenuCommandInteraction,
-    InteractionResponse,
-    LocaleString,
-    Message,
-    SharedSlashCommandOptions,
-} from 'discord.js';
-import {
-    Command, ExtendedContextMenuCommandBuilder, ExtendedSlashCommandBuilder,
-} from '../Classes';
+import { ChatInputCommandInteraction, CommandInteraction, ContextMenuCommandBuilder, ContextMenuCommandInteraction, InteractionResponse, LocaleString, Message, SharedSlashCommandOptions, SlashCommandBuilder } from 'discord.js';
+import { Command } from '../Classes';
 
 /**
  * Color values that can be referanced
@@ -25,9 +15,9 @@ export declare const ExtraColor: {
  * posible command return types
  */
 export type ChatInputCommandBuilders =
-	| ExtendedSlashCommandBuilder
-	| Omit<ExtendedSlashCommandBuilder, Exclude<keyof SharedSlashCommandOptions, 'options'>>
-	| Omit<ExtendedSlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+	| SlashCommandBuilder
+	| Omit<SlashCommandBuilder, Exclude<keyof SharedSlashCommandOptions, 'options'>>
+	| Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
 
 /**
  * Posible interaction return types
@@ -37,7 +27,7 @@ export type ReturnableInteraction = void | CommandInteraction | ContextMenuComma
 /**
  * TypeCommand definition
  */
-export type TypeCommand = Command<ChatInputCommandBuilders | ExtendedContextMenuCommandBuilder, ChatInputCommandInteraction | ContextMenuCommandInteraction>;
+export type TypeCommand = Command<ChatInputCommandBuilders | ContextMenuCommandBuilder, ChatInputCommandInteraction | ContextMenuCommandInteraction>;
 
 /**
  * Discord time Style definition

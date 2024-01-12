@@ -1,16 +1,13 @@
-import { ActionRowBuilder, GuildMember, MessageActionRowComponentBuilder, ModalSubmitInteraction, TextChannel } from "discord.js";
-import { guildDB } from "../../util/schema/guilds";
-import { warnDB } from "../../util/schema/warns";
-import { buttons, warnEmbedRender } from "../../util/system/warningRender";
+import { GuildMember, ModalSubmitInteraction } from 'discord.js';
+import { warningDb } from '../warn-schema';
 
-export async function modalInteractionExecute(interaction: ModalSubmitInteraction) {
-    
-    const reason = interaction.fields.getTextInputValue('warnupdate'),
-    newWarn = (await warnDB.updateById(interaction.customId.split(' ')[1], interaction.user, reason))!,
-    target = (await interaction.guild?.members.fetch(newWarn?.target.id!))!.user
+export async function warnUpdateModal(interaction: ModalSubmitInteraction) {
+    const { fields, client, customId } = interaction;
+    const reason = fields.getTextInputValue('warnupdate');
+    const newWarn = await warningDb.getWarnById(client, customId.split(client.splitCustomIDOn)[1]);
 
-    newWarn.reason = reason
-    
-    interaction.message?.edit({embeds:[warnEmbedRender(newWarn,target).setTitle('Warn | Updated')]})
-    interaction.reply({content:`Warning for ${target} has been updated`, ephemeral:true})
+    newWarn.setReason(reason, interaction.member as GuildMember).save();
+
+    interaction.message?.edit({ embeds:[newWarn.toEmbed().setTitle('Warn | Updated')] });
+    interaction.reply({ content:`Warning for ${newWarn.member} has been updated`, ephemeral:true });
 }

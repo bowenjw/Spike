@@ -1,5 +1,5 @@
 import { UserSelectMenuInteraction, VoiceChannel } from 'discord.js';
-import { Interaction } from '../../classes/Interaction';
+import { Interaction } from '../../Client';
 
 export default new Interaction<UserSelectMenuInteraction>()
     .setName('usermove')

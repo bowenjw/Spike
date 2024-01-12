@@ -1,5 +1,5 @@
 import { ButtonBuilder, ButtonStyle, codeBlock, ColorResolvable, EmbedBuilder, GuildMember, User } from 'discord.js';
-import { timeFormate } from './time';
+import { TimeStyles } from '../Client';
 
 export async function userEmbed(member:GuildMember, colors: ColorResolvable) {
     const user = await member.user.fetch(true);
@@ -11,8 +11,8 @@ export async function userEmbed(member:GuildMember, colors: ColorResolvable) {
         .setFields(
             { name: 'Nickname:', value: codeBlock(member.displayName), inline: true },
             { name: 'User ID:', value: codeBlock(member.id), inline: true },
-            { name: 'Created at:', value: timeFormate(user.createdAt, 'F'), inline: true },
-            { name: 'Joined at:', value: timeFormate(member.joinedAt, 'F'), inline: true },
+            { name: 'Created at:', value: user.createdAt.toDiscordString(TimeStyles.LongDateTime), inline: true },
+            { name: 'Joined at:', value: member.joinedAt.toDiscordString(TimeStyles.LongDateTime), inline: true },
         )
         .setImage(user.bannerURL({ size: 1024 }));
 }
