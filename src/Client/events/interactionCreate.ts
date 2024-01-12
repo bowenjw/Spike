@@ -1,6 +1,7 @@
 import {
     DiscordAPIError, Events, Interaction,
 } from 'discord.js';
+import { guildsModel } from '../../systems/guild';
 import { Event } from '../Classes/Event';
 
 export default new Event()
@@ -8,6 +9,7 @@ export default new Event()
     .setExecute(onInteractionCreate);
 
 async function onInteractionCreate(interaction: Interaction) {
+    if (interaction.inGuild()) guildsModel.getGuild(interaction.guild);
     const { commandHandler, interactionHandler } = interaction.client;
     try {
         // Runs if slash commands

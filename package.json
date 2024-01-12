@@ -5,21 +5,23 @@
   "main": "dist/bot.js",
   "scripts": {
     "start": "node ./dist/bot.js",
-    "prestart:bot": "npm run build",
-    "start:bot": "node ./dist/bot.js",
-    "prestart:manager": "npm run build",
-    "start:manager": "node ./dist/manager.js",
-    "dev:bot": "nodemon src/bot.ts",
-    "dev:manager": "nodemon src/manager.ts",
+    "prestart": "npm run build",
+    "dev": "nodemon src/bot.ts",
     "build": "tsc --project tsconfig.json"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/bowenjw/Spike.git"
   },
-  "author": "",
+  "author": {
+    "name": "John William Bowen",
+    "email": "bowenjw@outlook.com"
+  },
   "license": "MIT",
-  "homepage": "",
+  "bugs": {
+    "url": "https://github.com/bowenjw/Spike/issues"
+  },
+  "homepage": "hhttps://github.com/bowenjw/Spike",
   "dependencies": {
     "@fluent/bundle": "^0.18.0",
     "discord.js": "^14.14.1",

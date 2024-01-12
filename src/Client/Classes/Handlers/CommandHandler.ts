@@ -7,22 +7,30 @@ export class CommandHandler {
 
     protected readonly rest: REST;
 
-    readonly chatCommands: Collection<string, ChatInputCommand> = new Collection();
+    protected _chatCommands: Collection<string, ChatInputCommand> = new Collection();
 
-    readonly contextCommands: Collection<string, ContextMenuCommand> = new Collection();
+    protected _contextCommands: Collection<string, ContextMenuCommand> = new Collection();
+
+    get contextCommands() {
+        return this._contextCommands;
+    }
+
+    get chatCommands() {
+        return this._chatCommands;
+    }
 
     add(command: ChatInputCommand | ContextMenuCommand) {
-        command instanceof ChatInputCommand ? this.chatCommands.set(command.builder.name, command) : this.contextCommands.set(command.builder.name, command);
+        command instanceof ChatInputCommand ? this.chatCommands.set(command.builder.name, command) : this._contextCommands.set(command.builder.name, command);
         return this;
     }
 
     addChatCommands(commands: Collection<string, ChatInputCommand>) {
-        this.chatCommands.concat(commands);
+        this._chatCommands = this._chatCommands.concat(commands);
         return this;
     }
 
     addContextCommands(commands: Collection<string, ContextMenuCommand>) {
-        this.contextCommands.concat(commands);
+        this._contextCommands = this._contextCommands.concat(commands);
         return this;
     }
 
@@ -36,8 +44,8 @@ export class CommandHandler {
 
         console.log('Deploying commands...');
 
-        const commandData = this.contextCommands.filter((f) => f.isGlobal !== false).map((m) => m.toCommandJSON())
-            .concat(this.contextCommands.filter((f) => f.isGlobal !== false).map((m) => m.toCommandJSON()));
+        const commandData = this.chatCommands.filter((f) => f.isGlobal === true).map((m) => m.toCommandJSON())
+            .concat(this.contextCommands.filter((f) => f.isGlobal === true).map((m) => m.toCommandJSON()));
 
         const sentCommands = await this.client.application.commands.set(commandData);
 

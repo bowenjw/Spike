@@ -1,4 +1,4 @@
-import { DiscordjsError, DiscordjsErrorCodes, GatewayIntentBits as Intents, Partials } from 'discord.js';
+import { GatewayIntentBits as Intents, Partials } from 'discord.js';
 import { config } from 'dotenv';
 import { connect } from 'mongoose';
 import { join } from 'path';
@@ -38,31 +38,11 @@ const client = new Client({
             buttonPath: join(__dirname, 'interactions', 'buttons'),
             selectMenuPath: join(__dirname, 'interactions', 'select_menus'),
             modalPath: join(__dirname, 'interactions', 'modals'),
-            commandPath: join(__dirname, 'commands', 'chat', 'builders'),
-            contextMenuPath: join(__dirname, 'commands', 'context_menu'),
+            commandPath: join(__dirname, 'commands', 'chat'),
+            contextMenuPath: join(__dirname, 'commands', 'context'),
         }),
-        connect(process.env.DB_URI),
+        connect(process.env.MONGO_URI),
     ]);
 
     await client.login(process.env.TOKEN);
 })();
-
-
-client.login(process.env.TOKEN)
-    .catch((err:unknown) => {
-        if (err instanceof DiscordjsError) {
-            if (err.code == DiscordjsErrorCodes.TokenMissing) {
-                console.warn(`\n[Error] ${err.name}: ${err.message} Did you create a .env file?\n`);
-            }
-            else if (err.code == DiscordjsErrorCodes.TokenInvalid) {
-                console.warn(`\n[Error] ${err.name}: ${err.message} Check your .env file\n`);
-            }
-            else {
-                throw err;
-            }
-        }
-        else {
-            throw err;
-        }
-    });
-

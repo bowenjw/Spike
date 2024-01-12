@@ -256,7 +256,6 @@ export class ExtendedClient extends Client<true> {
                 throw error;
             }
         }
-
         return collection;
     }
 

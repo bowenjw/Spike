@@ -42,9 +42,10 @@ const guildSchema = new Schema<IGuild>({
 {
     statics: {
         async getGuild(guild:Guild) {
-            let record = await this.findOne({ guildId: guild.id });
+            const { id, name } = guild;
+            let record = await this.findOne({ guildId: id });
             if (!record) {
-                record = await this.create({ id:guild.id, name:guild.name });
+                record = await this.create({ guildId:id, name:name });
             }
             return new GuildConfig(guild, record) ;
         },

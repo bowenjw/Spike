@@ -36,11 +36,9 @@ export class WarningConfig {
     }
 
     enabledSystem() {
-        this.dbAnchor.warning.enabled = true;
         return this.setSystemStatus(true);
     }
     disableSystem() {
-        this.dbAnchor.warning.enabled = false;
         return this.setSystemStatus(false);
     }
 
@@ -72,6 +70,50 @@ export class WarningConfig {
 
     constructor(config:GuildConfig, guildDoc:GuildRecord) {
         const feture = guildDoc.warning;
+        this.dbAnchor = guildDoc;
+        this.enabled = feture.enabled;
+        this._channel = config.guild.channels.cache.get(feture.channelId) as TextChannel | ThreadChannel;
+    }
+}
+
+class TimeoutConfig {
+
+    private dbAnchor:GuildRecord;
+
+    protected _channel: TextChannel | ThreadChannel;
+
+    get enabled() {
+        return this.dbAnchor.timeoutlog.enabled;
+    }
+
+    private set enabled(state:boolean) {
+        this.dbAnchor.timeoutlog.enabled = state;
+    }
+
+    get channel() {
+        return this._channel;
+    }
+
+    enabledSystem() {
+        return this.setSystemStatus(true);
+    }
+
+    disableSystem() {
+        return this.setSystemStatus(false);
+    }
+
+    async setSystemStatus(state:boolean) {
+        this.enabled = state;
+        return this;
+    }
+
+    save() {
+        return this.dbAnchor.save();
+    }
+
+    constructor(config:GuildConfig, guildDoc:GuildRecord) {
+        const feture = guildDoc.timeoutlog;
+        this.dbAnchor = guildDoc;
         this.enabled = feture.enabled;
         this._channel = config.guild.channels.cache.get(feture.channelId) as TextChannel | ThreadChannel;
     }
@@ -86,6 +128,8 @@ export class GuildConfig {
 
     readonly warning: WarningConfig;
 
+    readonly timeout: TimeoutConfig;
+
     get id() {
         return this.dbAnchor._id;
     }
@@ -98,5 +142,6 @@ export class GuildConfig {
         this.dbAnchor = guildDoc;
         this.guild = guild;
         this.warning = new WarningConfig(this, this.dbAnchor);
+        this.timeout = new TimeoutConfig(this, guildDoc);
     }
 }
