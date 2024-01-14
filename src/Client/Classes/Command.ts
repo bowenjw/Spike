@@ -61,7 +61,7 @@ export class Command<
         return this;
     }
 
-    toCommandJSON() {
+    toJSON() {
         return this._builder.toJSON();
     }
 

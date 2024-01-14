@@ -44,8 +44,8 @@ export class CommandHandler {
 
         console.log('Deploying commands...');
 
-        const commandData = this.chatCommands.filter((f) => f.isGlobal === true).map((m) => m.toCommandJSON())
-            .concat(this.contextCommands.filter((f) => f.isGlobal === true).map((m) => m.toCommandJSON()));
+        const commandData = this.chatCommands.filter((f) => f.isGlobal === true).map((m) => m.toJSON())
+            .concat(this.contextCommands.filter((f) => f.isGlobal === true).map((m) => m.toJSON()));
 
         const sentCommands = await this.client.application.commands.set(commandData);
 
