@@ -65,10 +65,6 @@ export class Command<
         return this._builder.toJSON();
     }
 
-    /**
-	 *
-	 * @param options
-	 */
     constructor(options: Partial<Command<TypeBuilder, TypeInteraction>> = {}) {
         if (options.isGlobal) this.isGlobal = options.isGlobal;
         if (options.builder) this.builder = options.builder;

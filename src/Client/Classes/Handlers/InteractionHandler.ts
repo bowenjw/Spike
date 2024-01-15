@@ -1,9 +1,8 @@
 import { AnySelectMenuInteraction, ButtonInteraction, Collection, ModalSubmitInteraction } from 'discord.js';
-import { ExtendedClient } from '../ExtendedClient';
 import { Interaction } from '../Interaction';
+import { BaseHandler } from './baseHandler';
 
-export class InteractionHandler {
-    protected readonly client: ExtendedClient;
+export class InteractionHandler extends BaseHandler {
 
     // Collection of Button Interactions
     protected _buttons: Collection<string, Interaction<ButtonInteraction>> = new Collection();
@@ -26,19 +25,34 @@ export class InteractionHandler {
         return this._modals;
     }
 
-    addButton(interaction: Interaction<ButtonInteraction>) {
-        this._buttons.set(interaction.name, interaction);
+    /**
+     * Add a button interaction to the handler
+     * @param button The button interaction to add
+     * @returns The command handler
+     */
+    addButton(button: Interaction<ButtonInteraction>) {
+        this._buttons.set(button.name, button);
         return this;
     }
 
-    addButtons(collection: Collection<string, Interaction<ButtonInteraction>>) {
-        this._buttons = this._buttons.concat(collection);
+    /**
+     * Add a buttons interaction to the handler
+     * @param buttons The buttons interaction to add
+     * @returns The command handler
+     */
+    addButtons(buttons: Collection<string, Interaction<ButtonInteraction>>) {
+        this._buttons = this._buttons.concat(buttons);
         return this;
     }
 
-    runButton(interaction: ButtonInteraction) {
-        const interactionName = this.client.splitCustomID ? interaction.customId.split(this.client.splitCustomIDOn)[0] : interaction.customId;
-        return this._buttons.get(interactionName).execute(interaction);
+    /**
+     * Get and run a button interaction based on the interation event
+     * @param button The button interaction event
+     * @returns The command handler
+     */
+    runButton(button: ButtonInteraction) {
+        const interactionName = this.client.splitCustomID ? button.customId.split(this.client.splitCustomIDOn)[0] : button.customId;
+        return this._buttons.get(interactionName).execute(button);
     }
 
     addModal(interaction: Interaction<ModalSubmitInteraction>) {
@@ -69,9 +83,5 @@ export class InteractionHandler {
     runSelectMenus(interaction: AnySelectMenuInteraction) {
         const interactionName = this.client.splitCustomID ? interaction.customId.split(this.client.splitCustomIDOn)[0] : interaction.customId;
         return this._selectMenus.get(interactionName).execute(interaction);
-    }
-
-    constructor(client: ExtendedClient) {
-        this.client = client;
     }
 }

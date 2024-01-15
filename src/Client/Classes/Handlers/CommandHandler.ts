@@ -1,9 +1,9 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, Collection, ContextMenuCommandInteraction, REST } from 'discord.js';
 import { ChatInputCommand, ContextMenuCommand } from '../Command';
-import { ExtendedClient } from '../ExtendedClient';
+import { Client } from '../ExtendedClient';
+import { BaseHandler } from './baseHandler';
 
-export class CommandHandler {
-    protected readonly client: ExtendedClient;
+export class CommandHandler extends BaseHandler {
 
     protected readonly rest: REST;
 
@@ -66,8 +66,8 @@ export class CommandHandler {
         return this.contextCommands.get(interaction.commandName).execute(interaction);
     }
 
-    constructor(client: ExtendedClient) {
-        this.client = client;
+    constructor(client: Client) {
+        super(client);
         this.rest = client.rest;
     }
 }

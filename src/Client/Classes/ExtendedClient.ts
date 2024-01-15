@@ -1,9 +1,9 @@
 import {
     AnySelectMenuInteraction,
     ButtonInteraction,
-    Client,
     Collection,
     Interaction as DInteraction,
+    Client as DiscordClient,
     ModalSubmitInteraction,
 } from 'discord.js';
 import { readdir } from 'fs/promises';
@@ -24,7 +24,7 @@ import { InteractionHandler } from './Handlers/InteractionHandler';
  * ExtendedClient is extended from the {@import ('discord.js').Client}.
  * @see {@link https://discord.js.org/#/docs/main/stable/class/Client}
  */
-export class ExtendedClient extends Client<true> {
+export class Client extends DiscordClient<true> {
 
     private _eventHandler = new EventHandler(this);
 
@@ -124,7 +124,7 @@ export class ExtendedClient extends Client<true> {
         console.log('Client initialized');
 
         // return this object with init method omitted
-        return this as Omit<ExtendedClient, 'init'>;
+        return this as Omit<Client, 'init'>;
     }
 
     private async loadEvents(eventPath: string) {
@@ -268,31 +268,4 @@ export class ExtendedClient extends Client<true> {
     private isErrnoException(error: unknown): error is NodeJS.ErrnoException {
         return error instanceof Error;
     }
-}
-
-declare module 'discord.js' {
-	interface BaseInteraction {
-		client: ExtendedClient;
-	}
-	interface Component {
-		client: ExtendedClient;
-	}
-	interface Message {
-		client: ExtendedClient;
-	}
-	interface BaseChannel {
-		client: ExtendedClient;
-	}
-	interface Role {
-		client: ExtendedClient;
-	}
-	interface Guild {
-		client: ExtendedClient;
-	}
-	interface User {
-		client: ExtendedClient;
-	}
-	interface GuildMember {
-		client: ExtendedClient;
-	}
 }
