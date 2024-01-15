@@ -8,7 +8,7 @@ export async function updateWarn(interaction:ButtonInteraction) {
     const record = await warningDb.getWarnById(client, customId.split(client.splitCustomIDOn)[2]);
 
     if (!record) {
-        interaction.reply({ content:'Warning not found', ephemeral:true });
+        interaction.reply({ content: 'Warning not found', ephemeral: true });
         return;
     }
     const warnTextInput = new ActionRowBuilder<TextInputBuilder>().addComponents(new TextInputBuilder()

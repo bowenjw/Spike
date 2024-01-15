@@ -39,5 +39,5 @@ export default new ChatInputCommand()
 
         user.timeout(duration * 1000, `Member was timed out by ${interaction.user.tag} for ${reason}`);
 
-        interaction.reply({ content:`${user} has been timed out until <t:${endedDate}:F>`, ephemeral:true });
+        interaction.reply({ content: `${user} has been timed out until <t:${endedDate}:F>`, ephemeral: true });
     });

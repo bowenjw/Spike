@@ -21,16 +21,16 @@ export default new ChatInputCommand()
         const source = (await interaction.guild.members.fetch(interaction.user.id))?.voice.channel,
             destination = interaction.options.getChannel('destination', true) as VoiceChannel;
         if (source == null) {
-            interaction.reply({ content:'You must be in a Voice Channel to use this command', ephemeral: true });
+            interaction.reply({ content: 'You must be in a Voice Channel to use this command', ephemeral: true });
             return;
         }
         else if (source.id == destination.id) {
-            interaction.reply({ content:`Members are already in ${destination}`, ephemeral: true });
+            interaction.reply({ content: `Members are already in ${destination}`, ephemeral: true });
             return;
         }
         else if (interaction.options.getBoolean('everyone')) {
             source.members.forEach(async member => member.voice.setChannel(destination));
-            interaction.reply({ content:'Members have been moved', ephemeral:true });
+            interaction.reply({ content: 'Members have been moved', ephemeral: true });
             return;
         }
         // interaction.deferReply({ephemeral: true});
@@ -42,5 +42,5 @@ export default new ChatInputCommand()
 
             topActionRow = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(usermenu);
 
-        interaction.reply({ content:'Select users you would like to move', components:[topActionRow], ephemeral:true });
+        interaction.reply({ content: 'Select users you would like to move', components: [topActionRow], ephemeral: true });
     });

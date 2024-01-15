@@ -3,7 +3,7 @@ import { TimeStyles } from '../Client';
 
 export async function userEmbed(member:GuildMember, colors: ColorResolvable) {
     const user = await member.user.fetch(true);
-    const iconURL = member.displayAvatarURL({ forceStatic:true, size: 4096 });
+    const iconURL = member.displayAvatarURL({ forceStatic: true, size: 4096 });
     return new EmbedBuilder()
         .setAuthor({ name: member.user.tag, iconURL: iconURL })
         .setThumbnail(iconURL)

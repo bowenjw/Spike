@@ -65,14 +65,14 @@ async function execute(auditLogEntry:GuildAuditLogsEntry, guild:Guild) {
         const reason = auditLogEntry.reason || 'No Reason Given';
         // console.log(auditLogEntry, newDate, oldDate);
         timeoutChannel.send({
-            embeds:[
+            embeds: [
                 new EmbedBuilder()
                     .setAuthor({ name: target.tag, iconURL: avatarURL })
                     .setTitle(title)
                     .addFields(
-                        { name: 'Action By', value:`<@${auditLogEntry.executorId}>`, inline:true },
-                        { name: 'Expires At', value: `${newDate.toDiscordString(TimeStyles.LongDateTime)}\n ${newDate.toDiscordString(TimeStyles.RelativeTime)}`, inline:true },
-                        { name: 'Reason', value:reason },
+                        { name: 'Action By', value: `<@${auditLogEntry.executorId}>`, inline: true },
+                        { name: 'Expires At', value: `${newDate.toDiscordString(TimeStyles.LongDateTime)}\n ${newDate.toDiscordString(TimeStyles.RelativeTime)}`, inline: true },
+                        { name: 'Reason', value: reason },
                     )
                     .setColor(color)
                     .setThumbnail(avatarURL)

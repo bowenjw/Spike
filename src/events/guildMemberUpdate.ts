@@ -22,7 +22,7 @@ async function memberJoin(oldMember:GuildMember, newMember:GuildMember) {
             .setTitle('Member Verified')
             .setDescription('Member was verified or agreed to the rules')
             .addFields(
-                { name: 'More Info:', value:`${newMember}` },
+                { name: 'More Info:', value: `${newMember}` },
             )
             .setTimestamp()],
         components: [new ActionRowBuilder<ButtonBuilder>()

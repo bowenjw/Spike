@@ -34,7 +34,7 @@ function userReport(interaction:ModalSubmitInteraction, args: string[]):MessageC
     const comment = fields.getTextInputValue('comment') || 'No Additional Comment';
     const embed = new EmbedBuilder()
         .setTitle('User Report')
-        .setThumbnail(tMember.displayAvatarURL({ forceStatic:true, size: 4096 }))
+        .setThumbnail(tMember.displayAvatarURL({ forceStatic: true, size: 4096 }))
         .addFields(
             { name: 'Reported', value: `${tMember}`, inline: true },
             { name: 'Reported By', value: `${member}`, inline: true },
@@ -51,7 +51,7 @@ async function MessageReport(interaction:ModalSubmitInteraction, args: string[])
     const comment = fields.getTextInputValue('comment') || 'No Additional Comment';
     const embed = new EmbedBuilder()
         .setTitle('Message Report')
-        .setThumbnail(tmember.displayAvatarURL({ forceStatic:true, size: 1024 }) || tmember.user.avatarURL({ forceStatic: true, size: 1024 }))
+        .setThumbnail(tmember.displayAvatarURL({ forceStatic: true, size: 1024 }) || tmember.user.avatarURL({ forceStatic: true, size: 1024 }))
         .addFields(
             { name: 'Channel', value: `${channel}`, inline: true },
             { name: 'Date Posted', value: message.createdAt.toDiscordString(TimeStyles.LongDateTime), inline: true },

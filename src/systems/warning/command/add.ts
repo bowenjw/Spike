@@ -5,7 +5,7 @@ import { banDmEmbed, buttons, dmEmbed } from '../warningRender';
 
 export async function add(interaction: ChatInputCommandInteraction, target:GuildMember, officer:GuildMember, warningConfig: WarningConfig) {
     if (target.permissions.has(PermissionsBitField.Flags.ManageGuild, true)) {
-        interaction.reply({ content:'You can not warn this user bcaues that have `Manager Server` or `Administrator` permissions', ephemeral:true });
+        interaction.reply({ content: 'You can not warn this user bcaues that have `Manager Server` or `Administrator` permissions', ephemeral: true });
         return;
     }
 
@@ -25,9 +25,9 @@ export async function add(interaction: ChatInputCommandInteraction, target:Guild
 
     // interaction reply
     interaction.reply({
-        embeds:[logEmbed],
-        components:[new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(viewWarnButton)],
-        ephemeral:true,
+        embeds: [logEmbed],
+        components: [new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(viewWarnButton)],
+        ephemeral: true,
     });
 
     const actionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(buttons.updateButton(newWarn), viewWarnButton);
@@ -35,7 +35,7 @@ export async function add(interaction: ChatInputCommandInteraction, target:Guild
     if (days != 0) {actionRow.addComponents(buttons.removeButton(newWarn));}
 
     // Message to log channel
-    if (logChannel) { logChannel.send({ embeds:[logEmbed], components:[actionRow] });}
+    if (logChannel) { logChannel.send({ embeds: [logEmbed], components: [actionRow] });}
 
     const dm = dmEmbed(newWarn, numberOfWarns);
     const maxWarns = warningConfig.maxWarns;
@@ -43,12 +43,12 @@ export async function add(interaction: ChatInputCommandInteraction, target:Guild
     if (days != 0 && numberOfWarns >= maxWarns && target.bannable && maxWarns != 0) {
 
         const BanReason = `Automatic action after ${maxWarns} concurrent warnings`;
-        await target.send({ embeds:[dm, banDmEmbed(interaction, reason, warningConfig.appealMessage)] });
-        await target.ban({ reason:BanReason });
+        await target.send({ embeds: [dm, banDmEmbed(interaction, reason, warningConfig.appealMessage)] });
+        await target.ban({ reason: BanReason });
 
     }
     else {
-        await target.send({ embeds:[dm] }).catch(err => console.log(err));
+        await target.send({ embeds: [dm] }).catch(err => console.log(err));
     }
 
 

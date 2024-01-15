@@ -20,7 +20,7 @@ export default new Interaction<ButtonInteraction>()
             member.setNickname('Nickname moderated', `${interaction.member} moderated ${member.user.username}'s nickname formarly ${member.nickname}`)
                 .then(() => interaction.reply({
                     content: `${member}'s nickname has been moderated`,
-                    ephemeral:true }))
+                    ephemeral: true }))
                 .catch((err) => {
                     if (!(err instanceof DiscordAPIError)) {
                         console.error(err);
@@ -28,20 +28,20 @@ export default new Interaction<ButtonInteraction>()
                     }
                     else if (err.code == 50013) {
                         interaction.update({
-                            content:`Bot does not have permissions to moderate the nickname of ${member}`,
+                            content: `Bot does not have permissions to moderate the nickname of ${member}`,
                         });
                     }
                 });
         }
         else if (isN) {
             interaction.update({
-                content:'Action Cancelled',
+                content: 'Action Cancelled',
                 components: [],
             });
         }
         else {
             interaction.reply({
-                content:bold(`Are you sure you would like to moderate the nickname of ${member}`),
+                content: bold(`Are you sure you would like to moderate the nickname of ${member}`),
                 components: [new ActionRowBuilder<ButtonBuilder>()
                     .addComponents(new ButtonBuilder()
                         .setCustomId(interaction.customId.replace('_', '_y_'))
@@ -51,7 +51,7 @@ export default new Interaction<ButtonInteraction>()
                         .setCustomId(interaction.customId.replace('_', '_n_'))
                         .setLabel('No')
                         .setStyle(ButtonStyle.Danger))],
-                ephemeral:true,
+                ephemeral: true,
             });
         }
     });

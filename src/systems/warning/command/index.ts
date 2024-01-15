@@ -32,7 +32,7 @@ export async function warnChatCommandExecute(interaction: ChatInputCommandIntera
         const target = interaction.options.getMember('target')! as GuildMember;
 
         if (target.user.bot || target == officer) {
-            return interaction.reply({ content:'Target can not be a bot or your self', ephemeral:true });
+            return interaction.reply({ content: 'Target can not be a bot or your self', ephemeral: true });
         }
         switch (interaction.options.getSubcommand(true)) {
         case 'add':

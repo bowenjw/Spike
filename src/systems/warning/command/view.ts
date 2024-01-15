@@ -18,7 +18,7 @@ export async function view(interaction: ChatInputCommandInteraction, target:Guil
     const records = await warningDb.getWarnsOfMember(target, date);
 
     if (records.length == 0) {
-        interaction.reply({ content:`${target} has no active warns or warns in the selected scope`, ephemeral:true });
+        interaction.reply({ content: `${target} has no active warns or warns in the selected scope`, ephemeral: true });
         return;
     }
     else if (records.length > 3) {
@@ -27,5 +27,5 @@ export async function view(interaction: ChatInputCommandInteraction, target:Guil
 
     if (show == null) { show = undefined; }
 
-    interaction.reply({ embeds:viewWarningMessageRender(records), components:actionRow, ephemeral:!show });
+    interaction.reply({ embeds: viewWarningMessageRender(records), components: actionRow, ephemeral: !show });
 }

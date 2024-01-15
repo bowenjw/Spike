@@ -22,10 +22,10 @@ const warn = new Schema<Iwarn>(
         guildId: { type: String, required: true, ref: 'guilds' },
         targetId: { type: String, required: true },
         officerId: { type: String, required: true },
-        updaterId:{ type: String, required:false },
+        updaterId: { type: String, required: false },
         reason: { type: String, required: true, default: noReason },
-        expireAt: { type: Date, required:true, setDate },
-        updatedAt: { type: Date, required:true },
+        expireAt: { type: Date, required: true, setDate },
+        updatedAt: { type: Date, required: true },
     },
     {
         timestamps: true,
@@ -47,7 +47,7 @@ const warn = new Schema<Iwarn>(
             },
             async getWarns(member:GuildMember, expireAfter?:Date) {
                 const { guild, id, client } = member;
-                const filter: FilterQuery<FlatRecord<Iwarn>> = { guildId: guild.id, targetId:id };
+                const filter: FilterQuery<FlatRecord<Iwarn>> = { guildId: guild.id, targetId: id };
 
                 if (expireAfter) {filter.expireAt = { $gte: expireAfter }; }
 
@@ -65,7 +65,7 @@ const warn = new Schema<Iwarn>(
             },
             async getWarnsOfOfficer(officer:GuildMember, expireAfter?:Date) {
                 const { guild, id, client } = officer;
-                const filter: FilterQuery<FlatRecord<Iwarn>> = { guildId: guild.id, officerId:id };
+                const filter: FilterQuery<FlatRecord<Iwarn>> = { guildId: guild.id, officerId: id };
 
                 if (expireAfter) {filter.expireAt = { $gte: expireAfter }; }
 

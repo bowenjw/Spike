@@ -8,6 +8,6 @@ export async function warnUpdateModal(interaction: ModalSubmitInteraction) {
 
     newWarn.setReason(reason, interaction.member as GuildMember).save();
 
-    interaction.message?.edit({ embeds:[newWarn.toEmbed().setTitle('Warn | Updated')] });
-    interaction.reply({ content:`Warning for ${newWarn.member} has been updated`, ephemeral:true });
+    interaction.message?.edit({ embeds: [newWarn.toEmbed().setTitle('Warn | Updated')] });
+    interaction.reply({ content: `Warning for ${newWarn.member} has been updated`, ephemeral: true });
 }

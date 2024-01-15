@@ -8,13 +8,13 @@ export default new Event()
     .setExecute(execute);
 
 async function execute(member:GuildMember) {
-    const auditLog = (await member.guild.fetchAuditLogs({ type: AuditLogEvent.MemberKick || AuditLogEvent.MemberBanAdd, limit:10 })).entries
+    const auditLog = (await member.guild.fetchAuditLogs({ type: AuditLogEvent.MemberKick || AuditLogEvent.MemberBanAdd, limit: 10 })).entries
         .filter(e => e.targetId == member.id);
     if (auditLog.size > 0) return;
     const avatarURL = member.user.avatarURL({ forceStatic: true });
     const channel = member.guild.channels.cache.find((_c, k) => k == channelID) as ThreadChannel;
     channel.send({
-        embeds:[
+        embeds: [
             new EmbedBuilder()
                 .setAuthor({ name: member.user.tag, iconURL: avatarURL })
                 .setTitle('User left')

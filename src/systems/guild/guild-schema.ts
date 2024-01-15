@@ -31,7 +31,7 @@ const guildSchema = new Schema<IGuild>({
     warning: {
         channelId: { type: String, require: false },
         enabled: { type: Boolean, require: true, default: false },
-        appealMessage: { type: String, require:false },
+        appealMessage: { type: String, require: false },
         maxActiveWarns: { type: Number, require: true, default: 3 },
     },
     timeoutlog: {
@@ -45,7 +45,7 @@ const guildSchema = new Schema<IGuild>({
             const { id, name } = guild;
             let record = await this.findOne({ guildId: id });
             if (!record) {
-                record = await this.create({ guildId:id, name:name });
+                record = await this.create({ guildId: id, name: name });
             }
             return new GuildConfig(guild, record) ;
         },

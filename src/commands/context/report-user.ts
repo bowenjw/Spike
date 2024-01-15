@@ -13,7 +13,7 @@ export default new ContextMenuCommand()
 
 async function execute(interaction:UserContextMenuCommandInteraction) {
     if (interaction.targetUser.system || interaction.targetUser.bot) {
-        interaction.reply({ content:'This user is a bot and can not be reported', ephemeral:true });
+        interaction.reply({ content: 'This user is a bot and can not be reported', ephemeral: true });
         return;
     }
     interaction.showModal(reportModal

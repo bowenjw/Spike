@@ -1,4 +1,4 @@
-export { ChatInputCommand, ExtendedClient as Client, Command, ContextMenuCommand, Event, Interaction } from './Classes';
+export { ChatInputCommand, Client, Command, ContextMenuCommand, Event, Interaction } from './Classes';
 
 export { ExtraColor, TimeStyles, tsNodeRun } from './util';
 

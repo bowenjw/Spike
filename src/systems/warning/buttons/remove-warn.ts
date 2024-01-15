@@ -16,11 +16,11 @@ export async function removeWarning(interaction:ButtonInteraction) {
 
     if (!record) {
         interaction.message.delete();
-        interaction.reply({ content:'Warning has already been deleted', ephemeral:true });
+        interaction.reply({ content: 'Warning has already been deleted', ephemeral: true });
         return;
     }
     await record.setNewEndDate(new Date, interaction.member).save();
     const warnActionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(buttons.viewWarnButton(record.member));
 
-    interaction.update({ embeds:[record.toEmbed(null, 'Green').setTitle('Warn | Ended')], components:[warnActionRow] });
+    interaction.update({ embeds: [record.toEmbed(null, 'Green').setTitle('Warn | Ended')], components: [warnActionRow] });
 }

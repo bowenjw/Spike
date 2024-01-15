@@ -10,10 +10,10 @@ export async function viewWarnings(interaction:ButtonInteraction) {
     const records = await warningDb.getWarnsOfMember(target, new Date);
 
     if (records.length == 0) {
-        interaction.reply({ content:`${target} has no active warnings`, ephemeral:true });
+        interaction.reply({ content: `${target} has no active warnings`, ephemeral: true });
     }
     else if (isNaN(start)) {
-        interaction.reply({ embeds:viewWarningMessageRender(records, 0), ephemeral:true });
+        interaction.reply({ embeds: viewWarningMessageRender(records, 0), ephemeral: true });
     }
     else {
 
@@ -25,6 +25,6 @@ export async function viewWarnings(interaction:ButtonInteraction) {
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
             buttons.leftButton(target.id, leftButtonDisabled, start),
             buttons.rightButton(target.id, rightButtonDisabled, start));
-        interaction.update({ embeds:viewWarningMessageRender(records, start), components:[row] });
+        interaction.update({ embeds: viewWarningMessageRender(records, start), components: [row] });
     }
 }

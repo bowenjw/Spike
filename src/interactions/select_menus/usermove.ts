@@ -9,10 +9,10 @@ export default new Interaction<UserSelectMenuInteraction>()
             members = source.members.filter(member => interaction.values.includes(member.id));
 
         if (members.size < 2) {
-            interaction.reply({ content:'Two or more moveable Members need to be selected', ephemeral:true });
+            interaction.reply({ content: 'Two or more moveable Members need to be selected', ephemeral: true });
         }
         else {
             members.forEach(async member => member.voice.setChannel(destination));
-            interaction.update({ content:'Members have been moved', components:[] });
+            interaction.update({ content: 'Members have been moved', components: [] });
         }
     });

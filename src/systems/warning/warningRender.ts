@@ -24,14 +24,14 @@ export function removeWarnEmbed(record:Warn, remover:GuildMember, deleted: boole
         .addFields(
             { name: 'Target', value: `${record.member}\n${record.member.user.username}`, inline: true },
             { name: 'Officer', value: `<${record.officer}>\n${record.officer.user.username}`, inline: true },
-            { name: 'Removed By', value: `${remover}\n${remover.user.username}`, inline:true })
+            { name: 'Removed By', value: `${remover}\n${remover.user.username}`, inline: true })
         .setTimestamp();
 
     if (deleted) {
         return embed.setColor(WarmEmbedColor.Inactive);
     }
     else {
-        return embed.setColor(WarmEmbedColor.Active).setFooter({ text:`ID: ${record.id}` });
+        return embed.setColor(WarmEmbedColor.Active).setFooter({ text: `ID: ${record.id}` });
     }
 }
 
@@ -42,20 +42,20 @@ export function dmEmbed(record:Warn, numberOfWarns:number) {
         .setDescription(`**Reason:** ${reason}`)
         .setColor(WarmEmbedColor.Issued)
         .addFields(
-            { name:'Number of active warning(s)', value:`${numberOfWarns}` },
-            { name:'Time till warn epxeration', value: expireAt.toDiscordString(TimeStyles.RelativeTime) })
-        .setAuthor({ name:guild.name, iconURL:guild.iconURL({ forceStatic:true })! })
+            { name: 'Number of active warning(s)', value: `${numberOfWarns}` },
+            { name: 'Time till warn epxeration', value: expireAt.toDiscordString(TimeStyles.RelativeTime) })
+        .setAuthor({ name: guild.name, iconURL: guild.iconURL({ forceStatic: true })! })
         .setTimestamp(record.createdAt);
     return embed;
 }
 export function banDmEmbed(interation:CommandInteraction, banReason:string, appealMessage?:string) {
     const embed = new EmbedBuilder()
-        .setAuthor({ name:interation.guild.name, iconURL:interation.guild.iconURL({ forceStatic:true }) })
+        .setAuthor({ name: interation.guild.name, iconURL: interation.guild.iconURL({ forceStatic: true }) })
         .setTimestamp()
         .setTitle('Banned')
         .setDescription(banReason)
         .setColor(Colors.Red);
-    if (appealMessage) embed.addFields({ name:'Appeal Info', value:appealMessage });
+    if (appealMessage) embed.addFields({ name: 'Appeal Info', value: appealMessage });
     return embed;
 }
 export const buttons = {
