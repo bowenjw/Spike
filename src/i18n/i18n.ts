@@ -1,8 +1,8 @@
 import {
-	FluentBundle, FluentResource, FluentVariable,
+    FluentBundle, FluentResource, FluentVariable,
 } from '@fluent/bundle';
 import {
-	Collection, Locale, LocaleString,
+    Collection, Locale, LocaleString,
 } from 'discord.js';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
@@ -137,7 +137,7 @@ export class i18n {
         const res = bundle.formatPattern(msg.value, args, errors);
 
         if (errors.length) {
-            throw Error(`i18n - Errors with ${key}`, { cause: errors });
+            throw Error(`i18n - Errors with ${key}:\n ${errors}`);
         }
 
         return res;
