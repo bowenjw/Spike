@@ -1,0 +1,33 @@
+name: Feture Request
+description: Request a feture be added or inproved
+title: "[Request]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your input.
+  - type: textarea
+    id: what-should-happen
+    attributes:
+      label: What would you like to happen?
+      description: Tell use what action you would like to complete?
+      placeholder: What should happen
+    validations:
+      required: true
+  - type: textarea
+    id: how-does
+    attributes:
+      label: How would this feture help you?
+      description: Tell how you would you this feture?
+      placeholder: how would the feture help you
+    validations:
+      required: true
+  # - type: checkboxes
+  #   id: terms
+  #   attributes:
+  #     label: Code of Conduct
+  #     description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
+  #     options:
+  #       - label: I agree to follow this project's Code of Conduct
+  #         required: true
