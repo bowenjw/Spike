@@ -2,26 +2,26 @@ FROM node:lts-iron AS builder
 WORKDIR /usr/bot
 
 COPY package.json .
-COPY yarn.lock .
+COPY package-lock.json .
 
-RUN yarn install --frozen-lockfile
+RUN npm install
 
 COPY . .
 
-RUN yarn build
+RUN npx build
 
 FROM node:lts-iron AS runner
 WORKDIR /usr/bot
 
 COPY package.json .
-COPY yarn.lock .
+COPY package-lock.json .
 COPY ./locales ./locales
 
-RUN yarn install --frozen-lockfile --production
+RUN npm install --omit=dev
 
 COPY --from=builder /usr/bot/dist/ ./dist
 COPY ./src/*.json ./dist
 
 USER node
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]
