@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npx build
+RUN npm run build
 
 FROM node:lts-iron AS runner
 WORKDIR /usr/bot
